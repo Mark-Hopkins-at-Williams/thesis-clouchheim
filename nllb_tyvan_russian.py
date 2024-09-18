@@ -12,7 +12,8 @@ from sacremoses import MosesPunctNormalizer
 from transformers.optimization import Adafactor
 import gc 
 import torch
-import sacrebleu
+import sacrebleu 
+import numpy as np
 
 ################################ Load data ################################
 
@@ -56,15 +57,16 @@ smpl['tyv_words'] = smpl.tyv.apply(word_tokenize)
 stats = smpl[
     ['rus_toks', 'tyv_toks', 'rus_words', 'tyv_words']
 ].applymap(len).describe()
-print(stats.rus_toks['mean'] / stats.rus_words['mean'])  # number of tokens per word Russian: 2.0349
-print(stats.tyv_toks['mean'] / stats.tyv_words['mean'])  # number of tokens per word Tyvan: 2.4234
+print("# of tokens per word")
+print("Russian:", stats.rus_toks['mean'] / stats.rus_words['mean'])  # number of tokens per word Russian: 2.0349
+print("Tyvan:", stats.tyv_toks['mean'] / stats.tyv_words['mean'])  # number of tokens per word Tyvan: 2.4234
 
 # see number of unknowns 
 texts_with_unk = [
     text for text in tqdm(trans_df.tyv) 
     if tokenizer.unk_token_id in tokenizer(text).input_ids
 ]
-print(len(texts_with_unk)) # 163 - number of tyvan tokens that are unknown (mostly from unknown characters)
+print("# of <unk> before pre-processing:", len(texts_with_unk)) # 163 - number of tyvan tokens that are unknown (mostly from unknown characters)
 s = random.sample(texts_with_unk, 5)
 print(s) 
 
@@ -103,7 +105,7 @@ texts_with_unk_normed = [
     text for text in tqdm(texts_with_unk) 
     if tokenizer.unk_token_id in tokenizer(preproc(text)).input_ids
 ]
-print(len(texts_with_unk_normed)) # 0 - unknown after pre-processing
+print("# of <unk> after pre-processing", len(texts_with_unk_normed)) # 0 - unknown after pre-processing
 
 
 ################################ Expanding Vocabulary ################################
