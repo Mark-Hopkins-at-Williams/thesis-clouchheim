@@ -14,6 +14,8 @@ import gc
 import torch
 import sacrebleu 
 import numpy as np
+from datasets import load_dataset
+from collections import Counter
 
 ################################ Load data ################################
 
@@ -32,11 +34,11 @@ tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
 tokenizer.src_lang = "rus_Cyrl"
 
-# test - russain to english
-#inputs = tokenizer(text="поля озарились утренним солнцем", return_tensors="pt")
-#translated_tokens = model.generate(
-    #**inputs, forced_bos_token_id=tokenizer.lang_code_to_id["eng_Latn"])
-#print(tokenizer.decode(translated_tokens[0], skip_special_tokens=True)) # Return: The fields were lit by the morning sun
+#test - russain to english
+inputs = tokenizer(text="поля озарились утренним солнцем", return_tensors="pt")
+translated_tokens = model.generate(
+    **inputs, forced_bos_token_id=tokenizer.lang_code_to_id["eng_Latn"])
+print(tokenizer.decode(translated_tokens[0], skip_special_tokens=True)) # Return: The fields were lit by the morning sun
 
 ################################ Determine if this tokenizer is adequet for Tyvan ################################
 def word_tokenize(text):
@@ -109,10 +111,141 @@ print("# of <unk> after pre-processing", len(texts_with_unk_normed)) # 0 - unkno
 
 
 ################################ Expanding Vocabulary ################################
-#TODO(optional): complete this section 
+tyv_wiki = load_dataset("graelo/wikipedia", "20230601.tyv")
+tyv_wiki
+# DatasetDict({
+#     train: Dataset({
+#         features: ['id', 'url', 'title', 'text'],
+#         num_rows: 3459
+#     })
+# })
+print(sum(len(t) for t in tyv_wiki['train']['text']))  # 7568832
+print(sum(len(t) for t in trans_df.tyv.dropna()))      # 3573803
+
+all_texts = tyv_wiki['train']['text'] + df_train.tyv.dropna().tolist()
+all_text_normalized = [preproc(t) for t in tqdm(all_texts)]
+chars_cnt = Counter(c for t in all_text_normalized for c in t)
+required_chars = ''.join([
+    k for k, v in chars_cnt.most_common() 
+    if v >= 3 and k not in ' '
+])
+
+import sentencepiece as spm
+all_texts_file = 'myv_texts_plain.txt'
+SPM_PREFIX = 'spm_tyvan_16k'
+with open(all_texts_file, 'w') as f:
+    for i, text in enumerate(all_texts):
+        print(text, file=f)
+
+spm.SentencePieceTrainer.train(
+    input=all_texts_file,
+    model_prefix=SPM_PREFIX,
+    vocab_size=2**14,  # 16K
+    character_coverage = 1,
+    num_threads=16,
+    train_extremely_large_corpus=False,
+    add_dummy_prefix=False,
+    max_sentencepiece_length=128,
+    max_sentence_length=4192*4,
+    pad_id=0,
+    eos_id=1,
+    unk_id=2,
+    bos_id=-1,
+    required_chars=required_chars,
+)
+
+from sentencepiece import sentencepiece_model_pb2 as sp_pb2_model
+# At this step, the code may throw an error about protobuf. Do as it tells.
+from transformers import NllbTokenizer
+
+# reading the NLLB and the Tyvan sentencepiece models into a native format
+tokenizer = NllbTokenizer.from_pretrained('facebook/nllb-200-distilled-600M')
+sp_trained = spm.SentencePieceProcessor(model_file=f'{SPM_PREFIX}.model')
+added_spm = sp_pb2_model.ModelProto()
+added_spm.ParseFromString(sp_trained.serialized_model_proto())
+old_spm = sp_pb2_model.ModelProto()
+old_spm.ParseFromString(tokenizer.sp_model.serialized_model_proto())
+
+# adding the missing tokens to the NLLB sentencepiece model
+nllb_tokens_set = {p.piece for p in old_spm.pieces}
+prev_min_score = old_spm.pieces[-1].score
+for p in added_spm.pieces:
+    piece = p.piece
+    # !!! THIS FIX WAS ADDED LATER; it is required for CT2 compatibility !!!
+    # 1 is ordinary token, non-1 is special token; we don't want to copy the special tokens
+    if p.type != 1:
+        continue
+    if piece not in nllb_tokens_set:
+        new_p = sp_pb2_model.ModelProto().SentencePiece()
+        new_p.piece = piece
+        # for all new tokens, I'll set a lower score (priority)
+        new_p.score = p.score + prev_min_score
+        old_spm.pieces.append(new_p)
+
+# saving the result to disk
+NEW_SPM_NAME = 'spm_nllb_tyvan_268k.model'
+with open(NEW_SPM_NAME, 'wb') as f:
+    f.write(old_spm.SerializeToString())
+    
+from transformers import AutoModelForSeq2SeqLM
+model_name = 'facebook/nllb-200-distilled-600M'
+
+# loading the tokenizers
+tokenizer_old = NllbTokenizer.from_pretrained(model_name)
+tokenizer = NllbTokenizer.from_pretrained(model_name, vocab_file=NEW_SPM_NAME)
+print(len(tokenizer_old), len(tokenizer)) # 256204, 268559
+added_vocab = set(tokenizer.get_vocab()).difference(set(tokenizer_old.get_vocab()))
+print(len(added_vocab))  # 12355
+
+# loading and resizing the model
+model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
+model.resize_token_embeddings(len(tokenizer))
+
+# re-initializing the new embeddings
+for t in tqdm(added_vocab):
+    tt = tokenizer_old(t, add_special_tokens=False).input_ids
+    if len(tt) == 0:
+        tt = [tokenizer_old.unk_token_id]
+    idx = tokenizer.convert_tokens_to_ids(t)
+    model.model.shared.weight.data[idx] = model.model.shared.weight.data[tt].mean(0)
 
 ################################ Adding new Langauge Tag ################################
-#TODO(optional): complete this section
+def fix_tokenizer(tokenizer, new_lang='tyv_Cyrl'):
+    """
+    Add a new language token to the tokenizer vocabulary 
+    (this should be done each time after its initialization)
+    """
+    old_len = len(tokenizer) - int(new_lang in tokenizer.added_tokens_encoder)
+    tokenizer.lang_code_to_id[new_lang] = old_len-1
+    tokenizer.id_to_lang_code[old_len-1] = new_lang
+    # always move "mask" to the last position
+    tokenizer.fairseq_tokens_to_ids["<mask>"] = len(tokenizer.sp_model) + len(tokenizer.lang_code_to_id) + tokenizer.fairseq_offset
+
+    tokenizer.fairseq_tokens_to_ids.update(tokenizer.lang_code_to_id)
+    tokenizer.fairseq_ids_to_tokens = {v: k for k, v in tokenizer.fairseq_tokens_to_ids.items()}
+    if new_lang not in tokenizer._additional_special_tokens:
+        tokenizer._additional_special_tokens.append(new_lang)
+    # clear the added token encoder; otherwise a new token may end up there by mistake
+    tokenizer.added_tokens_encoder = {}
+    tokenizer.added_tokens_decoder = {} 
+
+
+model_name = "facebook/nllb-200-distilled-600M"
+# loading the tokenizer and the model
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
+# patching them
+fix_tokenizer(tokenizer)
+model.resize_token_embeddings(len(tokenizer))
+
+# fixing the new/moved token embeddings in the model
+added_token_id = tokenizer.convert_tokens_to_ids('tyv_Cyrl')
+similar_lang_id = tokenizer.convert_tokens_to_ids('kir_Cyrl')
+embeds = model.model.shared.weight.data
+# moving the embedding for "mask" to its new position
+embeds[added_token_id+1] =embeds[added_token_id]
+# initializing new language token with a token of a similar language
+embeds[added_token_id] = embeds[similar_lang_id]
 
 ################################ Training the Model ################################
 
@@ -190,14 +323,14 @@ for i in tq:
     if i % 1000 == 0 and i > 0:
         model.save_pretrained(MODEL_SAVE_PATH)
         tokenizer.save_pretrained(MODEL_SAVE_PATH)
-        
-################################ Evaluating the Model ################################
+
+###################### Evaluate and Load Model ######################
 
 # Load trained model
-model_load_name = '/mnt/storage/clouchheim/models/nllb_tyvan_russian'
+model_load_name = '/mnt/storage/clouchheim/models/nllb_tyvan_russian_v1'
 model = AutoModelForSeq2SeqLM.from_pretrained(model_load_name).cuda()
 tokenizer = NllbTokenizer.from_pretrained(model_load_name)
-fix_tokenizer(tokenizer)
+#fix_tokenizer(tokenizer)
 
 # translation function (default russian to english)
 def translate(
@@ -236,4 +369,3 @@ print(chrf_calc.corpus_score(df_dev['tyv_translated'].tolist(), [df_dev['tyv'].t
 
 ################################ Publishing ################################
 #TODO: complete this section
-
