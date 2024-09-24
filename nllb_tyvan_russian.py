@@ -255,7 +255,6 @@ print(chrf_calc.corpus_score(df_dev['tyv_translated'].tolist(), [df_dev['tyv'].t
 ################################ Publishing ################################
 #TODO: complete this section
 
-
 # Notes:
 # Had to use the kir_Cyrl tag instead of a tyvan specific tag
 # had a lower BLEU score and chrF2++ score than in the article
