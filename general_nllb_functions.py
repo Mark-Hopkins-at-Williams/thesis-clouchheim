@@ -9,7 +9,7 @@ import pandas as pd
 import sys
 from transformers.optimization import Adafactor
 from transformers import get_constant_schedule_with_warmup
-from tqdm import tqdm
+from tqdm.auto import tqdm, trange
 import numpy as np
 from os.path import join
 import pandas as pd
@@ -96,15 +96,12 @@ def load_model_untrained(model_name = "facebook/nllb-200-distilled-600M"):
     model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
     return model, tokenizer
 
-
 def get_batch_pairs(batch_size, data, langs):
     '''get bathches of senteces of size batch_size for given languages'''
     (l1, long1), (l2, long2) = random.sample(langs, 2)
-    xx, yy = [], []
-    for _ in range(batch_size):
-        item = data.iloc[random.randint(0, len(data)-1)]
-        xx.append(preproc(item[l1]))
-        yy.append(preproc(item[l2]))
+    indices = random.sample(range(len(data)), batch_size)
+    xx = [preproc(data.iloc[i][l1]) for i in indices]
+    yy = [preproc(data.iloc[i][l2]) for i in indices]
     return xx, yy, long1, long2
     
 def cleanup():
@@ -112,6 +109,84 @@ def cleanup():
     gc.collect()
     torch.cuda.empty_cache()
 
+def add_language_tag_to_tokenizer(tokenizer, new_lang_tag, model_save_path):
+    ''' Add the new language tag if it doesn't exist in the tokenizer '''
+    if new_lang_tag not in tokenizer.get_vocab():
+        tokenizer.add_special_tokens({'additional_special_tokens': [new_lang_tag]})
+        tokenizer.save_pretrained(model_save_path)
+        print(f"Tag '{new_lang_tag}' added successfully.")
+    else:
+        print(f"Tag '{new_lang_tag}' already exists in the tokenizer.")
+        
+    if new_lang_tag not in tokenizer.get_vocab():
+        raise ValueError(f"Failed to add new language tag '{new_lang_tag}' to the tokenizer.")
+    
+    return tokenizer
+
+def update_model_for_new_token(model, tokenizer):
+    ''' Resize model embeddings to include the new token '''
+    model.resize_token_embeddings(len(tokenizer))
+    
+    # Check if the model's vocabulary size was updated
+    if len(tokenizer) != model.get_input_embeddings().weight.size(0):
+        raise ValueError(f"Model embedding size not updated for new token '{new_lang_tag}'.")
+    
+    return model
+
+def train_model_2(model, tokenizer, df_train, df_dev, src_lang_tag, tgt_lang_tag, model_save_path,
+                batch_size = 16, max_length = 128, training_steps = 60000):
+    model.cuda();
+    optimizer = Adafactor(
+        [p for p in model.parameters() if p.requires_grad],
+        scale_parameter=False,
+        relative_step=False,
+        lr=1e-4,
+        clip_threshold=1.0,
+        weight_decay=1e-3,
+    )
+    scheduler = get_constant_schedule_with_warmup(optimizer, num_warmup_steps=1000)
+    model.train()
+    x, y, loss = None, None, None
+    cleanup()
+
+    losses = []
+    LANGS = [('src', src_lang_tag), ('tgt', tgt_lang_tag)]
+    tq = trange(len(losses), training_steps)
+    for i in tq:
+        xx, yy, lang1, lang2 = get_batch_pairs(batch_size, df_train, LANGS)
+        try:
+            tokenizer.src_lang = lang1
+            x = tokenizer(xx, return_tensors='pt', padding=True, truncation=True, max_length=max_length).to(model.device)
+            tokenizer.src_lang = lang2
+            y = tokenizer(yy, return_tensors='pt', padding=True, truncation=True, max_length=max_length).to(model.device)
+            # -100 is a magic value ignored in the loss function
+            # because we don't want the model to learn to predict padding ids
+            y.input_ids[y.input_ids == tokenizer.pad_token_id] = -100
+
+            loss = model(**x, labels=y.input_ids).loss
+            loss.backward()
+            losses.append(loss.item())
+
+            optimizer.step()
+            optimizer.zero_grad(set_to_none=True)
+            scheduler.step()
+
+        except RuntimeError as e:  # usually, it is out-of-memory
+            optimizer.zero_grad(set_to_none=True)
+            x, y, loss = None, None, None
+            cleanup()
+            print('error', max(len(s) for s in xx + yy), e)
+            continue
+
+        if i % 1000 == 0:
+            # each 1000 steps, I report average loss at these steps
+            print(i, np.mean(losses[-1000:]))
+
+        if i % 1000 == 0 and i > 0:
+            model.save_pretrained(model_save_path)
+            tokenizer.save_pretrained(model_save_path)
+        
+        
 def train_model(model, tokenizer, df_train, df_dev, src_lang_tag, tgt_lang_tag, model_save_path,
                 batch_size = 16, max_length = 128, training_steps = 60000):
     '''Finetune model for given languages'''
@@ -189,6 +264,8 @@ def train_model(model, tokenizer, df_train, df_dev, src_lang_tag, tgt_lang_tag, 
             model.save_pretrained(model_save_path)
             tokenizer.save_pretrained(model_save_path)
             best_dev_loss = dev_loss
+            
+        cleanup()
 
 ################### Functions to Evalaluate ####################
 
