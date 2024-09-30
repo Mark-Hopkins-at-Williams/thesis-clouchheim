@@ -269,10 +269,8 @@ def train_model(model, tokenizer, df_train, df_dev, src_lang_tag, tgt_lang_tag, 
 
 ################### Functions to Evalaluate ####################
 
-def translate(
-    text, src_lang, tgt_lang, 
-    a=32, b=3, max_input_length=1024, num_beams=4, **kwargs
-):
+def translate(text, src_lang, tgt_lang, model, tokenizer, a=32, b=3, max_input_length=1024, 
+              num_beams=4, **kwargs):
     """Translates a string or a list of strings."""
     tokenizer.src_lang = src_lang
     tokenizer.tgt_lang = tgt_lang
@@ -289,10 +287,10 @@ def translate(
     )
     return tokenizer.batch_decode(result, skip_special_tokens=True)
     
-def batched_translate(texts, batch_size=16, **kwargs):
+def batched_translate(texts, src_lang, tgt_lang, model, tokenizer, batch_size=16, **kwargs):
     """Translate texts in batches of similar length"""
     idxs, texts2 = zip(*sorted(enumerate(texts), key=lambda p: len(p[1]), reverse=True))
     results = []
     for i in tqdm(range(0, len(texts2), batch_size)):
-        results.extend(translate(texts2[i: i+batch_size], **kwargs))
+        results.extend(translate(texts2[i: i+batch_size], src_lang, tgt_lang, model, tokenizer, **kwargs))
     return [p for _, p in sorted(zip(idxs, results))]
