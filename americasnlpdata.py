@@ -42,3 +42,31 @@ def load_data():
         'tgt': tgt_sentences_dev
     })
     return df_train, df_dev
+
+def guarani_sents():
+    df_train, df_dev = load_data()
+    for line in df_train['src']:
+        yield(line)
+        
+def chinese_sents():
+    with open('baidu.txt') as reader:
+        for line in reader:
+            line = line.strip()
+            yield line
+        
+from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
+model_name = "facebook/nllb-200-distilled-600M"
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
+
+char_counts = dict()
+normalizer = 0
+for line in chinese_sents():
+    for char in line:
+        normalizer += 1
+        if char not in char_counts:
+            char_counts[char] = 0
+        char_counts[char] += 1
+char_probs = {char: char_counts[char] / normalizer for char in char_counts}
+    
+print(char_probs)
