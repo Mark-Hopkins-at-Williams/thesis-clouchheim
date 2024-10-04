@@ -63,7 +63,6 @@ def load_data(src_lang='spanish', src_lang_abbrv='es', tgt_lang='guarani', tgt_l
 ################### Functions to Pre Process and Train ####################
 
 def get_non_printing_char_replacer(replace_by: str = " "):
-    '''Return functon to replace certain characters with given'''
     non_printable_map = {
         ord(c): replace_by
         for c in (chr(i) for i in range(sys.maxunicode + 1))
@@ -77,13 +76,9 @@ def get_non_printing_char_replacer(replace_by: str = " "):
 
     return replace_non_printing_char
 
-def preproc(text):
-    '''Normalize text both font and characters'''
-    mpn = MosesPunctNormalizer(lang="en")
-    mpn.substitutions = [
-        (re.compile(r), sub) for r, sub in mpn.substitutions
-    ]
-    replace_nonprint = get_non_printing_char_replacer(" ")
+replace_nonprint = get_non_printing_char_replacer(" ")
+
+def preproc(text, replace_nonprint, mpn):
     clean = mpn.normalize(text)
     clean = replace_nonprint(clean)
     # replace 𝓕𝔯𝔞𝔫𝔠𝔢𝔰𝔠𝔞 by Francesca
@@ -96,12 +91,12 @@ def load_model_untrained(model_name = "facebook/nllb-200-distilled-600M"):
     model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
     return model, tokenizer
 
-def get_batch_pairs(batch_size, data, langs):
+def get_batch_pairs(batch_size, data, replace_nonprint, mpn, langs):
     '''get bathches of senteces of size batch_size for given languages'''
     (l1, long1), (l2, long2) = random.sample(langs, 2)
     indices = random.sample(range(len(data)), batch_size)
-    xx = [preproc(data.iloc[i][l1]) for i in indices]
-    yy = [preproc(data.iloc[i][l2]) for i in indices]
+    xx = [preproc(data.iloc[i][l1], replace_nonprint, mpn) for i in indices]
+    yy = [preproc(data.iloc[i][l2], replace_nonprint, mpn) for i in indices]
     return xx, yy, long1, long2
     
 def cleanup():
@@ -121,72 +116,24 @@ def add_language_tag_to_tokenizer(tokenizer, new_lang_tag, model_save_path):
     if new_lang_tag not in tokenizer.get_vocab():
         raise ValueError(f"Failed to add new language tag '{new_lang_tag}' to the tokenizer.")
     
-    return tokenizer
+    return tokenizer 
 
-def update_model_for_new_token(model, tokenizer):
+def update_model_for_new_token(model, tokenizer, similar_lang_tag):
     ''' Resize model embeddings to include the new token '''
     model.resize_token_embeddings(len(tokenizer))
     
+    #TODO: fix this, is not reassigning correctly
+    weights = model.get_input_embeddings().weight.clone()
+    similar_lang_weights = weights[tokenizer.convert_tokens_to_ids(similar_lang_tag)]
+    weights[len(tokenizer) - 1] = similar_lang_weights # weights[new tag location] = weights[similar lang location]
+    model.get_input_embeddings().weight = torch.nn.Parameter(weights) # re assign weights
+        
     # Check if the model's vocabulary size was updated
     if len(tokenizer) != model.get_input_embeddings().weight.size(0):
-        raise ValueError(f"Model embedding size not updated for new token '{new_lang_tag}'.")
+        raise ValueError(f"Model embedding size not updated for new tokenizer.")
     
     return model
-
-def train_model_2(model, tokenizer, df_train, df_dev, src_lang_tag, tgt_lang_tag, model_save_path,
-                batch_size = 16, max_length = 128, training_steps = 60000):
-    model.cuda();
-    optimizer = Adafactor(
-        [p for p in model.parameters() if p.requires_grad],
-        scale_parameter=False,
-        relative_step=False,
-        lr=1e-4,
-        clip_threshold=1.0,
-        weight_decay=1e-3,
-    )
-    scheduler = get_constant_schedule_with_warmup(optimizer, num_warmup_steps=1000)
-    model.train()
-    x, y, loss = None, None, None
-    cleanup()
-
-    losses = []
-    LANGS = [('src', src_lang_tag), ('tgt', tgt_lang_tag)]
-    tq = trange(len(losses), training_steps)
-    for i in tq:
-        xx, yy, lang1, lang2 = get_batch_pairs(batch_size, df_train, LANGS)
-        try:
-            tokenizer.src_lang = lang1
-            x = tokenizer(xx, return_tensors='pt', padding=True, truncation=True, max_length=max_length).to(model.device)
-            tokenizer.src_lang = lang2
-            y = tokenizer(yy, return_tensors='pt', padding=True, truncation=True, max_length=max_length).to(model.device)
-            # -100 is a magic value ignored in the loss function
-            # because we don't want the model to learn to predict padding ids
-            y.input_ids[y.input_ids == tokenizer.pad_token_id] = -100
-
-            loss = model(**x, labels=y.input_ids).loss
-            loss.backward()
-            losses.append(loss.item())
-
-            optimizer.step()
-            optimizer.zero_grad(set_to_none=True)
-            scheduler.step()
-
-        except RuntimeError as e:  # usually, it is out-of-memory
-            optimizer.zero_grad(set_to_none=True)
-            x, y, loss = None, None, None
-            cleanup()
-            print('error', max(len(s) for s in xx + yy), e)
-            continue
-
-        if i % 1000 == 0:
-            # each 1000 steps, I report average loss at these steps
-            print(i, np.mean(losses[-1000:]))
-
-        if i % 1000 == 0 and i > 0:
-            model.save_pretrained(model_save_path)
-            tokenizer.save_pretrained(model_save_path)
-        
-        
+       
 def train_model(model, tokenizer, df_train, df_dev, src_lang_tag, tgt_lang_tag, model_save_path,
                 batch_size = 16, max_length = 128, training_steps = 60000):
     '''Finetune model for given languages'''
@@ -205,19 +152,22 @@ def train_model(model, tokenizer, df_train, df_dev, src_lang_tag, tgt_lang_tag, 
     dev_losses = []  # with this list, I do very simple tracking of average loss
 
     LANGS = [('src', src_lang_tag), ('tgt', tgt_lang_tag)]
-    
-    ############# ADD A CHECK TO SEE IF THE TGT LANG HAS A VALID TAG (aka not Guarani) ##########
-    ## the add tag function goes here
 
     x, y, train_loss = None, None, None
     x_dev, y_dev, dev_loss = None, None, None
     best_dev_loss = None
     cleanup()
 
+    replace_nonprint = get_non_printing_char_replacer(" ")
+    mpn = MosesPunctNormalizer(lang="es")
+    mpn.substitutions = [
+        (re.compile(r), sub) for r, sub in mpn.substitutions
+    ]
+    
     tq = trange(len(train_losses), training_steps)
     for i in tq:
-        xx, yy, lang1, lang2 = get_batch_pairs(batch_size, df_train, LANGS)
-        xx_dev, yy_dev, lang1_dev, lang2_dev = get_batch_pairs(batch_size, df_dev, LANGS)
+        xx, yy, lang1, lang2 = get_batch_pairs(batch_size, df_train, replace_nonprint, mpn, LANGS)
+        xx_dev, yy_dev, lang1_dev, lang2_dev = get_batch_pairs(batch_size, df_dev, replace_nonprint, mpn, LANGS)
 
         try:
             model.train()

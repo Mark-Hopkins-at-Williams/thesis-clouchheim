@@ -27,9 +27,10 @@ model, tokenizer = load_model_untrained(BASE_MODEL)
 print(f'loaded tokenizer and model ({BASE_MODEL}) to finetune')
 
 tokenizer = add_language_tag_to_tokenizer(tokenizer, TGT_LANG[2], MODEL_SAVE_PATH)
-model = update_model_for_new_token(model, tokenizer)
+similar_lang_tag = 'grn_Latn' # similar language to initialize weights for new lang
+model = update_model_for_new_token(model, tokenizer, similar_lang_tag)
 
 # train model
 print('starting training')
-train_model_2(model, tokenizer, df_train, df_dev, SRC_LANG[2], TGT_LANG[2], MODEL_SAVE_PATH, training_steps = 2000)
+train_model(model, tokenizer, df_train, df_dev, SRC_LANG[2], TGT_LANG[2], MODEL_SAVE_PATH)
 print(f'done training, saved to {MODEL_SAVE_PATH}')

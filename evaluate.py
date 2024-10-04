@@ -2,7 +2,7 @@ import sacrebleu
 import pandas as pd
 from tqdm import tqdm
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, NllbTokenizer
-#from americasnlpdata import load_data
+from train_utils import load_data
 from general_nllb_functions import *
 
 ####################### Set Variables ######################
