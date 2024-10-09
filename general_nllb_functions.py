@@ -16,7 +16,8 @@ import pandas as pd
 
 ################### Functions to Load Data ####################
 
-def load_data(src_lang='spanish', src_lang_abbrv='es', tgt_lang='guarani', tgt_lang_abbrv='gn'):
+#TODO: add the ability to load multiple different target languages
+def load_data(src_lang, src_lang_abbrv, tgt_lang, tgt_lang_abbrv, tgt_lang_tag):
     '''
     Function that given a source langauge, taget language, and the correct tags will 
     build the train and dev data frames for that language from AmericasNLP data.
@@ -24,7 +25,7 @@ def load_data(src_lang='spanish', src_lang_abbrv='es', tgt_lang='guarani', tgt_l
 
     AMERICAS_NLP_DIR = '/mnt/storage/clouchheim/data/americasnlp2024/ST1_MachineTranslation/data/'
     SRC_LANG = (src_lang, src_lang_abbrv)
-    TGT_LANG = (tgt_lang, tgt_lang_abbrv)
+    TGT_LANG = (tgt_lang, tgt_lang_abbrv, tgt_lang_tag)
 
     # load in training data and create df_train
     with open(join(AMERICAS_NLP_DIR, f'{TGT_LANG[0]}-{SRC_LANG[0]}', f'train.{SRC_LANG[1]}'), 'r', encoding='utf-8') as f:
@@ -39,7 +40,8 @@ def load_data(src_lang='spanish', src_lang_abbrv='es', tgt_lang='guarani', tgt_l
     df_train = pd.DataFrame({    
         'id': range(len(src_sentences)),
         'src': src_sentences,
-        'tgt': tgt_sentences
+        'tgt': tgt_sentences,
+        'lang': tgt_lang_tag
     })
 
     # load dev data and create df_dev
@@ -56,10 +58,42 @@ def load_data(src_lang='spanish', src_lang_abbrv='es', tgt_lang='guarani', tgt_l
     df_dev = pd.DataFrame({    
         'id': range(len(src_sentences_dev)),
         'src': src_sentences_dev,
-        'tgt': tgt_sentences_dev
+        'tgt': tgt_sentences_dev,
+        'lang': tgt_lang_tag
     })
     return df_train, df_dev
 
+def load_all_data():
+    '''function to load all Americas NLP training data into one df for multi lingual training'''
+    AMERICAS_NLP_DIR = '/mnt/storage/clouchheim/data/americasnlp2024/ST1_MachineTranslation/data/'
+    SRC_LANG = ('spanish', 'es')
+    TGT_LANGS = (('ashaninka', 'cni', 'cni_Latn'),
+                 ('aymara', 'aym', 'aym_Latn'),
+                 ('bribri', 'bzd', 'bzd_Latn'),
+                 ('chatino', 'ctp', 'ctp_Latn'),
+                 ('guarani', 'gn', 'grn_Latn'),
+                 ('hñähñu', 'oto', 'oto_Latn'),
+                 ('nahuatl', 'nah', 'nah_Latn'),
+                 ('quechua', 'quy', 'quy_Latn'),
+                 ('raramuri', 'tar', 'tar_Latn'),
+                 ('shipibo_konibo', 'shp', 'shp_Latn'),
+                 ('wixarika', 'hch', 'hch_Latn'))
+    
+    df_train = pd.DataFrame(columns = ['id', 'src', 'tgt', 'lang'])
+    df_dev = pd.DataFrame(columns = ['id', 'src', 'tgt', 'lang'])
+    
+    for tgt in TGT_LANGS:
+        train, dev = load_data(SRC_LANG[0], SRC_LANG[1], tgt[0], tgt[1])
+        train['lang'] = tgt[2]
+        df_train = pd.concat([df_train, train], ignore_index=True)
+        
+        dev['lang'] = tgt[2]
+        df_dev = pd.concat([df_train, train], ignore_index=True)
+    
+    return df_train, df_dev
+        
+                 
+    
 ################### Functions to Pre Process and Train ####################
 
 def get_non_printing_char_replacer(replace_by: str = " "):
@@ -85,7 +119,7 @@ def preproc(text, replace_nonprint, mpn):
     clean = unicodedata.normalize("NFKC", clean)
     return clean
 
-def load_model_untrained(model_name = "facebook/nllb-200-distilled-600M"):
+def load_model_untrained(model_name = "facebook/nllb-200-distilled-600M"): 
     '''Load model and tokenizer'''
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
@@ -118,23 +152,39 @@ def add_language_tag_to_tokenizer(tokenizer, new_lang_tag, model_save_path):
     
     return tokenizer 
 
+def add_all_langs_to_tokenizer(tokenizer, model_save_path):
+    tgt_tags = ('cni_Latn',
+                'aym_Latn',
+                'bzd_Latn',
+                'ctp_Latn',
+                'oto_Latn',
+                'nah_Latn',
+                'tar_Latn',
+                'shp_Latn', 
+                'hch_Latn')
+    for lang in tgt_tags:
+        tokenizer = add_language_tag_to_tokenizer(tokenizer, lang, model_save_path)
+        
+    return tokenizer
+    
+
 def update_model_for_new_token(model, tokenizer, similar_lang_tag):
     ''' Resize model embeddings to include the new token '''
     model.resize_token_embeddings(len(tokenizer))
     
-    #TODO: fix this, is not reassigning correctly
-    weights = model.get_input_embeddings().weight.clone()
-    similar_lang_weights = weights[tokenizer.convert_tokens_to_ids(similar_lang_tag)]
-    weights[len(tokenizer) - 1] = similar_lang_weights # weights[new tag location] = weights[similar lang location]
-    model.get_input_embeddings().weight = torch.nn.Parameter(weights) # re assign weights
+    #TODO: fix this, is not reassigning correctly, make ti work for lots of langs
+    #weights = model.get_input_embeddings().weight.clone()
+    #similar_lang_weights = weights[tokenizer.convert_tokens_to_ids(similar_lang_tag)]
+    #weights[len(tokenizer) - 1] = similar_lang_weights # weights[new tag location] = weights[similar lang location]
+    #model.get_input_embeddings().weight = torch.nn.Parameter(weights) # re assign weights
         
     # Check if the model's vocabulary size was updated
     if len(tokenizer) != model.get_input_embeddings().weight.size(0):
         raise ValueError(f"Model embedding size not updated for new tokenizer.")
     
     return model
-       
-def train_model(model, tokenizer, df_train, df_dev, src_lang_tag, tgt_lang_tag, model_save_path,
+  
+def train_model(model, tokenizer, df_train, df_dev, src_lang_tag, tgt_lang_tags, model_save_path,
                 batch_size = 16, max_length = 128, training_steps = 60000):
     '''Finetune model for given languages'''
     model.cuda()
@@ -151,8 +201,6 @@ def train_model(model, tokenizer, df_train, df_dev, src_lang_tag, tgt_lang_tag, 
     train_losses = []  # with this list, I do very simple tracking of average loss
     dev_losses = []  # with this list, I do very simple tracking of average loss
 
-    LANGS = [('src', src_lang_tag), ('tgt', tgt_lang_tag)]
-
     x, y, train_loss = None, None, None
     x_dev, y_dev, dev_loss = None, None, None
     best_dev_loss = None
@@ -166,8 +214,15 @@ def train_model(model, tokenizer, df_train, df_dev, src_lang_tag, tgt_lang_tag, 
     
     tq = trange(len(train_losses), training_steps)
     for i in tq:
-        xx, yy, lang1, lang2 = get_batch_pairs(batch_size, df_train, replace_nonprint, mpn, LANGS)
-        xx_dev, yy_dev, lang1_dev, lang2_dev = get_batch_pairs(batch_size, df_dev, replace_nonprint, mpn, LANGS)
+        
+        # radomly choose a language tag from given and subset the data based on this
+        tgt_lang_tag = random.choice(tgt_lang_tags) 
+        LANGS = [('src', src_lang_tag), ('tgt', tgt_lang_tag)]
+        subset_train = df_train[df_train['lang'] == tgt_lang_tag]
+        subset_dev = df_dev[df_dev['lang'] == tgt_lang_tag]
+        
+        xx, yy, lang1, lang2 = get_batch_pairs(batch_size, subset_train, replace_nonprint, mpn, LANGS)
+        xx_dev, yy_dev, lang1_dev, lang2_dev = get_batch_pairs(batch_size, subset_dev, replace_nonprint, mpn, LANGS)
 
         try:
             model.train()
@@ -195,6 +250,9 @@ def train_model(model, tokenizer, df_train, df_dev, src_lang_tag, tgt_lang_tag, 
                 dev_loss = model(**x_dev, labels=y_dev.input_ids).loss
                 dev_losses.append(dev_loss.item())
 
+            ###### SEE IF THE WEIGHTS ARE UPDATING
+            
+            
         except RuntimeError as e:  # usually, it is out-of-memory
             optimizer.zero_grad(set_to_none=True)
             x, y, train_loss = None, None, None

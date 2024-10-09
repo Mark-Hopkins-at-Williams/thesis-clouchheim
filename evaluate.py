@@ -2,11 +2,10 @@ import sacrebleu
 import pandas as pd
 from tqdm import tqdm
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, NllbTokenizer
-from train_utils import load_data
 from general_nllb_functions import *
 
 ####################### Set Variables ######################
-MODEL_LOAD_NAME = '/mnt/storage/clouchheim/models/nllb_spanish_bribri_tagtest'  # this model name is swapped
+MODEL_LOAD_NAME = '/mnt/storage/clouchheim/models/nllb_multilingual'  # this model name is swapped
 #MODEL_LOAD_NAME = 'facebook/nllb-200-distilled-600M' # not fine tuned version
 SRC_LANG = ('spanish', 'es', 'spa_Latn')
 TGT_LANG = ('bribri', 'bzd', 'bzd_Latn')
