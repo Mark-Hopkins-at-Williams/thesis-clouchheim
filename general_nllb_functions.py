@@ -83,11 +83,10 @@ def load_all_data():
     df_dev = pd.DataFrame(columns = ['id', 'src', 'tgt', 'lang'])
     
     for tgt in TGT_LANGS:
-        train, dev = load_data(SRC_LANG[0], SRC_LANG[1], tgt[0], tgt[1])
-        train['lang'] = tgt[2]
-        df_train = pd.concat([df_train, train], ignore_index=True)
+        train, dev = load_data(SRC_LANG[0], SRC_LANG[1], tgt[0], tgt[1], tgt[2]) # load data
         
-        dev['lang'] = tgt[2]
+        # add on new loaded data
+        df_train = pd.concat([df_train, train], ignore_index=True) 
         df_dev = pd.concat([df_train, train], ignore_index=True)
     
     return df_train, df_dev
@@ -138,7 +137,7 @@ def cleanup():
     gc.collect()
     torch.cuda.empty_cache()
 
-def add_language_tag_to_tokenizer(tokenizer, new_lang_tag, model_save_path):
+def add_language_tag_to_tokenizer(model, tokenizer, new_lang_tag, model_save_path):
     ''' Add the new language tag if it doesn't exist in the tokenizer '''
     if new_lang_tag not in tokenizer.get_vocab():
         tokenizer.add_special_tokens({'additional_special_tokens': [new_lang_tag]})
@@ -149,10 +148,10 @@ def add_language_tag_to_tokenizer(tokenizer, new_lang_tag, model_save_path):
         
     if new_lang_tag not in tokenizer.get_vocab():
         raise ValueError(f"Failed to add new language tag '{new_lang_tag}' to the tokenizer.")
-    
-    return tokenizer 
+        
+    return model, tokenizer 
 
-def add_all_langs_to_tokenizer(tokenizer, model_save_path):
+def add_all_langs_to_tokenizer(model, tokenizer, model_save_path):
     tgt_tags = ('cni_Latn',
                 'aym_Latn',
                 'bzd_Latn',
@@ -162,22 +161,33 @@ def add_all_langs_to_tokenizer(tokenizer, model_save_path):
                 'tar_Latn',
                 'shp_Latn', 
                 'hch_Latn')
-    for lang in tgt_tags:
-        tokenizer = add_language_tag_to_tokenizer(tokenizer, lang, model_save_path)
-        
-    return tokenizer
+    for lang_tag in tgt_tags:
+        model, tokenizer = add_language_tag_to_tokenizer(model, tokenizer, lang_tag, model_save_path)
+        similar_lang_tag = 'grn_Latn' #TODO: make this customized to each language in the future
+        model = update_model_for_new_token(model, tokenizer, similar_lang_tag, lang_tag)
+    
+    return model, tokenizer
     
 
-def update_model_for_new_token(model, tokenizer, similar_lang_tag):
+def update_model_for_new_token(model, tokenizer, similar_lang_tag, new_lang_tag):
     ''' Resize model embeddings to include the new token '''
     model.resize_token_embeddings(len(tokenizer))
     
     #TODO: fix this, is not reassigning correctly, make ti work for lots of langs
-    #weights = model.get_input_embeddings().weight.clone()
-    #similar_lang_weights = weights[tokenizer.convert_tokens_to_ids(similar_lang_tag)]
-    #weights[len(tokenizer) - 1] = similar_lang_weights # weights[new tag location] = weights[similar lang location]
-    #model.get_input_embeddings().weight = torch.nn.Parameter(weights) # re assign weights
-        
+    
+    print(tokenizer)
+    weights = model.get_input_embeddings().weight.clone()
+    sim_tag_loc = tokenizer.convert_tokens_to_ids(similar_lang_tag)
+    new_lang_loc = tokenizer.convert_tokens_to_ids(new_lang_tag)
+    weights[new_lang_loc] = weights[sim_tag_loc] # change the new tag weights to that of similar lang
+
+    # replace all weights in model
+    model.get_input_embeddings().weight = torch.nn.Parameter(weights) # re assign weight
+    
+    # check if weights got repalces successfully
+    if not torch.all(weights[new_lang_loc] == model.get_input_embeddings().weight[new_lang_loc]):
+        raise ValueError(f"Model weights not replaced.")
+    
     # Check if the model's vocabulary size was updated
     if len(tokenizer) != model.get_input_embeddings().weight.size(0):
         raise ValueError(f"Model embedding size not updated for new tokenizer.")
