@@ -68,6 +68,7 @@ if __name__ == "__main__":
     
     my_model = 'nllb_spanish_'+tgt_lang
     model_save_path += my_model
+    print('Training: ', my_model)
     
     model_name = "facebook/nllb-200-distilled-600M"
     

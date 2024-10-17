@@ -19,7 +19,7 @@ from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
 # add -e command line option to evaluate at the end
 
 
-size = "1.3B"       #default size
+size = "600M"       #default size
 batch_size = 16     # 32 already doesn't fit well to 15GB of GPU memory
 max_length = 128    # token sequences will be truncated
 training_steps = 60000  
@@ -60,6 +60,7 @@ def cleanup():
 if __name__ == "__main__":
     
     my_model = 'nllb_spanish_multi_1016'
+    print('Training: ', my_model)
     
     model_name = "facebook/nllb-200-distilled-600M"
     
@@ -93,13 +94,21 @@ if __name__ == "__main__":
     last_best = 0
     patience = 30000
     cleanup()
+    
+    
+    subsets = {}
+    
+    # forming langueage subsets
+    for tag in TGT_TAGS:
+        train = df_train[df_train['lang'] == tag]
+        dev = df_dev[df_dev['lang'] == tag]
+        subsets[tag] = (train, dev)
 
     for i in tqdm(range(len(train_losses), training_steps)):
         
         #choose a tag, filter data to correct language pair
         tgt_lang_tag = random.choice(TGT_TAGS)
-        subset_train = df_train[df_train['lang'] == tgt_lang_tag]
-        subset_dev = df_dev[df_dev['lang'] == tgt_lang_tag]
+        subset_train, subset_dev = subsets[tgt_lang_tag] 
         LANGS = [('src', 'spa_Latn'), ('tgt', tgt_lang_tag)]
     
         xx, yy, lang1, lang2 = get_batch_pairs(batch_size, subset_train)
