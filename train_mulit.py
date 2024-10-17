@@ -63,6 +63,7 @@ if __name__ == "__main__":
     print('Training: ', my_model)
     
     model_name = "facebook/nllb-200-distilled-600M"
+    model_save_path += model_name
     
     now = datetime.now()
     # mm/dd/YY H:M:S
