@@ -74,4 +74,9 @@ if __name__ == "__main__":
                        'sent_id': info.sent_ids,
                        'text': info.texts,
                        'split': info.splits})
+    
+    # account for difference in nlp suffix and guarani nllb tag (grn_Latn) and aymaere nllb tag (ayr_Latn)
+    df['language'] = df['language'].replace('gn', 'grn')
+    df['language'] = df['language'].replace('ayr', 'aym')
+    
     df.to_csv("americas_nlp_data.csv", index = False)
