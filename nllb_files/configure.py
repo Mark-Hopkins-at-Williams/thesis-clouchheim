@@ -1,12 +1,12 @@
 USE_CUDA=True
 
 LOG_FILE = 'model_logs.csv'
-TRAINING_NOTES = 'Bilinugal train, first try'
+TRAINING_NOTES = 'Bilinugal train 600M'
 
-AMERICAS_NLP_LANGS = {
+AMERICAS_NLP_CODE_TO_LANG = {
     "cni": "ashaninka",
     "bzd": "bribri",
-    "gn": "guarani",
+    "grn": "guarani",
     "quy": "quechua",
     "aym": "aymara",
     "shp": "shipibo_konibo",
@@ -29,9 +29,10 @@ NLLB_SEED_LPS = [(src, 'eng_Latn') for src in NLLB_SEED_LANGS if src != 'eng_Lat
 AMERICAS_NLP_CSV = '/mnt/storage/clouchheim/thesis-clouchheim/nllb_files/americas_nlp_data.csv'
 
 # For multi lingual training all 11
-#AMERICAS_NLP_LANGS = ["cni_Latn", "bzd_Latn", "gn_Latn", "quy_Latn", "aym_Latn", "shp_Latn",
-#                      "ctp_Latn", "oto_Latn", "nah_Latn", "tar_Latn", "hch_Latn"]
+# AMERICAS_NLP_LANGS = ["cni_Latn", "bzd_Latn", "grn_Latn", "quy_Latn", "aym_Latn", "shp_Latn",
+                     # "ctp_Latn", "oto_Latn", "nah_Latn", "tar_Latn", "hch_Latn"]
 
 # For bilingual or more language training
-AMERICAS_NLP_LANGS = ['cni_Latn'] # REMEMBER TO SET DEV LANAGUAGE IN RUN.SH
+AMERICAS_NLP_LANGS = ['aym_Latn'] # REMEMBER TO SET DEV LANAGUAGE IN RUN.SH
 AMERICAS_NLP_LPS = [('spa_Latn', tgt) for tgt in AMERICAS_NLP_LANGS]
+

@@ -1,0 +1,11 @@
+model_name,date,target_lang,BLEU,ChrF++,notes
+anlp_ashaninka,2024-10-19 17:48:42,ashaninka,5.025,46.889,Bilinugal train 600M
+anlp_bribri,2024-10-19 17:49:43,bribri,14.284,41.977,Bilinugal train 600M
+anlp_guarani,2024-10-19 17:49:49,guarani,9.865,39.417,Bilinugal train 600M
+anlp_shipbo-konibo,2024-10-19 17:50:46,shipibo_konibo,15.62,42.031,Bilinugal train 600M
+anlp_wixarika,2024-10-20 12:05:09,wixarika,48.452,41.533,Bilinugal train 600M
+anlp_nahuatl,2024-10-20 12:07:19,nahuatl,7.769,47.901,Bilinugal train 600M
+anlp_raramuri,2024-10-20 12:07:32,raramuri,7.475,28.446,Bilinugal train 600M
+anlp_hñähñu,2024-10-20 12:07:52,hñähñu,1.588,15.956,Bilinugal train 600M
+anlp_chatino,2024-10-20 12:08:53,chatino,34.822,44.758,Bilinugal train 600M
+anlp_quechua,2024-10-20 20:33:29,quechua,13.651,59.185,Bilinugal train 600M

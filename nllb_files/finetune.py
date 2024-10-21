@@ -8,10 +8,10 @@ import numpy as np
 from tqdm import tqdm
 from datetime import datetime
 from nllbseed import NllbSeedData
+from validate import log_evaluation, batched_translate, evaluate
 from transformers.optimization import Adafactor
 from transformers import get_constant_schedule_with_warmup
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
-from validate import evaluate, batched_translate
 from configure import USE_CUDA
 from configure import AMERICAS_NLP_LANGS, AMERICAS_NLP_CSV, AMERICAS_NLP_LPS
 from configure import NLLB_SEED_CSV, NLLB_SEED_LPS
@@ -59,7 +59,7 @@ def finetune(mixture_of_bitexts, dev_bitext, base_model, finetuned_model_dir,
     x, y, train_loss = None, None, None
     last_best = 0
     last_best_chrf = 0
-    patience = 30000
+    patience = 20000
     cleanup()
     train_losses = []   # tracks average loss
     for i in tqdm(range(training_steps)):
@@ -93,42 +93,22 @@ def finetune(mixture_of_bitexts, dev_bitext, base_model, finetuned_model_dir,
                 print(f'gold:      {gold}')
             bleu, chrf = evaluate(candidate_translations, tgt_texts)
 
-            # only save model if there is an imporvement on chrf score
+            # only save model if there is an imporvement on chrf score after certain number of epoechs
             # TODO: see if I want this do depend on both loss and chrf
-            if chrf > last_best_chrf:
+            if chrf > last_best_chrf or i <= patience: 
                 print("Saving new best model!")
                 tokenizer.save_pretrained(finetuned_model_dir) #TODO: check that we can use the same directory
                 model.save_pretrained(finetuned_model_dir)
+                last_saved_model = model
+                last_saved_tokenizer = tokenizer
                 last_best = i
                 last_best_chrf = chrf
 
         if i - last_best >= patience:
             print('No imporvement in ', patience, ' epochs. Stopping training.' )
             break
-
-
-def log_evaluation(log_file, model_name, base_model_size, target_lang, bleu, chrf, notes):
-
-    file_exists = os.path.isfile(log_file)
-
-    # Open the log file in append mode
-    with open(log_file, mode='a', newline='', encoding='utf-8') as file:
-        writer = csv.writer(file)
-
-        # Write the header if the file is empty
-        if not file_exists:
-            writer.writerow(['model_name', 'base_model_size', 'date', 'target_lang', 'BLEU', 'ChrF++', 'notes'])
-
-        # Write the new row with the evaluation data
-        date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        writer.writerow(
-            [model_name,
-             base_model_size,
-             date,
-             target_lang,
-             bleu,
-             chrf,
-             notes])
+        
+    return last_saved_model, last_saved_tokenizer
 
 
 if __name__ == "__main__":
@@ -150,24 +130,26 @@ if __name__ == "__main__":
     corpus = MultilingualCorpus(csv_file)
     train_data = corpus.create_mixture_of_bitexts(lps, batch_size=2)
     dev_bitext = corpus.create_bitext(args.dev_src, args.dev_tgt, 'dev')
+    future_eval_lps = AMERICAS_NLP_LANGS
+    notes = TRAINING_NOTES # get notes from configure.py
 
     print('Training ', model_dir)
     print('Langs in training:', train_data.get_language_codes())
-    finetune(train_data, dev_bitext, model_name, model_dir)
+    model, tokenizer = finetune(train_data, dev_bitext, model_name, model_dir)
     print('Done training ', model_dir)
 
     print('Starting logging to ', LOG_FILE)
-    notes = TRAINING_NOTES # get notes from configure.py
-    for src, tgt in AMERICAS_NLP_LPS:
+    for src, tgt in future_eval_lps:
         try:
             print('Evaluating: ', src, '-->', tgt)
             eval_bitext = corpus.create_bitext(src, tgt, 'dev')
             src_texts, tgt_texts = eval_bitext.lang1_sents, eval_bitext.lang2_sents
             candidate_translations = batched_translate(src_texts, tokenizer=tokenizer, model=model, src_lang=eval_bitext.lang1_code, tgt_lang=eval_bitext.lang2_code)
             bleu, chrf = evaluate(candidate_translations, tgt_texts)
-            tgt_lang = AMERICAS_NLP_LANGS[tgt.split('_')[0]]
-            log_evaluation(LOG_FILE, model_dir, args.nllb_model, tgt_lang, bleu, chrf, notes) # log a line for each evaluation
+            tgt_lang = AMERICAS_NLP_CODE_TO_LANG[tgt.split('_')[0]]
+            log_evaluation(LOG_FILE, model_dir.split('/')[-1], tgt_lang, bleu, chrf, notes) # log a line for each evaluation
+            print('Wrote all evaluations to ', LOG_FILE)
         except Exception as e:
             print(f"Error occurred while evaluating {src} --> {tgt}: {str(e)}")
         
-    print('Wrote all evaluations to ', LOG_FILE)
+    
