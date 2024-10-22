@@ -12,7 +12,7 @@ TGT_LANG = ('bribri', 'bzd', 'bzd_Latn')
 LANGS = [SRC_LANG, TGT_LANG]
 
 ######################## EVALUATE MODEL ###########################
-model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_LOAD_NAME, local_files_only=True).cuda()
+model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_LOAD_NAME).cuda()
 tokenizer = NllbTokenizer.from_pretrained(MODEL_LOAD_NAME)
 print('loaded model', MODEL_LOAD_NAME)
 
@@ -22,11 +22,11 @@ chrf_calc = sacrebleu.CHRF(word_order=2)  # this metric is called ChrF++
 
 # Load Data
 print('starting translation from ', SRC_LANG[0], ' to ', TGT_LANG[0])
-df_train, df_dev = load_data(SRC_LANG[0], SRC_LANG[1], TGT_LANG[0], TGT_LANG[1])
+df_train, df_dev = load_data(SRC_LANG[0], SRC_LANG[1], TGT_LANG[0], TGT_LANG[1], TGT_LANG[2])
 translations = batched_translate(df_dev['src'].tolist(), SRC_LANG[2], TGT_LANG[2], model, tokenizer)
 print('finished translation!')
 
 # print evaluations 
 print('Model Evaluation:')
-print(bleu_calc.corpus_score(translations, [df_dev['tgt'].tolist()]))
-print(chrf_calc.corpus_score(translations, [df_dev['tgt'].tolist()]))
+print(bleu_calc.corpus_score(translations, [[ref] for ref in df_dev['tgt']]))
+print(chrf_calc.corpus_score(translations, [[ref] for ref in df_dev['tgt']]))
