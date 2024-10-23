@@ -91,7 +91,7 @@ def finetune(mixture_of_bitexts, dev_bitext, base_model, finetuned_model_dir,
                 print('-'*5)
                 print(f'candidate: {candidate}')
                 print(f'gold:      {gold}')
-            bleu, chrf = evaluate(candidate_translations, tgt_texts)
+            bleu, chrf = evaluate_translations(candidate_translations, tgt_texts)
 
             # only save model if there is an imporvement on chrf score after certain number of epoechs
             # TODO: see if I want this do depend on both loss and chrf
@@ -138,6 +138,7 @@ if __name__ == "__main__":
     model, tokenizer = finetune(train_data, dev_bitext, model_name, model_dir)
     print('Done training ', model_dir)
 
+    # TODO: automatic logging system not working
     print('Starting logging to ', LOG_FILE)
     for src, tgt in future_eval_lps:
         try:
@@ -145,7 +146,7 @@ if __name__ == "__main__":
             eval_bitext = corpus.create_bitext(src, tgt, 'dev')
             src_texts, tgt_texts = eval_bitext.lang1_sents, eval_bitext.lang2_sents
             candidate_translations = batched_translate(src_texts, tokenizer=tokenizer, model=model, src_lang=eval_bitext.lang1_code, tgt_lang=eval_bitext.lang2_code)
-            bleu, chrf = evaluate(candidate_translations, tgt_texts)
+            bleu, chrf = evaluate_translations(candidate_translations, tgt_texts)
             tgt_lang = AMERICAS_NLP_CODE_TO_LANG[tgt.split('_')[0]]
             log_evaluation(LOG_FILE, model_dir.split('/')[-1], tgt_lang, bleu, chrf, notes) # log a line for each evaluation
             print('Wrote all evaluations to ', LOG_FILE)

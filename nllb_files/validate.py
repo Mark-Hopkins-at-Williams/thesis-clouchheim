@@ -5,6 +5,7 @@ import os
 import csv
 from datetime import datetime
 import argparse
+import evaluate
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, NllbTokenizer
 from configure import *
 from multilingualdata import * 
@@ -39,22 +40,17 @@ def batched_translate(texts, batch_size=16, **kwargs):
     return [p for _, p in sorted(zip(idxs, results))]
 
 
-def evaluate(candidate_translations, reference_translations):
-    bleu_calc = sacrebleu.BLEU()
-    chrf_calc = sacrebleu.CHRF( # I think this is the official metric of AmericasNLP
-        word_order=0,
-        char_order=6,
-        lowercase=False,
-        whitespace=False
-    )
+def evaluate_translations(candidate_translations, reference_translations):
+    bleu_calc = evaluate.load("sacrebleu")
+    chrf_calc = evaluate.load("chrf")
     reference_translations = [[ref] for ref in reference_translations]
-    bleu_result  = bleu_calc.corpus_score(candidate_translations, reference_translations)
+    bleu_result = bleu_calc.compute(predictions = candidate_translations, references = reference_translations)
     bleu_string = str(bleu_result)
-    chrf_result = chrf_calc.corpus_score(candidate_translations, reference_translations)
-    chrf_string = str(chrf_result)
     print(bleu_string)
+    chrf_result = chrf_calc.compute(predictions = candidate_translations, references = reference_translations)
+    chrf_string = str(chrf_result)
     print(chrf_string)
-    return round(bleu_result.score, 3), round(chrf_result.score, 3)
+    return round(bleu_result["score"], 3), round(chrf_result["score"], 3)
 
 def log_evaluation(log_file, model_name, target_lang, bleu, chrf, notes):
 
@@ -113,7 +109,7 @@ if __name__ == "__main__":
             eval_bitext = corpus.create_bitext(src, tgt, 'dev')
             src_texts, tgt_texts = eval_bitext.lang1_sents, eval_bitext.lang2_sents
             candidate_translations = batched_translate(src_texts, tokenizer=tokenizer, model=model, src_lang=eval_bitext.lang1_code, tgt_lang=eval_bitext.lang2_code)
-            bleu, chrf = evaluate(candidate_translations, tgt_texts)
+            bleu, chrf = evaluate_translations(candidate_translations, tgt_texts)
             tgt_lang = AMERICAS_NLP_CODE_TO_LANG[tgt.split('_')[0]]
             log_evaluation(LOG_FILE, model_dir.split('/')[-1], tgt_lang, bleu, chrf, notes) # log a line for each evaluation
             print('Wrote all evaluations to ', LOG_FILE)

@@ -1,34 +1,34 @@
 model_name,date,target_lang,BLEU,ChrF++,notes
-anlp_ashaninka,2024-10-19 17:48:42,ashaninka,5.025,46.889,Bilinugal train 600M
-anlp_bribri,2024-10-19 17:49:43,bribri,14.284,41.977,Bilinugal train 600M
-anlp_guarani,2024-10-19 17:49:49,guarani,9.865,39.417,Bilinugal train 600M
-anlp_shipbo-konibo,2024-10-19 17:50:46,shipibo_konibo,15.62,42.031,Bilinugal train 600M
-anlp_wixarika,2024-10-20 12:05:09,wixarika,48.452,41.533,Bilinugal train 600M
-anlp_nahuatl,2024-10-20 12:07:19,nahuatl,7.769,47.901,Bilinugal train 600M
-anlp_raramuri,2024-10-20 12:07:32,raramuri,7.475,28.446,Bilinugal train 600M
-anlp_hñähñu,2024-10-20 12:07:52,hñähñu,1.588,15.956,Bilinugal train 600M
-anlp_chatino,2024-10-20 12:08:53,chatino,34.822,44.758,Bilinugal train 600M
-anlp_quechua,2024-10-20 20:33:29,quechua,13.651,59.185,Bilinugal train 600M
-anlp_multi_v1,2024-10-21 10:06:28,ashaninka,4.027,20.137,"Multilingual, eval on nahuatl"
-anlp_multi_v1,2024-10-21 10:08:27,bribri,4.027,14.487,"Multilingual, eval on nahuatl"
-anlp_multi_v1,2024-10-21 10:10:52,quechua,11.045,36.581,"Multilingual, eval on nahuatl"
-anlp_multi_v1,2024-10-21 10:12:34,aymara,11.391,40.106,"Multilingual, eval on nahuatl"
-anlp_multi_v1,2024-10-21 10:14:16,shipibo_konibo,4.027,22.193,"Multilingual, eval on nahuatl"
-anlp_multi_v1,2024-10-21 10:15:44,guarani,7.655,36.386,"Multilingual, eval on nahuatl"
-anlp_multi_v1,2024-10-21 10:15:52,chatino,41.18,45.581,"Multilingual, eval on nahuatl"
-anlp_multi_v1,2024-10-21 10:16:43,hñähñu,4.027,15.47,"Multilingual, eval on nahuatl"
-anlp_multi_v1,2024-10-21 10:17:44,nahuatl,4.027,16.014,"Multilingual, eval on nahuatl"
-anlp_multi_v1,2024-10-21 10:19:26,raramuri,4.027,18.887,"Multilingual, eval on nahuatl"
-anlp_multi_v1,2024-10-21 10:21:08,wixarika,4.027,20.238,"Multilingual, eval on nahuatl"
-anlp_aymara,2024-10-21 10:26:44,aymara,18.36,51.901,"Bilingual, 600M model"
-anlp_multi_v2,2024-10-21 10:29:44,ashaninka,4.457,22.609,"Multilingual, eval on hñähñu (oto) (worst performing  bilingual lang)"
-anlp_multi_v2,2024-10-21 10:31:13,bribri,4.457,13.898,"Multilingual, eval on hñähñu (oto) (worst performing  bilingual lang)"
-anlp_multi_v2,2024-10-21 10:31:54,guarani,9.264,30.522,"Multilingual, eval on hñähñu (oto) (worst performing  bilingual lang)"
-anlp_multi_v2,2024-10-21 10:33:13,quechua,5.934,41.312,"Multilingual, eval on hñähñu (oto) (worst performing  bilingual lang)"
-anlp_multi_v2,2024-10-21 10:34:43,aymara,9.865,37.766,"Multilingual, eval on hñähñu (oto) (worst performing  bilingual lang)"
-anlp_multi_v2,2024-10-21 10:36:11,shipibo_konibo,4.457,23.458,"Multilingual, eval on hñähñu (oto) (worst performing  bilingual lang)"
-anlp_multi_v2,2024-10-21 10:37:47,chatino,54.452,36.394,"Multilingual, eval on hñähñu (oto) (worst performing  bilingual lang)"
-anlp_multi_v2,2024-10-21 10:38:28,hñähñu,4.457,19.126,"Multilingual, eval on hñähñu (oto) (worst performing  bilingual lang)"
-anlp_multi_v2,2024-10-21 10:39:19,nahuatl,4.457,15.649,"Multilingual, eval on hñähñu (oto) (worst performing  bilingual lang)"
-anlp_multi_v2,2024-10-21 10:40:47,raramuri,4.457,20.078,"Multilingual, eval on hñähñu (oto) (worst performing  bilingual lang)"
-anlp_multi_v2,2024-10-21 10:42:15,wixarika,4.457,19.579,"Multilingual, eval on hñähñu (oto) (worst performing  bilingual lang)"
+anlp_ashaninka,2024-10-23 11:06:42,ashaninka,2.138,27.384,Nllb finetune bilingual
+anlp_guarani,2024-10-23 11:09:14,guarani,4.351,30.298,Nllb finetune bilingual
+anlp_bribri,2024-10-23 11:09:20,bribri,3.404,19.182,Nllb finetune bilingual
+anlp_quechua,2024-10-23 11:09:21,quechua,2.782,34.551,Nllb finetune bilingual
+anlp_aymara,2024-10-23 11:10:32,aymara,3.215,33.661,Nllb finetune bilingual
+anlp_hñähñu,2024-10-23 11:10:44,hñähñu,0.408,10.045,Nllb finetune bilingual
+anlp_chatino,2024-10-23 11:11:27,chatino,0.964,17.572,Nllb finetune bilingual
+anlp_nahuatl,2024-10-23 11:11:35,nahuatl,0.708,29.254,Nllb finetune bilingual
+anlp_raramuri,2024-10-23 11:12:18,raramuri,0.162,14.576,"Nllb finetune multi, nah dev"
+anlp_wixarika,2024-10-23 11:12:34,wixarika,8.124,28.679,"Nllb finetune multi, oto dev"
+anlp_multi_v1,2024-10-23 11:13:21,ashaninka,1.585,11.909,"Nllb finetune multi, oto dev"
+anlp_multi_v2,2024-10-23 11:14:03,ashaninka,1.618,12.865,"Nllb finetune multi, oto dev"
+anlp_multi_v1,2024-10-23 11:15:03,bribri,2.757,12.364,"Nllb finetune multi, oto dev"
+anlp_multi_v2,2024-10-23 11:15:36,bribri,2.509,14.228,"Nllb finetune multi, oto dev"
+anlp_multi_v1,2024-10-23 11:15:46,guarani,4.769,29.134,"Nllb finetune multi, oto dev"
+anlp_multi_v2,2024-10-23 11:16:16,guarani,4.972,29.003,"Nllb finetune multi, oto dev"
+anlp_multi_v1,2024-10-23 11:17:17,quechua,1.908,29.34,"Nllb finetune multi, oto dev"
+anlp_multi_v2,2024-10-23 11:17:39,quechua,2.217,31.839,"Nllb finetune multi, oto dev"
+anlp_multi_v1,2024-10-23 11:18:59,aymara,2.231,18.513,"Nllb finetune multi, oto dev"
+anlp_multi_v2,2024-10-23 11:19:11,aymara,2.211,21.684,"Nllb finetune multi, oto dev"
+anlp_multi_v1,2024-10-23 11:20:42,shipibo_konibo,2.09,16.254,"Nllb finetune multi, oto dev"
+anlp_multi_v2,2024-10-23 11:20:43,shipibo_konibo,2.293,17.419,"Nllb finetune multi, oto dev"
+anlp_multi_v1,2024-10-23 11:22:18,chatino,1.18,16.461,"Nllb finetune multi, oto dev"
+anlp_multi_v2,2024-10-23 11:22:25,chatino,1.358,16.629,"Nllb finetune multi, oto dev"
+anlp_multi_v2,2024-10-23 11:23:08,hñähñu,0.878,10.891,"Nllb finetune multi, oto dev"
+anlp_multi_v1,2024-10-23 11:23:09,hñähñu,0.876,9.31,"Nllb finetune multi, oto dev"
+anlp_multi_v2,2024-10-23 11:24:02,nahuatl,1.327,10.601,"Nllb finetune multi, oto dev"
+anlp_multi_v1,2024-10-23 11:24:11,nahuatl,1.206,9.146,"Nllb finetune multi, oto dev"
+anlp_multi_v2,2024-10-23 11:25:34,raramuri,1.106,12.518,"Nllb finetune multi, oto dev"
+anlp_multi_v1,2024-10-23 11:25:54,raramuri,1.208,11.209,"Nllb finetune multi, oto dev"
+anlp_multi_v2,2024-10-23 11:27:07,wixarika,2.126,14.794,"Nllb finetune multi, oto dev"
+anlp_multi_v1,2024-10-23 11:27:37,wixarika,0.998,11.899,"Nllb finetune multi, oto dev"
+anlp_shipbo-konibo,2024-10-23 11:51:08,shipibo_konibo,1.551,24.113,Nllb finetune bilingual
