@@ -1,5 +1,7 @@
 import pandas as pd
+import unicodedata
 import os
+import re
 
 # This program makes csv files containing all the training and dev data for each of the language
 # pairs in the americasnlp dataset. each csv has the headers
@@ -76,7 +78,59 @@ if __name__ == "__main__":
                        'split': info.splits})
     
     # account for difference in nlp suffix and guarani nllb tag (grn_Latn) and aymaere nllb tag (ayr_Latn)
+    
+    # for ctp, cahnge all super script to normal letters
+    
+    # for nah, oto detokenize to put in line with rest of vocab
+    
+    # change all punctiation not in NLLB-200s vocab
+    
     df['language'] = df['language'].replace('gn', 'grn')
     df['language'] = df['language'].replace('ayr', 'aym')
+    
+    # normalize super script and punctuation and special characters
+    char_map = {
+    'ᴬ': 'A', 'ᴮ': 'B', 'ᶜ': 'C', 'ᴰ': 'D', 'ᴱ': 'E', 'ᴴ': 'H', 'ᴵ': 'I', 'ᴶ': 'J', 
+    'ᴷ': 'K', 'ᴸ': 'L', 'ᴹ': 'M', 'ᴺ': 'N', 'ᴼ': 'O', 'ᴾ': 'P', 'ʳ': 'R', 
+    'ᵀ': 'T', 'ᵁ': 'U', 'ⱽ': 'V', 'ʷ': 'W', 'ⁱ': 'i', 'ⁿ': 'n', '⁺': '+', 
+    '⁻': '-', '⁼': '=', '⁽': '(', '⁾': ')', 'ᶠ': 'F', 'ᴳ': 'G', 'ᴿ': 'R',
+    '“':'"', '”':'"', '—': '', 'č':'C', 'ç': 'C', '""': '"', '’':"'", '‘':"'",
+    '–': '', '«': '"', '': '', 'ⴘ':'', 'ô':'o', 'ƌ':'d', 'ȥ':'z', '»':'"', 'Ƌ':'d',
+    'ᶎ':'z', 'o̮':'o', 'î':'i', 'u̡':'u', '„':'"', '‟':'"', '☹':'', 'ⴁ':'', 'ḱ':'k', '₲':'$'
+    }
+    #'č': 'C', or curacao c
+    
+    # detokenize nah and oto --> move punctuation back into right place
+    def remove_space_before_punctuation(text):
+        # Substitute any space followed by punctuation with just the punctuation
+        return re.sub(r'\s+([,.;:!?"\'’])', r'\1', text)
+    
+    # this works for one line
+    def replace_characters(text):
+        # Normalize the text to a consistent form (NFD separates diacritics from base characters)
+        text = unicodedata.normalize('NFD', text)
+        # Replace characters based on the map
+        for char, replacement in char_map.items():
+            text = text.replace(char, replacement)
+        # Re-normalize back to NFC to combine characters if needed
+        return unicodedata.normalize('NFC', text)
+    
+    def clean_text(text):
+        # Remove spaces inside parentheses
+        text = re.sub(r'\s*\(\s*', '(', text)  # Remove spaces before '('
+        text = re.sub(r'\s*\)\s*', ')', text)  # Remove spaces after ')'
+    
+        # Remove spaces before punctuation (e.g., ':', ',', '.')
+        text = re.sub(r'\s+([:,.\'])', r'\1', text)  # No space before punctuation
+        return text
+
+    df['text'] = df['text'].str.strip()
+    df['text'] = df['text'].apply(replace_characters)
+    df['text'] = df['text'].str.lstrip('"').str.rstrip('"')
+    df['text'] = df['text'].str.strip()
+    df['text'] = df['text'].str.lstrip('"').str.rstrip('"')
+    df['text'] = df['text'].apply(remove_space_before_punctuation)
+    df['text'] = df['text'].apply(clean_text)
+    
     
     df.to_csv("americas_nlp_data.csv", index = False)
