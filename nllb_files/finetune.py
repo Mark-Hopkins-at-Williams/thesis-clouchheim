@@ -2,13 +2,15 @@ import gc
 import os
 import sys
 import csv
+import math
 import torch
+import random
 import argparse
 import numpy as np
 from tqdm import tqdm
 from datetime import datetime
 from nllbseed import NllbSeedData
-from validate import log_evaluation, batched_translate, evaluate
+from validate import log_evaluation, batched_translate, evaluate_translations
 from transformers.optimization import Adafactor
 from transformers import get_constant_schedule_with_warmup
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
@@ -34,14 +36,28 @@ def tokenize(sents, lang, tokenizer, max_length, alt_pad_token=None):
     return tokens
 
 
-def finetune(mixture_of_bitexts, dev_bitext, base_model, finetuned_model_dir,
+def finetune(mixture_of_bitexts, dev_bitext_list, base_model, finetuned_model_dir,
              training_steps=60000,
              max_length=128, # token sequences will be truncated to this many tokens
              report_every=100,
-             validate_every=1000,
+             validate_every=1000, 
+             sampling_probs = None
              ):
-    tokenizer = AutoTokenizer.from_pretrained(base_model)
-    model = AutoModelForSeq2SeqLM.from_pretrained(base_model)
+    
+    # set up sampling probs for dev
+    if sampling_probs:
+        sampling_probs = [p / sum(sampling_probs) for p in sampling_probs]
+    else:
+        sampling_probs = [1 / len(dev_bitext_list)] * len(dev_bitext_list)
+    
+    # load model and tokenizer
+    if type(base_model) is list: # this is what you do if it is pretrained
+        model = base_model[0]
+        tokenizer = base_model[1]
+    else:
+        tokenizer = AutoTokenizer.from_pretrained(base_model)
+        model = AutoModelForSeq2SeqLM.from_pretrained(base_model)
+        
     new_lang_codes = [code for code in mixture_of_bitexts.get_language_codes() if code in tokenizer.get_vocab()]
     tokenizer.add_tokens(new_lang_codes)
     model.resize_token_embeddings(len(tokenizer))
@@ -63,6 +79,7 @@ def finetune(mixture_of_bitexts, dev_bitext, base_model, finetuned_model_dir,
     cleanup()
     train_losses = []   # tracks average loss
     for i in tqdm(range(training_steps)):
+        sys.stdout.flush()
         lang1_sents, lang2_sents, lang1, lang2 = mixture_of_bitexts.next_batch()
         try:
             model.train()
@@ -79,33 +96,55 @@ def finetune(mixture_of_bitexts, dev_bitext, base_model, finetuned_model_dir,
             x, y, train_loss = None, None, None
             cleanup()
             print('GPU out of memory! Performing garbage collection.')
+            sys.stdout.flush()
             continue
         if i % report_every == 0 and i > 0: # report average loss at regular intervals
             print(f'step {i} (train): {np.mean(train_losses[-report_every:])}')
             sys.stdout.flush()
         if i % validate_every == 0:
             print("Validating on a sample...")
-            src_texts, tgt_texts = dev_bitext.lang1_sents, dev_bitext.lang2_sents
-            candidate_translations = batched_translate(src_texts, tokenizer=tokenizer, model=model, src_lang=dev_bitext.lang1_code, tgt_lang=dev_bitext.lang2_code)
-            for candidate, gold in zip(candidate_translations[:5], tgt_texts[:5]):
-                print('-'*5)
-                print(f'candidate: {candidate}')
-                print(f'gold:      {gold}')
-            bleu, chrf = evaluate_translations(candidate_translations, tgt_texts)
-
-            # only save model if there is an imporvement on chrf score after certain number of epoechs
+            sys.stdout.flush()
+            avg_chrf = 0
+            num_val_lang = math.ceil(len(dev_bitext_list)/3)
+            for i in range(num_val_lang):
+                bitext_index = random.choices(range(len(dev_bitext_list)), weights=sampling_probs, k=1)[0]
+                dev_bitext = dev_bitext_list[bitext_index]
+                if dev_bitext.lang1_code == "eng_Latn" or dev_bitext.lang2_code == "eng_Latn":
+                    src_texts = []
+                    tgt_texts = []
+                    for _ in range(100):
+                        pair = next(iter(dev_bitext))
+                        src_texts.append(pair[0])
+                        tgt_texts.append(pair[1])
+                        assert len(src_texts) == len(tgt_texts)
+                else:
+                    src_texts, tgt_texts = dev_bitext.lang1_sents, dev_bitext.lang2_sents
+                candidate_translations = batched_translate(src_texts, tokenizer=tokenizer, model=model, src_lang=dev_bitext.lang1_code, tgt_lang=dev_bitext.lang2_code)
+                for candidate, gold in zip(candidate_translations[:5], tgt_texts[:5]):
+                    print('-'*5)
+                    print(f'candidate: {candidate}')
+                    print(f'gold:      {gold}')
+                    sys.stdout.flush()
+                bleu, chrf = evaluate_translations(candidate_translations, tgt_texts)
+                avg_chrf += chrf
+            avg_chrf /= num_val_lang
+            
+            # only save model if there is an imporvement on chrf score after certain number of epochs
             # TODO: see if I want this do depend on both loss and chrf
-            if chrf > last_best_chrf or i <= patience: 
+            print(f"Average chrF: {avg_chrf}")
+            if avg_chrf > last_best_chrf or i <= patience: 
                 print("Saving new best model!")
-                tokenizer.save_pretrained(finetuned_model_dir) #TODO: check that we can use the same directory
+                sys.stdout.flush()
+                tokenizer.save_pretrained(finetuned_model_dir) 
                 model.save_pretrained(finetuned_model_dir)
                 last_saved_model = model
                 last_saved_tokenizer = tokenizer
                 last_best = i
-                last_best_chrf = chrf
+                last_best_chrf = avg_chrf 
 
         if i - last_best >= patience:
             print('No imporvement in ', patience, ' epochs. Stopping training.' )
+            sys.stdout.flush()
             break
         
     return last_saved_model, last_saved_tokenizer
@@ -125,12 +164,13 @@ if __name__ == "__main__":
     if os.path.exists(model_dir):
         print(f"model directory already exists: {model_dir}")
         exit()
+        
     csv_file = NLLB_SEED_CSV if args.data == 'nllb-seed' else AMERICAS_NLP_CSV
     lps = NLLB_SEED_LPS if args.data == 'nllb-seed' else AMERICAS_NLP_LPS
     corpus = MultilingualCorpus(csv_file)
-    train_data = corpus.create_mixture_of_bitexts(lps, batch_size=2)
-    dev_bitext = corpus.create_bitext(args.dev_src, args.dev_tgt, 'dev')
-    future_eval_lps = AMERICAS_NLP_LANGS
+    train_data = corpus.create_mixture_of_bitexts(lps, batch_size=2, split = 'train')
+    dev_bitext = [corpus.create_bitext(args.dev_src, args.dev_tgt, split = 'dev')]
+    future_eval_lps = AMERICAS_NLP_LPS
     notes = TRAINING_NOTES # get notes from configure.py
 
     print('Training ', model_dir)

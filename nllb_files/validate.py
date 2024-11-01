@@ -2,6 +2,7 @@ import sacrebleu
 from nllbseed import NllbSeedData
 from tqdm import tqdm
 import os
+import sys
 import csv
 from datetime import datetime
 import argparse
@@ -32,7 +33,7 @@ def translate(
     return tokenizer.batch_decode(result, skip_special_tokens=True)
 
 
-def batched_translate(texts, batch_size=16, **kwargs):
+def batched_translate(texts, batch_size=8, **kwargs):
     idxs, texts2 = zip(*sorted(enumerate(texts), key=lambda p: len(p[1]), reverse=True))
     results = []
     for i in tqdm(range(0, len(texts2), batch_size)):
@@ -46,10 +47,12 @@ def evaluate_translations(candidate_translations, reference_translations):
     reference_translations = [[ref] for ref in reference_translations]
     bleu_result = bleu_calc.compute(predictions = candidate_translations, references = reference_translations)
     bleu_string = str(bleu_result)
-    print(bleu_string)
+    print('BLEU:', bleu_result["score"])
+    sys.stdout.flush()
     chrf_result = chrf_calc.compute(predictions = candidate_translations, references = reference_translations)
     chrf_string = str(chrf_result)
-    print(chrf_string)
+    print('Chrf:', chrf_result["score"])
+    sys.stdout.flush()
     return round(bleu_result["score"], 3), round(chrf_result["score"], 3)
 
 def log_evaluation(log_file, model_name, target_lang, bleu, chrf, notes):
