@@ -98,6 +98,6 @@ helsinki/v3/phase_2/model_step_143000,2024-11-03 12:57:44,raramuri,0.012,7.149,P
 helsinki/v3/phase_2/model_step_143000,2024-11-03 13:00:02,wixarika,0.409,7.704,Phase 2 Helsinki
 anlp_wixarika_sheff,2024-11-03 18:03:43,wixarika,8.282,28.231,Sheffield normalization nllb finetune
 anlp_raramuri_sheff,2024-11-03 18:14:10,raramuri,0.077,14.512,Sheffield normalization nllb finetune
-ashaninka_finetune,2024-11-04 11:45:21,ashaninka,0.018,14.464,Helsinki Phase 3 Finetune
-guarani_finetune,2024-11-04 12:02:46,guarani,0.111,9.419,Helsinki Phase 3 Finetune
-raramuri_finetune,2024-11-04 12:09:16,raramuri,0.009,4.844,Helsinki Phase 3 Finetune
+helsinki/v3/phase_3/ashaninka_finetune,2024-11-04 11:45:21,ashaninka,0.018,14.464,Helsinki Phase 3 Finetune
+helsinki/v3/phase_3/guarani_finetune,2024-11-04 12:02:46,guarani,0.111,9.419,Helsinki Phase 3 Finetune
+helsinki/v3/phase_3/raramuri_finetune,2024-11-04 12:09:16,raramuri,0.009,4.844,Helsinki Phase 3 Finetune
