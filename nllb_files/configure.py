@@ -1,20 +1,20 @@
 USE_CUDA=True
 
 LOG_FILE = 'model_logs.csv'
-TRAINING_NOTES = 'Sheffield normalization nllb finetune'
+TRAINING_NOTES = 'Helsinki Phase 3 Finetune'
 
 # hñähñu (worst performing lang)
 
 AMERICAS_NLP_CODE_TO_LANG = {
-    "cni": "ashaninka",
-    "bzd": "bribri",
-    "grn": "guarani",
-    "quy": "quechua",
-    "aym": "aymara",
-    "shp": "shipibo_konibo",
-    "ctp": "chatino",
-    "oto": "hñähñu",
-    "nah": "nahuatl",
+    "cni": "ashaninka", # training sheff
+    "bzd": "bribri", # training sheff
+    "grn": "guarani",  # training sheff
+    "quy": "quechua",  # training sheff
+    "aym": "aymara", # training sheff
+    "shp": "shipibo_konibo", # training sheff
+    "ctp": "chatino", # trained sheff
+    "oto": "hñähñu", # trained sheff
+    "nah": "nahuatl", # trained sheff
     "tar": "raramuri",
     "hch": "wixarika"
 }
@@ -40,6 +40,6 @@ ALL_AMERICAS_NLP_LANGS = ["cni_Latn", "bzd_Latn", "grn_Latn", "quy_Latn", "aym_L
                       #"ctp_Latn", "oto_Latn", "nah_Latn", "tar_Latn", "hch_Latn"]
 
 # For bilingual or more language training
-AMERICAS_NLP_LANGS = ['nah_Latn'] # REMEMBER TO SET DEV LANAGUAGE IN RUN.SH
+AMERICAS_NLP_LANGS = ['tar_Latn'] # REMEMBER TO SET DEV LANAGUAGE IN RUN.SH
 AMERICAS_NLP_LPS = [('spa_Latn', tgt) for tgt in AMERICAS_NLP_LANGS]
 

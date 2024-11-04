@@ -13,9 +13,9 @@ from nllbseed import NllbSeedData
 from validate import log_evaluation, batched_translate, evaluate_translations
 from transformers.optimization import Adafactor
 from transformers import get_constant_schedule_with_warmup
-from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
+from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, NllbTokenizer
 from configure import USE_CUDA
-from configure import AMERICAS_NLP_LANGS, AMERICAS_NLP_CSV, AMERICAS_NLP_LPS
+from configure import AMERICAS_NLP_LANGS, AMERICAS_NLP_CSV, AMERICAS_NLP_LPS, AMERICAS_NLP_CODE_TO_LANG
 from configure import NLLB_SEED_CSV, NLLB_SEED_LPS
 from configure import LOG_FILE, TRAINING_NOTES
 from multilingualdata import MultilingualCorpus
@@ -37,7 +37,7 @@ def tokenize(sents, lang, tokenizer, max_length, alt_pad_token=None):
 
 
 def finetune(mixture_of_bitexts, dev_bitext_list, base_model, finetuned_model_dir,
-             training_steps=60000,
+             training_steps=12000,
              max_length=128, # token sequences will be truncated to this many tokens
              report_every=100,
              validate_every=1000, 
@@ -54,6 +54,9 @@ def finetune(mixture_of_bitexts, dev_bitext_list, base_model, finetuned_model_di
     if type(base_model) is list: # this is what you do if it is pretrained
         model = base_model[0]
         tokenizer = base_model[1]
+    elif 'facebook' not in base_model:
+        model = AutoModelForSeq2SeqLM.from_pretrained(base_model, local_files_only=True).cuda()
+        tokenizer = AutoTokenizer.from_pretrained(base_model)
     else:
         tokenizer = AutoTokenizer.from_pretrained(base_model)
         model = AutoModelForSeq2SeqLM.from_pretrained(base_model)
@@ -61,6 +64,7 @@ def finetune(mixture_of_bitexts, dev_bitext_list, base_model, finetuned_model_di
     new_lang_codes = [code for code in mixture_of_bitexts.get_language_codes() if code in tokenizer.get_vocab()]
     tokenizer.add_tokens(new_lang_codes)
     model.resize_token_embeddings(len(tokenizer))
+    
     if USE_CUDA:
         model.cuda()
     optimizer = Adafactor(
@@ -75,7 +79,7 @@ def finetune(mixture_of_bitexts, dev_bitext_list, base_model, finetuned_model_di
     x, y, train_loss = None, None, None
     last_best = 0
     last_best_chrf = 0
-    patience = 20000
+    patience = 0.5 * training_steps
     cleanup()
     train_losses = []   # tracks average loss
     for i in tqdm(range(training_steps)):
@@ -154,13 +158,18 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Finetuning script for NLLB models.")
     parser.add_argument("--data", type=str, required=True, choices=['nllb-seed', 'americas-nlp'], help="Finetuning data")
     parser.add_argument("--model_dir", type=str, help="Directory for storing the trained model")
-    parser.add_argument("--nllb_model", type=str, default="600M", choices=['600M', '1.3B', '3.3B'], help="NLLB base model.")
+    parser.add_argument("--nllb_model", type=str, default="600M", choices=['600M', '1.3B', '3.3B', 'other'], help="NLLB base model.")
     parser.add_argument("--dev_src", type=str, required=True, help="Source language for validation.")
     parser.add_argument("--dev_tgt", type=str, required=True, help="Target language for validation.")
-
+    parser.add_argument("--other_model", type=str, required=False, help="Finetune model")
+    
     args = parser.parse_args()
     model_dir = args.model_dir
-    model_name = "facebook/nllb-200-distilled-" + args.nllb_model
+    if args.nllb_model != 'other':
+        model_name = "facebook/nllb-200-distilled-" + args.nllb_model
+    else:
+        model_name = args.other_model
+    
     if os.path.exists(model_dir):
         print(f"model directory already exists: {model_dir}")
         exit()

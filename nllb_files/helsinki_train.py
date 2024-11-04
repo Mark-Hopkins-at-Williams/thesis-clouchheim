@@ -60,7 +60,7 @@ def finetune_n_best(mixture_of_bitexts, dev_bitext_list, base_model, finetuned_m
 
     # Initialize training
     last_best = 0
-    patience = 20000
+    patience = 80000
     train_losses = []
     best_models = []  # List to store best models and their scores
 
@@ -207,7 +207,7 @@ if __name__ == "__main__":
     phase1_p = make_sampling_weights(0.91, 0.09)
     phase1_data = MixtureOfBitexts(train_bitexts, batch_size = 2, sampling_probs = phase1_p)
     phase1_dev_data = [opus_corpus.create_bitext('eng_Latn', 'spa_Latn', 'dev', lang1_file = opus_files_dev[0], lang2_file = opus_files_dev[1])]
-    phase1_dir = save_dir + '/phase_1'
+    phase1_dir = save_dir + 'phase_1'
         
     # train phase 1 
     print("Starting phase 1 training")
@@ -221,7 +221,7 @@ if __name__ == "__main__":
     phase2_p = make_sampling_weights(0.37, 0.63)
     phase2_data = MixtureOfBitexts(train_bitexts, batch_size = 2, sampling_probs = phase2_p)
     phase2_dev_data = dev_bitexts
-    phase1_dir = save_dir + '/phase_2'
+    phase2_dir = save_dir + 'phase_2'
     
     # train phase 2
     print("Starting phase 2 training")

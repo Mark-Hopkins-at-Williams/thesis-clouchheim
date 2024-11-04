@@ -108,7 +108,7 @@ if __name__ == "__main__":
     notes = TRAINING_NOTES # get notes from configure.py
     for src, tgt in lps:
         try:
-            print('Evaluating ', model_dir.split('/')[-1], 'on: ', src, '-->', tgt)
+            print('Evaluating ', model_dir.split('/'), 'on: ', src, '-->', tgt)
             eval_bitext = corpus.create_bitext(src, tgt, 'dev')
             src_texts, tgt_texts = eval_bitext.lang1_sents, eval_bitext.lang2_sents
             candidate_translations = batched_translate(src_texts, tokenizer=tokenizer, model=model, src_lang=eval_bitext.lang1_code, tgt_lang=eval_bitext.lang2_code)
