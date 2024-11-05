@@ -10,7 +10,7 @@ from tqdm import tqdm
 from datetime import datetime
 from finetune import tokenize
 from validate import evaluate_translations, log_evaluation, batched_translate
-from finetune import finetune
+from finetune import finetune, cleanup
 from multilingualdata import MultilingualCorpus, MixtureOfBitexts, StreamingBitext, Bitext
 from transformers.optimization import Adafactor
 from transformers import get_constant_schedule_with_warmup
@@ -182,8 +182,27 @@ if __name__ == "__main__":
     sys.stdout.flush()
     base_model = "facebook/nllb-200-distilled-600M"
     tokenizer = AutoTokenizer.from_pretrained(base_model)
+    """
+    After loading in the pretrained tokenizer, train a new one:
+        
+        new_tokenizer = tokenizer.train_new_from_iterator(corpus, 100000)
+   
+    where corpus is an iterator/generator over monolingual sentences, e.g.
+        def get_training_corpus():
+            from datasets import load_dataset
+            quechua_data = load_dataset("Llamacha/monolingual-quechua-iic")
+            dataset = quechua_data["train"]
+            for start_idx in range(0, len(dataset), 1000):
+                samples = dataset[start_idx : start_idx + 1000]
+                yield samples["text"]
+        
+        corpus = get_training_corpus()
+    
+    except that corpus should evenly represent the 11 indigenous languages, english, and spanish.    
+    """
     config = AutoConfig.from_pretrained(base_model)
     model_base = AutoModelForSeq2SeqLM.from_config(config)
+    
     
     # load in data 
     anlp_csv = "americas_nlp_data.csv"
