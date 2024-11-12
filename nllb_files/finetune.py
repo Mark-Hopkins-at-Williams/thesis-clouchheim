@@ -79,7 +79,7 @@ def finetune(mixture_of_bitexts, dev_bitext_list, base_model, finetuned_model_di
     x, y, train_loss = None, None, None
     last_best = 0
     last_best_chrf = 0
-    patience = 0.5 * training_steps
+    patience = training_steps * 0.5
     cleanup()
     train_losses = []   # tracks average loss
     for i in tqdm(range(training_steps)):
@@ -110,7 +110,7 @@ def finetune(mixture_of_bitexts, dev_bitext_list, base_model, finetuned_model_di
             sys.stdout.flush()
             avg_chrf = 0
             num_val_lang = math.ceil(len(dev_bitext_list)/3)
-            for i in range(num_val_lang):
+            for _ in range(num_val_lang):
                 bitext_index = random.choices(range(len(dev_bitext_list)), weights=sampling_probs, k=1)[0]
                 dev_bitext = dev_bitext_list[bitext_index]
                 if dev_bitext.lang1_code == "eng_Latn" or dev_bitext.lang2_code == "eng_Latn":
@@ -136,7 +136,7 @@ def finetune(mixture_of_bitexts, dev_bitext_list, base_model, finetuned_model_di
             # only save model if there is an imporvement on chrf score after certain number of epochs
             # TODO: see if I want this do depend on both loss and chrf
             print(f"Average chrF: {avg_chrf}")
-            if avg_chrf > last_best_chrf or i <= patience: 
+            if avg_chrf > last_best_chrf or i <= (patience): 
                 print("Saving new best model!")
                 sys.stdout.flush()
                 tokenizer.save_pretrained(finetuned_model_dir) 
@@ -145,7 +145,7 @@ def finetune(mixture_of_bitexts, dev_bitext_list, base_model, finetuned_model_di
                 last_saved_tokenizer = tokenizer
                 last_best = i
                 last_best_chrf = avg_chrf 
-
+               
         if i - last_best >= patience:
             print('No imporvement in ', patience, ' epochs. Stopping training.' )
             sys.stdout.flush()
@@ -175,7 +175,7 @@ if __name__ == "__main__":
         exit()
         
     csv_file = NLLB_SEED_CSV if args.data == 'nllb-seed' else AMERICAS_NLP_CSV
-    lps = NLLB_SEED_LPS if args.data == 'nllb-seed' else AMERICAS_NLP_LPS
+    lps = NLLB_SEED_LPS if args.data == 'nllb-seed' else AMERICAS_NLP_LPS 
     corpus = MultilingualCorpus(csv_file)
     train_data = corpus.create_mixture_of_bitexts(lps, batch_size=2, split = 'train')
     dev_bitext = [corpus.create_bitext(args.dev_src, args.dev_tgt, split = 'dev')]
@@ -193,11 +193,23 @@ if __name__ == "__main__":
         try:
             print('Evaluating: ', src, '-->', tgt)
             eval_bitext = corpus.create_bitext(src, tgt, 'dev')
-            src_texts, tgt_texts = eval_bitext.lang1_sents, eval_bitext.lang2_sents
+            if eval_bitext.lang1_code == "eng_Latn" or eval_bitext.lang2_code == "eng_Latn": # handel streaming bitexts
+                eval_bitext = corpus.create_bitext('spa_Latn', 'eng_Latn', 'dev', lang1_file = 'opus_data/dev.es', lang2_file = 'opus_data/dev.es')
+                src_texts = []
+                tgt_texts = []
+                for _ in range(100):
+                    pair = next(iter(eval_bitext))
+                    src_texts.append(pair[0])
+                    tgt_texts.append(pair[1])
+                    assert len(src_texts) == len(tgt_texts)
+            else:
+                eval_bitext = corpus.create_bitext(src, tgt, 'dev')
+                src_texts, tgt_texts = eval_bitext.lang1_sents, eval_bitext.lang2_sents
+                
             candidate_translations = batched_translate(src_texts, tokenizer=tokenizer, model=model, src_lang=eval_bitext.lang1_code, tgt_lang=eval_bitext.lang2_code)
             bleu, chrf = evaluate_translations(candidate_translations, tgt_texts)
             tgt_lang = AMERICAS_NLP_CODE_TO_LANG[tgt.split('_')[0]]
-            log_evaluation(LOG_FILE, model_dir.split('/')[-1], tgt_lang, bleu, chrf, notes) # log a line for each evaluation
+            log_evaluation(LOG_FILE, model_dir.replace("models/", ""), tgt_lang, bleu, chrf, notes) # log a line for each evaluation
             print('Wrote all evaluations to ', LOG_FILE)
         except Exception as e:
             print(f"Error occurred while evaluating {src} --> {tgt}: {str(e)}")
