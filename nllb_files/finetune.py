@@ -15,10 +15,10 @@ from transformers.optimization import Adafactor
 from transformers import get_constant_schedule_with_warmup
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, NllbTokenizer
 from configure import USE_CUDA
-from configure import AMERICAS_NLP_LANGS, AMERICAS_NLP_CSV, AMERICAS_NLP_LPS, AMERICAS_NLP_CODE_TO_LANG
+from configure import AMERICAS_NLP_LANGS, AMERICAS_NLP_CSV, AMERICAS_NLP_LPS, AMERICAS_NLP_CODE_TO_LANG, ALL_LANGS
 from configure import NLLB_SEED_CSV, NLLB_SEED_LPS
 from configure import LOG_FILE, TRAINING_NOTES
-from multilingualdata import MultilingualCorpus
+from multilingualdata import MultilingualCorpus, StreamingMonolingual, Monolingual
 
 
 def cleanup():
@@ -35,9 +35,42 @@ def tokenize(sents, lang, tokenizer, max_length, alt_pad_token=None):
                                                                                       # in the loss function because we don't want the model to learn to predict padding ids
     return tokens
 
+def tokenizer_texts(opus_corpus, opus_files, anlp_corpus, num):
+    # Initialize the monolingual stream list
+    mono_list = []
+    
+    # Add streaming instances for 'eng_Latn' and 'spa_Latn'
+    mono_list.append(opus_corpus.create_monolingual('eng_Latn', stream_file=opus_files[0]))
+    mono_list.append(opus_corpus.create_monolingual('spa_Latn', stream_file=opus_files[1]))
+    
+    # Append non-streaming instances for the other languages
+    for lang in ALL_LANGS:
+        mono_list.append(anlp_corpus.create_monolingual(lang))
+    
+    def tok_stream():
+        for _ in range(num):
+            # Randomly select an index from the list
+            data = random.choice(mono_list)
+            
+            # Handle StreamingMonolingual and Monolingual objects differently
+            if isinstance(data, StreamingMonolingual):
+                # For StreamingMonolingual, yield the next sentence from the stream
+                try:
+                    yield next(iter(data))
+                except StopIteration:
+                    continue  # If the stream ends, continue to the next iteration
+            elif isinstance(data, Monolingual):
+                # For Monolingual, yield the next sentence from the list
+                try:
+                    yield data.get_next()
+                except StopIteration:
+                    continue  # If there are no more sentences, continue to the next iteration
+                
+    return tok_stream()
+
 
 def finetune(mixture_of_bitexts, dev_bitext_list, base_model, finetuned_model_dir,
-             training_steps=12000,
+             training_steps=60000,
              max_length=128, # token sequences will be truncated to this many tokens
              report_every=100,
              validate_every=1000, 
@@ -60,6 +93,7 @@ def finetune(mixture_of_bitexts, dev_bitext_list, base_model, finetuned_model_di
     else:
         tokenizer = AutoTokenizer.from_pretrained(base_model)
         model = AutoModelForSeq2SeqLM.from_pretrained(base_model)
+    print('Done loading in model and tokenzier')
         
     new_lang_codes = [code for code in mixture_of_bitexts.get_language_codes() if code in tokenizer.get_vocab()]
     tokenizer.add_tokens(new_lang_codes)
@@ -176,6 +210,10 @@ if __name__ == "__main__":
         
     csv_file = NLLB_SEED_CSV if args.data == 'nllb-seed' else AMERICAS_NLP_CSV
     lps = NLLB_SEED_LPS if args.data == 'nllb-seed' else AMERICAS_NLP_LPS 
+    if len(lps) > 1:
+        train_scope = 'multi'
+    else:
+        train_scope = 'bi'
     corpus = MultilingualCorpus(csv_file)
     train_data = corpus.create_mixture_of_bitexts(lps, batch_size=2, split = 'train')
     dev_bitext = [corpus.create_bitext(args.dev_src, args.dev_tgt, split = 'dev')]
@@ -209,7 +247,7 @@ if __name__ == "__main__":
             candidate_translations = batched_translate(src_texts, tokenizer=tokenizer, model=model, src_lang=eval_bitext.lang1_code, tgt_lang=eval_bitext.lang2_code)
             bleu, chrf = evaluate_translations(candidate_translations, tgt_texts)
             tgt_lang = AMERICAS_NLP_CODE_TO_LANG[tgt.split('_')[0]]
-            log_evaluation(LOG_FILE, model_dir.replace("models/", ""), tgt_lang, bleu, chrf, notes) # log a line for each evaluation
+            log_evaluation(LOG_FILE, model_dir.replace("models/", ""), train_scope, tgt_lang, bleu, chrf, notes) # log a line for each evaluation
             print('Wrote all evaluations to ', LOG_FILE)
         except Exception as e:
             print(f"Error occurred while evaluating {src} --> {tgt}: {str(e)}")

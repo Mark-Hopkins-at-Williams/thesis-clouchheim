@@ -10,13 +10,22 @@ from tqdm import tqdm
 from datetime import datetime
 from finetune import tokenize
 from validate import evaluate_translations, log_evaluation, batched_translate
-from finetune import finetune, cleanup
+from finetune import finetune, cleanup, tokenizer_texts
 from multilingualdata import MultilingualCorpus, MixtureOfBitexts, StreamingBitext, Bitext, StreamingMonolingual, Monolingual
 from transformers.optimization import Adafactor
 from transformers import get_constant_schedule_with_warmup
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, AutoConfig
-from configure import ALL_AMERICAS_NLP_LANGS, USE_CUDA
-import shutil  # for deleting directories
+from configure import *
+import shutil
+
+def flatten_sents(sents):
+    return [item for sublist in sents for item in (sublist if isinstance(sublist, list) else [sublist])]
+    # Ensure sents is a list of strings, and filter out non-string or empty sentences
+    if isinstance(sents, list):
+        sents = [str(sent) for sent in sents if isinstance(sent, str) and len(sent) > 0]
+    else:
+        sents = [str(sents)]  # If it's not a list, make it one
+    return sents
 
 def finetune_n_best(mixture_of_bitexts, dev_bitext_list, base_model, finetuned_model_dir,
                   training_steps=60000,
@@ -35,6 +44,7 @@ def finetune_n_best(mixture_of_bitexts, dev_bitext_list, base_model, finetuned_m
     
     # Load model and tokenizer
     if isinstance(base_model, list):  # handle pretrained model input as list
+        print('loading model and tokenizer passed in as argument')
         model = base_model[0]
         tokenizer = base_model[1]
     else:
@@ -60,12 +70,15 @@ def finetune_n_best(mixture_of_bitexts, dev_bitext_list, base_model, finetuned_m
 
     # Initialize training
     last_best = 0
-    patience = training_steps
+    patience = training_steps * 0.5
     train_losses = []
     best_models = []  # List to store best models and their scores
 
     for i in tqdm(range(training_steps)):
         lang1_sents, lang2_sents, lang1, lang2 = mixture_of_bitexts.next_batch()
+        
+        if lang1 == '<gen>':
+            lang1_sents = lang1_sents[0]
         try:
             model.train()
             x = tokenize(lang1_sents, lang1, tokenizer, max_length).to(model.device)
@@ -96,10 +109,10 @@ def finetune_n_best(mixture_of_bitexts, dev_bitext_list, base_model, finetuned_m
             print("# evals at this validation:", num_val_lang)
             sys.stdout.flush()
             for q in range(num_val_lang):
-                #bitext_index = random.choices(range(len(dev_bitext_list)), weights=sampling_probs, k=1)[0]
                 bitext_index = q
                 dev_bitext = dev_bitext_list[bitext_index]
-                if dev_bitext.lang1_code == "eng_Latn" or dev_bitext.lang2_code == "eng_Latn":
+                print(dev_bitext.lang2_code)
+                if dev_bitext.lang1_code == "eng_Latn" or dev_bitext.lang2_code == "eng_Latn": 
                     src_texts = []
                     tgt_texts = []
                     for _ in range(100):
@@ -109,6 +122,7 @@ def finetune_n_best(mixture_of_bitexts, dev_bitext_list, base_model, finetuned_m
                         assert len(src_texts) == len(tgt_texts)
                 else:
                     src_texts, tgt_texts = dev_bitext.lang1_sents, dev_bitext.lang2_sents
+                    
                 candidate_translations = batched_translate(src_texts, tokenizer=tokenizer, model=model, src_lang=dev_bitext.lang1_code, tgt_lang=dev_bitext.lang2_code)
                 bleu, chrf = evaluate_translations(candidate_translations, tgt_texts)
                 avg_chrf += chrf
@@ -130,7 +144,7 @@ def finetune_n_best(mixture_of_bitexts, dev_bitext_list, base_model, finetuned_m
                 best_models.append((avg_chrf, model_dir))
                 
                 # Keep only the top `num_best_save` models
-                if len(best_models) > num_best_save:
+                if len(best_models) > num_best_save and num_best_save != 1:
                     # Remove the model with the lowest score
                     worst_model = min(best_models, key=lambda x: x[0])
                     shutil.rmtree(worst_model[1])  # Delete the model directory
@@ -156,45 +170,10 @@ def helsinki_bitexts_list(opus_corpus, opus_files, anlp_corpus, split):
     # append eng_spa
     bitext_list.append(opus_corpus.create_bitext('spa_Latn', 'eng_Latn', split, lang1_file = opus_files[0], lang2_file = opus_files[1]))
     # append all anlp _ spa
-    for lang in ALL_AMERICAS_NLP_LANGS:
+    for lang in ALL_LANGS:
         bitext_list.append(anlp_corpus.create_bitext('spa_Latn', lang, split))
     return bitext_list
-
-#TODO: test this
-def tokenizer_texts(opus_corpus, opus_files, anlp_corpus, num):
-    # Initialize the monolingual stream list
-    mono_list = []
-    
-    # Add streaming instances for 'eng_Latn' and 'spa_Latn'
-    mono_list.append(opus_corpus.create_monolingual('eng_Latn', stream_file=opus_files[0]))
-    mono_list.append(opus_corpus.create_monolingual('spa_Latn', stream_file=opus_files[1]))
-    
-    # Append non-streaming instances for the other languages
-    for lang in ALL_AMERICAS_NLP_LANGS:
-        mono_list.append(anlp_corpus.create_monolingual(lang))
-    
-    def tok_stream():
-        for _ in range(num):
-            # Randomly select an index from the list
-            data = random.choice(mono_list)
-            
-            # Handle StreamingMonolingual and Monolingual objects differently
-            if isinstance(data, StreamingMonolingual):
-                # For StreamingMonolingual, yield the next sentence from the stream
-                try:
-                    yield next(iter(data))
-                except StopIteration:
-                    continue  # If the stream ends, continue to the next iteration
-            elif isinstance(data, Monolingual):
-                # For Monolingual, yield the next sentence from the list
-                try:
-                    yield data.get_next()
-                except StopIteration:
-                    continue  # If there are no more sentences, continue to the next iteration
-                
-    return tok_stream()
-    
-    
+  
 if __name__ == "__main__":
     
     parser = argparse.ArgumentParser(description="Three-phase training for multilingual translation")
@@ -208,9 +187,9 @@ if __name__ == "__main__":
     
     
     ######## DATA 
-    anlp_csv = "americas_nlp_data.csv"
+    anlp_csv = "data/americas_nlp_data.csv"
     opus_csv = None
-    opus_dir = "opus_data"
+    opus_dir = "data/opus_data"
     opus_files_train = (f'{opus_dir}/train.es', f'{opus_dir}/train.en')
     opus_files_dev = (f'{opus_dir}/dev.es', f'{opus_dir}/dev.en')
     
@@ -223,7 +202,7 @@ if __name__ == "__main__":
     dev_bitexts = helsinki_bitexts_list(opus_corpus, opus_files_dev, anlp_corpus, 'dev')
     # create all bitexts
     
-    
+    '''
     ###### MODEL AND TOKENIZER 
     # Load in model and tokenizer from scratch
     print("Loading in model for training")
@@ -233,9 +212,10 @@ if __name__ == "__main__":
     
     #TODO: create the iterator that evenly samples each langauge to train tokenizer 
     sents = tokenizer_texts(opus_corpus, opus_files_train, anlp_corpus, 10000) 
-    new_tokenizer = tokenizer.train_new_from_iterator(sents, 100000)
+    tokenizer = tokenizer.train_new_from_iterator(sents, 100000)
     config = AutoConfig.from_pretrained(base_model)
     model_base = AutoModelForSeq2SeqLM.from_config(config)
+    
     
     # create phase 1 data 91% eng 9% indigenous
     print('Making phase 1 data')
@@ -253,10 +233,14 @@ if __name__ == "__main__":
     phase1_model_tok = [model_base, tokenizer]
     phase1_model, phase1_tokenizer = finetune(phase1_data, phase1_dev_data, phase1_model_tok, phase1_dir, training_steps=100000)
     print(f'Done training phase 1, saved to {phase1_dir}. Now making phase 2 data')
-    sys.stdout.flush()
+    sys.stdout.flush()'''
         
     ##### PHASE 2
     # create phase 2 data 37% eng 63% indegenous
+    base_model = "Helsinki-NLP/opus-mt-es-en"
+    phase1_model = AutoModelForSeq2SeqLM.from_pretrained(base_model)
+    phase1_tokenizer = AutoTokenizer.from_pretrained(base_model)
+    
     phase2_p = make_sampling_weights(0.37, 0.63)
     phase2_data = MixtureOfBitexts(train_bitexts, batch_size = 16, sampling_probs = phase2_p)
     phase2_dev_data = dev_bitexts
