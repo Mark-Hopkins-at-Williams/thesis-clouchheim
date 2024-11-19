@@ -1,0 +1,14 @@
+
+
+%%%%%%%% Chapters %%%%%%%%%%%%
+%% Introduction
+\chapter{Introduction}
+\label{chap:introduction}
+
+\section{The Transformer Architecture}
+
+The introduction of the Transformer architecture in "Attention Is All You Need" \cite{NIPS2017_3f5ee243} marked a paradigm shift in machine translation (MT) and natural language processing more broadly. To understand its significance, consider the fundamental challenge in machine translation: capturing the relationships between words in diverse languages while preserving meaning and structure. Previous approaches relied heavily on recurrent neural networks (RNNs) and long short-term memory (LSTM) networks \cite{hochreiter1997long}. These models use recurrence and convolution and therefore processing text sequentially—word by word—much like a human reader. While effective, these sequential models struggled with long-range dependencies due to the positive linear relationship of distance between tokens and number of computations needed to relate them. This made accounting for long-range dependencies between tokens both costly and ineffective in RNN and LSTM networks. 
+
+Take this example sentence, “The keys to the car are there” where the subject “keys” and the verb “are” are linked despite their relatively large distance in the sentence. This example of subject-verb resolution highlights why understanding long-range dependencies in sentences is important.  Additionally, due to the sequential nature of this evaluation, these models were inherently limited in their ability to parallelize computation and therefore were costly both temporally and spatially. 
+
+To ground our discussion, let's consider a simple Spanish sentence that will serve as our running example throughout this section: "El gato negro duerme en la casa" (The black cat sleeps in the house). This sentence, while straightforward, encompasses several key challenges in machine translation, including word order differences, agreement, and contextual relationships.
