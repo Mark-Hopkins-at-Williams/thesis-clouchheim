@@ -1,0 +1,1337 @@
+@article{hochreiter1997long,
+  title={Long Short-term Memory},
+  author={Hochreiter, S},
+  journal={Neural Computation MIT-Press},
+  year={1997}
+}
+
+@inproceedings{zoph-etal-2016-transfer,
+    title = "Transfer Learning for Low-Resource Neural Machine Translation",
+    author = "Zoph, Barret  and
+      Yuret, Deniz  and
+      May, Jonathan  and
+      Knight, Kevin",
+    editor = "Su, Jian  and
+      Duh, Kevin  and
+      Carreras, Xavier",
+    booktitle = "Proceedings of the 2016 Conference on Empirical Methods in Natural Language Processing",
+    month = nov,
+    year = "2016",
+    address = "Austin, Texas",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/D16-1163",
+    doi = "10.18653/v1/D16-1163",
+    pages = "1568--1575",
+}
+
+@inproceedings{NIPS2017_3f5ee243,
+ author = {Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N and Kaiser, \L ukasz and Polosukhin, Illia},
+ booktitle = {Advances in Neural Information Processing Systems},
+ editor = {I. Guyon and U. Von Luxburg and S. Bengio and H. Wallach and R. Fergus and S. Vishwanathan and R. Garnett},
+ pages = {},
+ publisher = {Curran Associates, Inc.},
+ title = {Attention is All you Need},
+ url = {https://proceedings.neurips.cc/paper_files/paper/2017/file/3f5ee243547dee91fbd053c1c4a845aa-Paper.pdf},
+ volume = {30},
+ year = {2017}
+}
+
+@inproceedings{sennrich-etal-2016-improving,
+    title = "Improving Neural Machine Translation Models with Monolingual Data",
+    author = "Sennrich, Rico  and
+      Haddow, Barry  and
+      Birch, Alexandra",
+    editor = "Erk, Katrin  and
+      Smith, Noah A.",
+    booktitle = "Proceedings of the 54th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)",
+    month = aug,
+    year = "2016",
+    address = "Berlin, Germany",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/P16-1009",
+    doi = "10.18653/v1/P16-1009",
+    pages = "86--96",
+}
+
+@inproceedings{zhao-etal-2020-active,
+    title = "Active Learning Approaches to Enhancing Neural Machine Translation",
+    author = "Zhao, Yuekai  and
+      Zhang, Haoran  and
+      Zhou, Shuchang  and
+      Zhang, Zhihua",
+    editor = "Cohn, Trevor  and
+      He, Yulan  and
+      Liu, Yang",
+    booktitle = "Findings of the Association for Computational Linguistics: EMNLP 2020",
+    month = nov,
+    year = "2020",
+    address = "Online",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2020.findings-emnlp.162",
+    doi = "10.18653/v1/2020.findings-emnlp.162",
+    pages = "1796--1806",
+    abstract = "Active learning is an efficient approach for mitigating data dependency when training neural machine translation (NMT) models. In this paper, we explore new training frameworks by incorporating active learning into various techniques such as transfer learning and iterative back-translation (IBT) under a limited human translation budget. We design a word frequency based acquisition function and combine it with a strong uncertainty based method. The combined method steadily outperforms all other acquisition functions in various scenarios. As far as we know, we are the first to do a large-scale study on actively training Transformer for NMT. Specifically, with a human translation budget of only 20{\%} of the original parallel corpus, we manage to surpass Transformer trained on the entire parallel corpus in three language pairs.",
+}
+
+@inproceedings{shaham-etal-2023-causes,
+    title = "Causes and Cures for Interference in Multilingual Translation",
+    author = "Shaham, Uri  and
+      Elbayad, Maha  and
+      Goswami, Vedanuj  and
+      Levy, Omer  and
+      Bhosale, Shruti",
+    editor = "Rogers, Anna  and
+      Boyd-Graber, Jordan  and
+      Okazaki, Naoaki",
+    booktitle = "Proceedings of the 61st Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)",
+    month = jul,
+    year = "2023",
+    address = "Toronto, Canada",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2023.acl-long.883",
+    doi = "10.18653/v1/2023.acl-long.883",
+    pages = "15849--15863",
+    abstract = "Multilingual machine translation models can benefit from synergy between different language pairs, but also suffer from interference. While there is a growing number of sophisticated methods that aim to eliminate interference, our understanding of interference as a phenomenon is still limited. This work identifies the main factors that contribute to interference in multilingual machine translation. Through systematic experimentation, we find that interference (or synergy) are primarily determined by model size, data size, and the proportion of each language pair within the total dataset. We observe that substantial interference occurs mainly when the model is very small with respect to the available training data, and that using standard transformer configurations with less than one billion parameters largely alleviates interference and promotes synergy. Moreover, we show that tuning the sampling temperature to control the proportion of each language pair in the data is key to balancing the amount of interference between low and high resource language pairs effectively, and can lead to superior performance overall.",
+}
+@inproceedings{neubig-hu-2018-rapid,
+    title = "Rapid Adaptation of Neural Machine Translation to New Languages",
+    author = "Neubig, Graham  and
+      Hu, Junjie",
+    editor = "Riloff, Ellen  and
+      Chiang, David  and
+      Hockenmaier, Julia  and
+      Tsujii, Jun{'}ichi",
+    booktitle = "Proceedings of the 2018 Conference on Empirical Methods in Natural Language Processing",
+    month = oct # "-" # nov,
+    year = "2018",
+    address = "Brussels, Belgium",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/D18-1103",
+    doi = "10.18653/v1/D18-1103",
+    pages = "875--880",
+    abstract = "This paper examines the problem of adapting neural machine translation systems to new, low-resourced languages (LRLs) as effectively and rapidly as possible. We propose methods based on starting with massively multilingual {``}seed models{''}, which can be trained ahead-of-time, and then continuing training on data related to the LRL. We contrast a number of strategies, leading to a novel, simple, yet effective method of {``}similar-language regularization{''}, where we jointly train on both a LRL of interest and a similar high-resourced language to prevent over-fitting to small LRL data. Experiments demonstrate that massively multilingual models, even without any explicit adaptation, are surprisingly effective, achieving BLEU scores of up to 15.5 with no data from the LRL, and that the proposed similar-language regularization method improves over other adaptation methods by 1.7 BLEU points average over 4 LRL settings.",
+}
+
+@inproceedings{maillard-etal-2023-small,
+    title = "Small Data, Big Impact: Leveraging Minimal Data for Effective Machine Translation",
+    author = "Maillard, Jean  and
+      Gao, Cynthia  and
+      Kalbassi, Elahe  and
+      Sadagopan, Kaushik Ram  and
+      Goswami, Vedanuj  and
+      Koehn, Philipp  and
+      Fan, Angela  and
+      Guzman, Francisco",
+    editor = "Rogers, Anna  and
+      Boyd-Graber, Jordan  and
+      Okazaki, Naoaki",
+    booktitle = "Proceedings of the 61st Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)",
+    month = jul,
+    year = "2023",
+    address = "Toronto, Canada",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2023.acl-long.154",
+    doi = "10.18653/v1/2023.acl-long.154",
+    pages = "2740--2756",
+    abstract = "For many languages, machine translation progress is hindered by the lack of reliable training data. Models are trained on whatever pre-existing datasets may be available and then augmented with synthetic data, because it is often not economical to pay for the creation of large-scale datasets. But for the case of low-resource languages, would the creation of a few thousand professionally translated sentence pairs give any benefit? In this paper, we show that it does. We describe a broad data collection effort involving around 6k professionally translated sentence pairs for each of 39 low-resource languages, which we make publicly available. We analyse the gains of models trained on this small but high-quality data, showing that it has significant impact even when larger but lower quality pre-existing corpora are used, or when data is augmented with millions of sentences through backtranslation.",
+}
+
+@inproceedings{khayrallah-koehn-2018-impact,
+    title = "On the Impact of Various Types of Noise on Neural Machine Translation",
+    author = "Khayrallah, Huda  and
+      Koehn, Philipp",
+    editor = "Birch, Alexandra  and
+      Finch, Andrew  and
+      Luong, Thang  and
+      Neubig, Graham  and
+      Oda, Yusuke",
+    booktitle = "Proceedings of the 2nd Workshop on Neural Machine Translation and Generation",
+    month = jul,
+    year = "2018",
+    address = "Melbourne, Australia",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/W18-2709",
+    doi = "10.18653/v1/W18-2709",
+    pages = "74--83",
+    abstract = "We examine how various types of noise in the parallel training data impact the quality of neural machine translation systems. We create five types of artificial noise and analyze how they degrade performance in neural and statistical machine translation. We find that neural models are generally more harmed by noise than statistical models. For one especially egregious type of noise they learn to just copy the input sentence.",
+}
+@misc{siddhant20221000,
+      title={Towards the Next 1000 Languages in Multilingual Machine Translation: Exploring the Synergy Between Supervised and Self-Supervised Learning}, 
+      author={Aditya Siddhant and Ankur Bapna and Orhan Firat and Yuan Cao and Mia Xu Chen and Isaac Caswell and Xavier Garcia},
+      year={2022},
+      eprint={2201.03110},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+@inproceedings{muller-etal-2021-unseen,
+    title = "When Being Unseen from m{BERT} is just the Beginning: Handling New Languages With Multilingual Language Models",
+    author = "Muller, Benjamin  and
+      Anastasopoulos, Antonios  and
+      Sagot, Beno{\^\i}t  and
+      Seddah, Djam{\'e}",
+    editor = "Toutanova, Kristina  and
+      Rumshisky, Anna  and
+      Zettlemoyer, Luke  and
+      Hakkani-Tur, Dilek  and
+      Beltagy, Iz  and
+      Bethard, Steven  and
+      Cotterell, Ryan  and
+      Chakraborty, Tanmoy  and
+      Zhou, Yichao",
+    booktitle = "Proceedings of the 2021 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies",
+    month = jun,
+    year = "2021",
+    address = "Online",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2021.naacl-main.38",
+    doi = "10.18653/v1/2021.naacl-main.38",
+    pages = "448--462",
+    abstract = "Transfer learning based on pretraining language models on a large amount of raw data has become a new norm to reach state-of-the-art performance in NLP. Still, it remains unclear how this approach should be applied for unseen languages that are not covered by any available large-scale multilingual language model and for which only a small amount of raw data is generally available. In this work, by comparing multilingual and monolingual models, we show that such models behave in multiple ways on unseen languages. Some languages greatly benefit from transfer learning and behave similarly to closely related high resource languages whereas others apparently do not. Focusing on the latter, we show that this failure to transfer is largely related to the impact of the script used to write such languages. We show that transliterating those languages significantly improves the potential of large-scale multilingual language models on downstream tasks. This result provides a promising direction towards making these massively multilingual models useful for a new set of unseen languages.",
+}
+@inproceedings{pfeiffer-etal-2021-unks,
+    title = "{UNK}s Everywhere: {A}dapting Multilingual Language Models to New Scripts",
+    author = "Pfeiffer, Jonas  and
+      Vuli{\'c}, Ivan  and
+      Gurevych, Iryna  and
+      Ruder, Sebastian",
+    editor = "Moens, Marie-Francine  and
+      Huang, Xuanjing  and
+      Specia, Lucia  and
+      Yih, Scott Wen-tau",
+    booktitle = "Proceedings of the 2021 Conference on Empirical Methods in Natural Language Processing",
+    month = nov,
+    year = "2021",
+    address = "Online and Punta Cana, Dominican Republic",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2021.emnlp-main.800",
+    doi = "10.18653/v1/2021.emnlp-main.800",
+    pages = "10186--10203",
+    abstract = "Massively multilingual language models such as multilingual BERT offer state-of-the-art cross-lingual transfer performance on a range of NLP tasks. However, due to limited capacity and large differences in pretraining data sizes, there is a profound performance gap between resource-rich and resource-poor target languages. The ultimate challenge is dealing with under-resourced languages not covered at all by the models and written in scripts unseen during pretraining. In this work, we propose a series of novel data-efficient methods that enable quick and effective adaptation of pretrained multilingual models to such low-resource languages and unseen scripts. Relying on matrix factorization, our methods capitalize on the existing latent knowledge about multiple languages already available in the pretrained model{'}s embedding matrix. Furthermore, we show that learning of the new dedicated embedding matrix in the target language can be improved by leveraging a small number of vocabulary items (i.e., the so-called lexically overlapping tokens) shared between mBERT{'}s and target language vocabulary. Our adaptation techniques offer substantial performance gains for languages with unseen scripts. We also demonstrate that they can yield improvements for low-resource languages written in scripts covered by the pretrained model.",
+}
+@inproceedings{amrhein-sennrich-2020-romanization,
+    title = "On {R}omanization for Model Transfer Between Scripts in Neural Machine Translation",
+    author = "Amrhein, Chantal  and
+      Sennrich, Rico",
+    editor = "Cohn, Trevor  and
+      He, Yulan  and
+      Liu, Yang",
+    booktitle = "Findings of the Association for Computational Linguistics: EMNLP 2020",
+    month = nov,
+    year = "2020",
+    address = "Online",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2020.findings-emnlp.223",
+    doi = "10.18653/v1/2020.findings-emnlp.223",
+    pages = "2461--2469",
+    abstract = "Transfer learning is a popular strategy to improve the quality of low-resource machine translation. For an optimal transfer of the embedding layer, the child and parent model should share a substantial part of the vocabulary. This is not the case when transferring to languages with a different script. We explore the benefit of romanization in this scenario. Our results show that romanization entails information loss and is thus not always superior to simpler vocabulary transfer methods, but can improve the transfer between related languages with different scripts. We compare two romanization tools and find that they exhibit different degrees of information loss, which affects translation quality. Finally, we extend romanization to the target side, showing that this can be a successful strategy when coupled with a simple deromanization model.",
+}@inproceedings{graca-etal-2019-generalizing,
+    title = "Generalizing Back-Translation in Neural Machine Translation",
+    author = "Gra{\c{c}}a, Miguel  and
+      Kim, Yunsu  and
+      Schamper, Julian  and
+      Khadivi, Shahram  and
+      Ney, Hermann",
+    editor = "Bojar, Ond{\v{r}}ej  and
+      Chatterjee, Rajen  and
+      Federmann, Christian  and
+      Fishel, Mark  and
+      Graham, Yvette  and
+      Haddow, Barry  and
+      Huck, Matthias  and
+      Yepes, Antonio Jimeno  and
+      Koehn, Philipp  and
+      Martins, Andr{\'e}  and
+      Monz, Christof  and
+      Negri, Matteo  and
+      N{\'e}v{\'e}ol, Aur{\'e}lie  and
+      Neves, Mariana  and
+      Post, Matt  and
+      Turchi, Marco  and
+      Verspoor, Karin",
+    booktitle = "Proceedings of the Fourth Conference on Machine Translation (Volume 1: Research Papers)",
+    month = aug,
+    year = "2019",
+    address = "Florence, Italy",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/W19-5205",
+    doi = "10.18653/v1/W19-5205",
+    pages = "45--52",
+    abstract = "Back-translation {---} data augmentation by translating target monolingual data {---} is a crucial component in modern neural machine translation (NMT). In this work, we reformulate back-translation in the scope of cross-entropy optimization of an NMT model, clarifying its underlying mathematical assumptions and approximations beyond its heuristic usage. Our formulation covers broader synthetic data generation schemes, including sampling from a target-to-source NMT model. With this formulation, we point out fundamental problems of the sampling-based approaches and propose to remedy them by (i) disabling label smoothing for the target-to-source model and (ii) sampling from a restricted search space. Our statements are investigated on the WMT 2018 German {\textless}-{\textgreater} English news translation task.",
+}
+@inproceedings{zhang-etal-2022-survey,
+    title = "A Survey of Active Learning for Natural Language Processing",
+    author = "Zhang, Zhisong  and
+      Strubell, Emma  and
+      Hovy, Eduard",
+    editor = "Goldberg, Yoav  and
+      Kozareva, Zornitsa  and
+      Zhang, Yue",
+    booktitle = "Proceedings of the 2022 Conference on Empirical Methods in Natural Language Processing",
+    month = dec,
+    year = "2022",
+    address = "Abu Dhabi, United Arab Emirates",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2022.emnlp-main.414",
+    doi = "10.18653/v1/2022.emnlp-main.414",
+    pages = "6166--6190",
+    abstract = "In this work, we provide a literature review of active learning (AL) for its applications in natural language processing (NLP). In addition to a fine-grained categorization of query strategies, we also investigate several other important aspects of applying AL to NLP problems. These include AL for structured prediction tasks, annotation cost, model learning (especially with deep neural models), and starting and stopping AL. Finally, we conclude with a discussion of related topics and future directions.",
+}
+@inproceedings{swayamdipta-etal-2020-dataset,
+    title = "Dataset Cartography: Mapping and Diagnosing Datasets with Training Dynamics",
+    author = "Swayamdipta, Swabha  and
+      Schwartz, Roy  and
+      Lourie, Nicholas  and
+      Wang, Yizhong  and
+      Hajishirzi, Hannaneh  and
+      Smith, Noah A.  and
+      Choi, Yejin",
+    editor = "Webber, Bonnie  and
+      Cohn, Trevor  and
+      He, Yulan  and
+      Liu, Yang",
+    booktitle = "Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing (EMNLP)",
+    month = nov,
+    year = "2020",
+    address = "Online",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2020.emnlp-main.746",
+    doi = "10.18653/v1/2020.emnlp-main.746",
+    pages = "9275--9293",
+    abstract = "Large datasets have become commonplace in NLP research. However, the increased emphasis on data quantity has made it challenging to assess the quality of data. We introduce Data Maps{---}a model-based tool to characterize and diagnose datasets. We leverage a largely ignored source of information: the behavior of the model on individual instances during training (training dynamics) for building data maps. This yields two intuitive measures for each example{---}the model{'}s confidence in the true class, and the variability of this confidence across epochs{---}obtained in a single run of training. Experiments on four datasets show that these model-dependent measures reveal three distinct regions in the data map, each with pronounced characteristics. First, our data maps show the presence of {``}ambiguous{''} regions with respect to the model, which contribute the most towards out-of-distribution generalization. Second, the most populous regions in the data are {``}easy to learn{''} for the model, and play an important role in model optimization. Finally, data maps uncover a region with instances that the model finds {``}hard to learn{''}; these often correspond to labeling errors. Our results indicate that a shift in focus from quantity to quality of data could lead to robust models and improved out-of-distribution generalization.",
+}
+@inproceedings{bhatnagar-etal-2022-chia,
+    title = "{CHIA}: {CH}oosing Instances to Annotate for Machine Translation",
+    author = "Bhatnagar, Rajat  and
+      Ganesh, Ananya  and
+      Kann, Katharina",
+    editor = "Goldberg, Yoav  and
+      Kozareva, Zornitsa  and
+      Zhang, Yue",
+    booktitle = "Findings of the Association for Computational Linguistics: EMNLP 2022",
+    month = dec,
+    year = "2022",
+    address = "Abu Dhabi, United Arab Emirates",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2022.findings-emnlp.540",
+    doi = "10.18653/v1/2022.findings-emnlp.540",
+    pages = "7299--7315",
+    abstract = "Neural machine translation (MT) systems have been shown to perform poorly on low-resource language pairs, for which large-scale parallel data is unavailable. Making the data annotation process faster and cheaper is therefore important to ensure equitable access to MT systems. To make optimal use of a limited annotation budget, we present CHIA (choosing instances to annotate), a method for selecting instances to annotate for machine translation. Using an existing multi-way parallel dataset of high-resource languages, we first identify instances, based on model training dynamics, that are most informative for training MT models for high-resource languages. We find that there are cross-lingual commonalities in instances that are useful for MT model training, which we use to identify instances that will be useful to train models on a new target language. Evaluating on 20 languages from two corpora, we show that training on instances selected using our method provides an average performance improvement of 1.59 BLEU over training on randomly selected instances of the same size.",
+}
+@inproceedings{richburg-carpuat-2022-data,
+    title = "Data Cartography for Low-Resource Neural Machine Translation",
+    author = "Richburg, Aquia  and
+      Carpuat, Marine",
+    editor = "Goldberg, Yoav  and
+      Kozareva, Zornitsa  and
+      Zhang, Yue",
+    booktitle = "Findings of the Association for Computational Linguistics: EMNLP 2022",
+    month = dec,
+    year = "2022",
+    address = "Abu Dhabi, United Arab Emirates",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2022.findings-emnlp.410",
+    doi = "10.18653/v1/2022.findings-emnlp.410",
+    pages = "5594--5607",
+    abstract = "While collecting or generating more parallel data is necessary to improve machine translation (MT) in low-resource settings, we lack an understanding of how the limited amounts of existing data are actually used to help guide the collection of further resources. In this paper, we apply data cartography techniques (Swayamdipta et al., 2020) to characterize the contribution of training samples in two low-resource MT tasks (Swahili-English and Turkish-English) throughout the training of standard neural MT models. Our empirical study shows that, unlike in prior work for classification tasks, most samples contribute to model training in low-resource MT, albeit not uniformly throughout the training process. Furthermore, uni-dimensional characterizations of samples {--} e.g., based on dual cross-entropy or word frequency {--} do not suffice to characterize to what degree they are hard or easy to learn. Taken together, our results suggest that data augmentation strategies for low-resource MT would benefit from model-in-the-loop strategies to maximize improvements.",
+}
+@inproceedings{papineni-etal-2002-bleu,
+    title = "{B}leu: a Method for Automatic Evaluation of Machine Translation",
+    author = "Papineni, Kishore  and
+      Roukos, Salim  and
+      Ward, Todd  and
+      Zhu, Wei-Jing",
+    editor = "Isabelle, Pierre  and
+      Charniak, Eugene  and
+      Lin, Dekang",
+    booktitle = "Proceedings of the 40th Annual Meeting of the Association for Computational Linguistics",
+    month = jul,
+    year = "2002",
+    address = "Philadelphia, Pennsylvania, USA",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/P02-1040",
+    doi = "10.3115/1073083.1073135",
+    pages = "311--318",
+}
+@inproceedings{popovic-2015-chrf,
+    title = "chr{F}: character n-gram {F}-score for automatic {MT} evaluation",
+    author = "Popovi{\'c}, Maja",
+    editor = "Bojar, Ond{\v{r}}ej  and
+      Chatterjee, Rajan  and
+      Federmann, Christian  and
+      Haddow, Barry  and
+      Hokamp, Chris  and
+      Huck, Matthias  and
+      Logacheva, Varvara  and
+      Pecina, Pavel",
+    booktitle = "Proceedings of the Tenth Workshop on Statistical Machine Translation",
+    month = sep,
+    year = "2015",
+    address = "Lisbon, Portugal",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/W15-3049",
+    doi = "10.18653/v1/W15-3049",
+    pages = "392--395",
+}
+@misc{sutskever2014sequence,
+      title={Sequence to Sequence Learning with Neural Networks}, 
+      author={Ilya Sutskever and Oriol Vinyals and Quoc V. Le},
+      year={2014},
+      eprint={1409.3215},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+
+@article{10.1162/neco.1997.9.8.1735,
+author = {Hochreiter, Sepp and Schmidhuber, J\"{u}rgen},
+title = {Long Short-Term Memory},
+year = {1997},
+issue_date = {November 15, 1997},
+publisher = {MIT Press},
+address = {Cambridge, MA, USA},
+volume = {9},
+number = {8},
+issn = {0899-7667},
+url = {https://doi.org/10.1162/neco.1997.9.8.1735},
+doi = {10.1162/neco.1997.9.8.1735},
+abstract = {Learning to store information over extended time intervals by recurrent backpropagation takes a very long time, mostly because of insufficient, decaying error backflow. We briefly review Hochreiter's (1991) analysis of this problem, then address it by introducing a novel, efficient, gradient based method called long short-term memory (LSTM). Truncating the gradient where this does not do harm, LSTM can learn to bridge minimal time lags in excess of 1000 discrete-time steps by enforcing constant error flow through constant error carousels within special units. Multiplicative gate units learn to open and close access to the constant error flow. LSTM is local in space and time; its computational complexity per time step and weight is O. 1. Our experiments with artificial data involve local, distributed, real-valued, and noisy pattern representations. In comparisons with real-time recurrent learning, back propagation through time, recurrent cascade correlation, Elman nets, and neural sequence chunking, LSTM leads to many more successful runs, and learns much faster. LSTM also solves complex, artificial long-time-lag tasks that have never been solved by previous recurrent network algorithms.},
+journal = {Neural Comput.},
+month = {nov},
+pages = {1735–1780},
+numpages = {46}
+}
+@article{Rumelhart1986LearningRB,
+  title={Learning representations by back-propagating errors},
+  author={David E. Rumelhart and Geoffrey E. Hinton and Ronald J. Williams},
+  journal={Nature},
+  year={1986},
+  volume={323},
+  pages={533-536},
+  url={https://api.semanticscholar.org/CorpusID:205001834}
+}
+@article{HORNIK1991251,
+title = {Approximation capabilities of multilayer feedforward networks},
+journal = {Neural Networks},
+volume = {4},
+number = {2},
+pages = {251-257},
+year = {1991},
+issn = {0893-6080},
+doi = {https://doi.org/10.1016/0893-6080(91)90009-T},
+url = {https://www.sciencedirect.com/science/article/pii/089360809190009T},
+author = {Kurt Hornik},
+keywords = {Multilayer feedforward networks, Activation function, Universal approximation capabilities, Input environment measure, () approximation, Uniform approximation, Sobolev spaces, Smooth approximation},
+abstract = {We show that standard multilayer feedforward networks with as few as a single hidden layer and arbitrary bounded and nonconstant activation function are universal approximators with respect to Lp(μ) performance criteria, for arbitrary finite input environment measures μ, provided only that sufficiently many hidden units are available. If the activation function is continuous, bounded and nonconstant, then continuous mappings can be learned uniformly over compact input sets. We also give very general conditions ensuring that networks with sufficiently smooth activation functions are capable of arbitrarily accurate approximation to a function and its derivatives.}
+}
+@article{ELMAN1990179,
+title = {Finding structure in time},
+journal = {Cognitive Science},
+volume = {14},
+number = {2},
+pages = {179-211},
+year = {1990},
+issn = {0364-0213},
+doi = {https://doi.org/10.1016/0364-0213(90)90002-E},
+url = {https://www.sciencedirect.com/science/article/pii/036402139090002E},
+author = {Jeffrey L. Elman},
+abstract = {Time underlies many interesting human behaviors. Thus, the question of how to represent time in connectionist models is very important. One approach is to represent time implicitly by its effects on processing rather than explicitly (as in a spatial representation). The current report develops a proposal along these lines first described by Jordan (1986) which involves the use of recurrent links in order to provide networks with a dynamic memory. In this approach, hidden unit patterns are fed back to themselves; the internal representations which develop thus reflect task demands in the context of prior internal states. A set of simulations is reported which range from relatively simple problems (temporal version of XOR) to discovering syntactic/semantic features for words. The networks are able to learn interesting internal representations which incorporate task demands with memory demands; indeed, in this approach the notion of memory is inextricably bound up with task processing. These representations reveal a rich structure, which allows them to be highly context-dependent, while also expressing generalizations across classes of items. These representations suggest a method for representing lexical categories and the type/token distinction.}
+}
+@inproceedings{voita-etal-2021-analyzing,
+    title = "Analyzing the Source and Target Contributions to Predictions in Neural Machine Translation",
+    author = "Voita, Elena  and
+      Sennrich, Rico  and
+      Titov, Ivan",
+    editor = "Zong, Chengqing  and
+      Xia, Fei  and
+      Li, Wenjie  and
+      Navigli, Roberto",
+    booktitle = "Proceedings of the 59th Annual Meeting of the Association for Computational Linguistics and the 11th International Joint Conference on Natural Language Processing (Volume 1: Long Papers)",
+    month = aug,
+    year = "2021",
+    address = "Online",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2021.acl-long.91",
+    doi = "10.18653/v1/2021.acl-long.91",
+    pages = "1126--1140",
+    abstract = "In Neural Machine Translation (and, more generally, conditional language modeling), the generation of a target token is influenced by two types of context: the source and the prefix of the target sequence. While many attempts to understand the internal workings of NMT models have been made, none of them explicitly evaluates relative source and target contributions to a generation decision. We argue that this relative contribution can be evaluated by adopting a variant of Layerwise Relevance Propagation (LRP). Its underlying {`}conservation principle{'} makes relevance propagation unique: differently from other methods, it evaluates not an abstract quantity reflecting token importance, but the proportion of each token{'}s influence. We extend LRP to the Transformer and conduct an analysis of NMT models which explicitly evaluates the source and target relative contributions to the generation process. We analyze changes in these contributions when conditioning on different types of prefixes, when varying the training objective or the amount of training data, and during the training process. We find that models trained with more data tend to rely on source information more and to have more sharp token contributions; the training process is non-monotonic with several stages of different nature.",
+}
+@inproceedings{sennrich-zhang-2019-revisiting,
+    title = "Revisiting Low-Resource Neural Machine Translation: A Case Study",
+    author = "Sennrich, Rico  and
+      Zhang, Biao",
+    editor = "Korhonen, Anna  and
+      Traum, David  and
+      M{\`a}rquez, Llu{\'\i}s",
+    booktitle = "Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics",
+    month = jul,
+    year = "2019",
+    address = "Florence, Italy",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/P19-1021",
+    doi = "10.18653/v1/P19-1021",
+    pages = "211--221",
+    abstract = "It has been shown that the performance of neural machine translation (NMT) drops starkly in low-resource conditions, underperforming phrase-based statistical machine translation (PBSMT) and requiring large amounts of auxiliary data to achieve competitive results. In this paper, we re-assess the validity of these results, arguing that they are the result of lack of system adaptation to low-resource settings. We discuss some pitfalls to be aware of when training low-resource NMT systems, and recent techniques that have shown to be especially helpful in low-resource settings, resulting in a set of best practices for low-resource NMT. In our experiments on German{--}English with different amounts of IWSLT14 training data, we show that, without the use of any auxiliary monolingual or multilingual data, an optimized NMT system can outperform PBSMT with far less data than previously claimed. We also apply these techniques to a low-resource Korean{--}English dataset, surpassing previously reported results by 4 BLEU.",
+}
+@article{haddow-etal-2022-survey,
+    title = "Survey of Low-Resource Machine Translation",
+    author = "Haddow, Barry  and
+      Bawden, Rachel  and
+      Miceli Barone, Antonio Valerio  and
+      Helcl, Jind{\v{r}}ich  and
+      Birch, Alexandra",
+    journal = "Computational Linguistics",
+    volume = "48",
+    number = "3",
+    month = sep,
+    year = "2022",
+    address = "Cambridge, MA",
+    publisher = "MIT Press",
+    url = "https://aclanthology.org/2022.cl-3.6",
+    doi = "10.1162/coli_a_00446",
+    pages = "673--732",
+    abstract = "We present a survey covering the state of the art in low-resource machine translation (MT) research. There are currently around 7,000 languages spoken in the world and almost all language pairs lack significant resources for training machine translation models. There has been increasing interest in research addressing the challenge of producing useful translation models when very little translated training data is available. We present a summary of this topical research field and provide a description of the techniques evaluated by researchers in several recent shared tasks in low-resource MT.",
+}
+
+@article{brown2020language,
+  title={Language models are few-shot learners},
+  author={Brown, Tom and Mann, Benjamin and Ryder, Nick and Subbiah, Melanie and Kaplan, Jared D and Dhariwal, Prafulla and Neelakantan, Arvind and Shyam, Pranav and Sastry, Girish and Askell, Amanda and others},
+  journal={Advances in neural information processing systems},
+  volume={33},
+  pages={1877--1901},
+  year={2020}
+}
+
+@article{achiam2023gpt,
+  title={Gpt-4 technical report},
+  author={Achiam, Josh and Adler, Steven and Agarwal, Sandhini and Ahmad, Lama and Akkaya, Ilge and Aleman, Florencia Leoni and Almeida, Diogo and Altenschmidt, Janko and Altman, Sam and Anadkat, Shyamal and others},
+  journal={arXiv preprint arXiv:2303.08774},
+  year={2023}
+}
+
+@misc{zhu2023multilingual,
+      title={Multilingual Machine Translation with Large Language Models: Empirical Results and Analysis}, 
+      author={Wenhao Zhu and Hongyi Liu and Qingxiu Dong and Jingjing Xu and Shujian Huang and Lingpeng Kong and Jiajun Chen and Lei Li},
+      year={2023},
+      eprint={2304.04675},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+@misc{jiao2023chatgpt,
+      title={Is ChatGPT A Good Translator? Yes With GPT-4 As The Engine}, 
+      author={Wenxiang Jiao and Wenxuan Wang and Jen-tse Huang and Xing Wang and Shuming Shi and Zhaopeng Tu},
+      year={2023},
+      eprint={2301.08745},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+
+@techreport{claude3,
+  author = {Anthropic},
+  title = {The Claude 3 Model Family- Opus, Sonnet, Haiku},
+  institution = {Anthropic},
+  year = {2024},
+  address = {548 Market Street, San Francisco},
+  month = {March},
+  url = {https://www-cdn.anthropic.com/de8ba9b01c9ab7cbabf5c33b80b7bbc618857627/Model_Card_Claude_3.pdf}
+}
+
+@inproceedings{stap-araabi-2023-chatgpt,
+    title = "{C}hat{GPT} is not a good indigenous translator",
+    author = "Stap, David  and
+      Araabi, Ali",
+    editor = "Mager, Manuel  and
+      Ebrahimi, Abteen  and
+      Oncevay, Arturo  and
+      Rice, Enora  and
+      Rijhwani, Shruti  and
+      Palmer, Alexis  and
+      Kann, Katharina",
+    booktitle = "Proceedings of the Workshop on Natural Language Processing for Indigenous Languages of the Americas (AmericasNLP)",
+    month = jul,
+    year = "2023",
+    address = "Toronto, Canada",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2023.americasnlp-1.17",
+    doi = "10.18653/v1/2023.americasnlp-1.17",
+    pages = "163--167",
+    abstract = "This report investigates the continuous challenges of Machine Translation (MT) systems on indigenous and extremely low-resource language pairs. Despite the notable achievements of Large Language Models (LLMs) that excel in various tasks, their applicability to low-resource languages remains questionable. In this study, we leveraged the AmericasNLP competition to evaluate the translation performance of different systems for Spanish to 11 indigenous languages from South America. Our team, LTLAmsterdam, submitted a total of four systems including GPT-4, a bilingual model, fine-tuned M2M100, and a combination of fine-tuned M2M100 with {\$}k{\$}NN-MT. We found that even large language models like GPT-4 are not well-suited for extremely low-resource languages. Our results suggest that fine-tuning M2M100 models can offer significantly better performance for extremely low-resource translation.",
+}
+
+@misc{zhang2023prompting,
+      title={Prompting Large Language Model for Machine Translation: A Case Study}, 
+      author={Biao Zhang and Barry Haddow and Alexandra Birch},
+      year={2023},
+      eprint={2301.07069},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+
+@misc{tanzer2024benchmark,
+      title={A Benchmark for Learning to Translate a New Language from One Grammar Book}, 
+      author={Garrett Tanzer and Mirac Suzgun and Eline Visser and Dan Jurafsky and Luke Melas-Kyriazi},
+      year={2024},
+      eprint={2309.16575},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+
+@misc{reid2024gemini,
+      title={Gemini 1.5: Unlocking multimodal understanding across millions of tokens of context}, 
+      author={Machel Reid and Nikolay Savinov and Denis Teplyashin and Dmitry Lepikhin and Timothy Lillicrap and Jean-baptiste Alayrac and Radu Soricut and Angeliki Lazaridou and Orhan Firat and Julian Schrittwieser and Ioannis Antonoglou and Rohan Anil and Sebastian Borgeaud and Andrew Dai and Katie Millican and Ethan Dyer and Mia Glaese and Thibault Sottiaux and Benjamin Lee and Fabio Viola and Malcolm Reynolds and Yuanzhong Xu and James Molloy and Jilin Chen and Michael Isard and Paul Barham and Tom Hennigan and Ross McIlroy and Melvin Johnson and Johan Schalkwyk and Eli Collins and Eliza Rutherford and Erica Moreira and Kareem Ayoub and Megha Goel and Clemens Meyer and Gregory Thornton and Zhen Yang and Henryk Michalewski and Zaheer Abbas and Nathan Schucher and Ankesh Anand and Richard Ives and James Keeling and Karel Lenc and Salem Haykal and Siamak Shakeri and Pranav Shyam and Aakanksha Chowdhery and Roman Ring and Stephen Spencer and Eren Sezener and Luke Vilnis and Oscar Chang and Nobuyuki Morioka and George Tucker and Ce Zheng and Oliver Woodman and Nithya Attaluri and Tomas Kocisky and Evgenii Eltyshev and Xi Chen and Timothy Chung and Vittorio Selo and Siddhartha Brahma and Petko Georgiev and Ambrose Slone and Zhenkai Zhu and James Lottes and Siyuan Qiao and Ben Caine and Sebastian Riedel and Alex Tomala and Martin Chadwick and Juliette Love and Peter Choy and Sid Mittal and Neil Houlsby and Yunhao Tang and Matthew Lamm and Libin Bai and Qiao Zhang and Luheng He and Yong Cheng and Peter Humphreys and Yujia Li and Sergey Brin and Albin Cassirer and Yingjie Miao and Lukas Zilka and Taylor Tobin and Kelvin Xu and Lev Proleev and Daniel Sohn and Alberto Magni and Lisa Anne Hendricks and Isabel Gao and Santiago Ontañón and Oskar Bunyan and Nathan Byrd and Abhanshu Sharma and Biao Zhang and Mario Pinto and Rishika Sinha and Harsh Mehta and Dawei Jia and Sergi Caelles and Albert Webson and Alex Morris and Becca Roelofs and Yifan Ding and Robin Strudel and Xuehan Xiong and Marvin Ritter and Mostafa Dehghani and Rahma Chaabouni and Abhijit Karmarkar and Guangda Lai and Fabian Mentzer and Bibo Xu and YaGuang Li and Yujing Zhang and Tom Le Paine and Alex Goldin and Behnam Neyshabur and Kate Baumli and Anselm Levskaya and Michael Laskin and Wenhao Jia and Jack W. Rae and Kefan Xiao and Antoine He and Skye Giordano and Lakshman Yagati and Jean-Baptiste Lespiau and Paul Natsev and Sanjay Ganapathy and Fangyu Liu and Danilo Martins and Nanxin Chen and Yunhan Xu and Megan Barnes and Rhys May and Arpi Vezer and Junhyuk Oh and Ken Franko and Sophie Bridgers and Ruizhe Zhao and Boxi Wu and Basil Mustafa and Sean Sechrist and Emilio Parisotto and Thanumalayan Sankaranarayana Pillai and Chris Larkin and Chenjie Gu and Christina Sorokin and Maxim Krikun and Alexey Guseynov and Jessica Landon and Romina Datta and Alexander Pritzel and Phoebe Thacker and Fan Yang and Kevin Hui and Anja Hauth and Chih-Kuan Yeh and David Barker and Justin Mao-Jones and Sophia Austin and Hannah Sheahan and Parker Schuh and James Svensson and Rohan Jain and Vinay Ramasesh and Anton Briukhov and Da-Woon Chung and Tamara von Glehn and Christina Butterfield and Priya Jhakra and Matthew Wiethoff and Justin Frye and Jordan Grimstad and Beer Changpinyo and Charline Le Lan and Anna Bortsova and Yonghui Wu and Paul Voigtlaender and Tara Sainath and Charlotte Smith and Will Hawkins and Kris Cao and James Besley and Srivatsan Srinivasan and Mark Omernick and Colin Gaffney and Gabriela Surita and Ryan Burnell and Bogdan Damoc and Junwhan Ahn and Andrew Brock and Mantas Pajarskas and Anastasia Petrushkina and Seb Noury and Lorenzo Blanco and Kevin Swersky and Arun Ahuja and Thi Avrahami and Vedant Misra and Raoul de Liedekerke and Mariko Iinuma and Alex Polozov and Sarah York and George van den Driessche and Paul Michel and Justin Chiu and Rory Blevins and Zach Gleicher and Adrià Recasens and Alban Rrustemi and Elena Gribovskaya and Aurko Roy and Wiktor Gworek and Séb Arnold and Lisa Lee and James Lee-Thorp and Marcello Maggioni and Enrique Piqueras and Kartikeya Badola and Sharad Vikram and Lucas Gonzalez and Anirudh Baddepudi and Evan Senter and Jacob Devlin and James Qin and Michael Azzam and Maja Trebacz and Martin Polacek and Kashyap Krishnakumar and Shuo-yiin Chang and Matthew Tung and Ivo Penchev and Rishabh Joshi and Kate Olszewska and Carrie Muir and Mateo Wirth and Ale Jakse Hartman and Josh Newlan and Sheleem Kashem and Vijay Bolina and Elahe Dabir and Joost van Amersfoort and Zafarali Ahmed and James Cobon-Kerr and Aishwarya Kamath and Arnar Mar Hrafnkelsson and Le Hou and Ian Mackinnon and Alexandre Frechette and Eric Noland and Xiance Si and Emanuel Taropa and Dong Li and Phil Crone and Anmol Gulati and Sébastien Cevey and Jonas Adler and Ada Ma and David Silver and Simon Tokumine and Richard Powell and Stephan Lee and Michael Chang and Samer Hassan and Diana Mincu and Antoine Yang and Nir Levine and Jenny Brennan and Mingqiu Wang and Sarah Hodkinson and Jeffrey Zhao and Josh Lipschultz and Aedan Pope and Michael B. Chang and Cheng Li and Laurent El Shafey and Michela Paganini and Sholto Douglas and Bernd Bohnet and Fabio Pardo and Seth Odoom and Mihaela Rosca and Cicero Nogueira dos Santos and Kedar Soparkar and Arthur Guez and Tom Hudson and Steven Hansen and Chulayuth Asawaroengchai and Ravi Addanki and Tianhe Yu and Wojciech Stokowiec and Mina Khan and Justin Gilmer and Jaehoon Lee and Carrie Grimes Bostock and Keran Rong and Jonathan Caton and Pedram Pejman and Filip Pavetic and Geoff Brown and Vivek Sharma and Mario Lučić and Rajkumar Samuel and Josip Djolonga and Amol Mandhane and Lars Lowe Sjösund and Elena Buchatskaya and Elspeth White and Natalie Clay and Jiepu Jiang and Hyeontaek Lim and Ross Hemsley and Jane Labanowski and Nicola De Cao and David Steiner and Sayed Hadi Hashemi and Jacob Austin and Anita Gergely and Tim Blyth and Joe Stanton and Kaushik Shivakumar and Aditya Siddhant and Anders Andreassen and Carlos Araya and Nikhil Sethi and Rakesh Shivanna and Steven Hand and Ankur Bapna and Ali Khodaei and Antoine Miech and Garrett Tanzer and Andy Swing and Shantanu Thakoor and Zhufeng Pan and Zachary Nado and Stephanie Winkler and Dian Yu and Mohammad Saleh and Loren Maggiore and Iain Barr and Minh Giang and Thais Kagohara and Ivo Danihelka and Amit Marathe and Vladimir Feinberg and Mohamed Elhawaty and Nimesh Ghelani and Dan Horgan and Helen Miller and Lexi Walker and Richard Tanburn and Mukarram Tariq and Disha Shrivastava and Fei Xia and Chung-Cheng Chiu and Zoe Ashwood and Khuslen Baatarsukh and Sina Samangooei and Fred Alcober and Axel Stjerngren and Paul Komarek and Katerina Tsihlas and Anudhyan Boral and Ramona Comanescu and Jeremy Chen and Ruibo Liu and Dawn Bloxwich and Charlie Chen and Yanhua Sun and Fangxiaoyu Feng and Matthew Mauger and Xerxes Dotiwalla and Vincent Hellendoorn and Michael Sharman and Ivy Zheng and Krishna Haridasan and Gabe Barth-Maron and Craig Swanson and Dominika Rogozińska and Alek Andreev and Paul Kishan Rubenstein and Ruoxin Sang and Dan Hurt and Gamaleldin Elsayed and Renshen Wang and Dave Lacey and Anastasija Ilić and Yao Zhao and Lora Aroyo and Chimezie Iwuanyanwu and Vitaly Nikolaev and Balaji Lakshminarayanan and Sadegh Jazayeri and Raphaël Lopez Kaufman and Mani Varadarajan and Chetan Tekur and Doug Fritz and Misha Khalman and David Reitter and Kingshuk Dasgupta and Shourya Sarcar and Tina Ornduff and Javier Snaider and Fantine Huot and Johnson Jia and Rupert Kemp and Nejc Trdin and Anitha Vijayakumar and Lucy Kim and Christof Angermueller and Li Lao and Tianqi Liu and Haibin Zhang and David Engel and Somer Greene and Anaïs White and Jessica Austin and Lilly Taylor and Shereen Ashraf and Dangyi Liu and Maria Georgaki and Irene Cai and Yana Kulizhskaya and Sonam Goenka and Brennan Saeta and Kiran Vodrahalli and Christian Frank and Dario de Cesare and Brona Robenek and Harry Richardson and Mahmoud Alnahlawi and Christopher Yew and Priya Ponnapalli and Marco Tagliasacchi and Alex Korchemniy and Yelin Kim and Dinghua Li and Bill Rosgen and Zoe Ashwood and Kyle Levin and Jeremy Wiesner and Praseem Banzal and Praveen Srinivasan and Hongkun Yu and Çağlar Ünlü and David Reid and Zora Tung and Daniel Finchelstein and Ravin Kumar and Andre Elisseeff and Jin Huang and Ming Zhang and Rui Zhu and Ricardo Aguilar and Mai Giménez and Jiawei Xia and Olivier Dousse and Willi Gierke and Soheil Hassas Yeganeh and Damion Yates and Komal Jalan and Lu Li and Eri Latorre-Chimoto and Duc Dung Nguyen and Ken Durden and Praveen Kallakuri and Yaxin Liu and Matthew Johnson and Tomy Tsai and Alice Talbert and Jasmine Liu and Alexander Neitz and Chen Elkind and Marco Selvi and Mimi Jasarevic and Livio Baldini Soares and Albert Cui and Pidong Wang and Alek Wenjiao Wang and Xinyu Ye and Krystal Kallarackal and Lucia Loher and Hoi Lam and Josef Broder and Dan Holtmann-Rice and Nina Martin and Bramandia Ramadhana and Daniel Toyama and Mrinal Shukla and Sujoy Basu and Abhi Mohan and Nick Fernando and Noah Fiedel and Kim Paterson and Hui Li and Ankush Garg and Jane Park and DongHyun Choi and Diane Wu and Sankalp Singh and Zhishuai Zhang and Amir Globerson and Lily Yu and John Carpenter and Félix de Chaumont Quitry and Carey Radebaugh and Chu-Cheng Lin and Alex Tudor and Prakash Shroff and Drew Garmon and Dayou Du and Neera Vats and Han Lu and Shariq Iqbal and Alex Yakubovich and Nilesh Tripuraneni and James Manyika and Haroon Qureshi and Nan Hua and Christel Ngani and Maria Abi Raad and Hannah Forbes and Anna Bulanova and Jeff Stanway and Mukund Sundararajan and Victor Ungureanu and Colton Bishop and Yunjie Li and Balaji Venkatraman and Bo Li and Chloe Thornton and Salvatore Scellato and Nishesh Gupta and Yicheng Wang and Ian Tenney and Xihui Wu and Ashish Shenoy and Gabriel Carvajal and Diana Gage Wright and Ben Bariach and Zhuyun Xiao and Peter Hawkins and Sid Dalmia and Clement Farabet and Pedro Valenzuela and Quan Yuan and Chris Welty and Ananth Agarwal and Mia Chen and Wooyeol Kim and Brice Hulse and Nandita Dukkipati and Adam Paszke and Andrew Bolt and Elnaz Davoodi and Kiam Choo and Jennifer Beattie and Jennifer Prendki and Harsha Vashisht and Rebeca Santamaria-Fernandez and Luis C. Cobo and Jarek Wilkiewicz and David Madras and Ali Elqursh and Grant Uy and Kevin Ramirez and Matt Harvey and Tyler Liechty and Heiga Zen and Jeff Seibert and Clara Huiyi Hu and Mohamed Elhawaty and Andrey Khorlin and Maigo Le and Asaf Aharoni and Megan Li and Lily Wang and Sandeep Kumar and Alejandro Lince and Norman Casagrande and Jay Hoover and Dalia El Badawy and David Soergel and Denis Vnukov and Matt Miecnikowski and Jiri Simsa and Anna Koop and Praveen Kumar and Thibault Sellam and Daniel Vlasic and Samira Daruki and Nir Shabat and John Zhang and Guolong Su and Jiageng Zhang and Jeremiah Liu and Yi Sun and Evan Palmer and Alireza Ghaffarkhah and Xi Xiong and Victor Cotruta and Michael Fink and Lucas Dixon and Ashwin Sreevatsa and Adrian Goedeckemeyer and Alek Dimitriev and Mohsen Jafari and Remi Crocker and Nicholas FitzGerald and Aviral Kumar and Sanjay Ghemawat and Ivan Philips and Frederick Liu and Yannie Liang and Rachel Sterneck and Alena Repina and Marcus Wu and Laura Knight and Marin Georgiev and Hyo Lee and Harry Askham and Abhishek Chakladar and Annie Louis and Carl Crous and Hardie Cate and Dessie Petrova and Michael Quinn and Denese Owusu-Afriyie and Achintya Singhal and Nan Wei and Solomon Kim and Damien Vincent and Milad Nasr and Christopher A. Choquette-Choo and Reiko Tojo and Shawn Lu and Diego de Las Casas and Yuchung Cheng and Tolga Bolukbasi and Katherine Lee and Saaber Fatehi and Rajagopal Ananthanarayanan and Miteyan Patel and Charbel Kaed and Jing Li and Jakub Sygnowski and Shreyas Rammohan Belle and Zhe Chen and Jaclyn Konzelmann and Siim Põder and Roopal Garg and Vinod Koverkathu and Adam Brown and Chris Dyer and Rosanne Liu and Azade Nova and Jun Xu and Slav Petrov and Demis Hassabis and Koray Kavukcuoglu and Jeffrey Dean and Oriol Vinyals},
+      year={2024},
+      eprint={2403.05530},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+
+@inproceedings{robinson-etal-2023-chatgpt,
+    title = "{C}hat{GPT} {MT}: Competitive for High- (but Not Low-) Resource Languages",
+    author = "Robinson, Nathaniel  and
+      Ogayo, Perez  and
+      Mortensen, David R.  and
+      Neubig, Graham",
+    editor = "Koehn, Philipp  and
+      Haddow, Barry  and
+      Kocmi, Tom  and
+      Monz, Christof",
+    booktitle = "Proceedings of the Eighth Conference on Machine Translation",
+    month = dec,
+    year = "2023",
+    address = "Singapore",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2023.wmt-1.40",
+    doi = "10.18653/v1/2023.wmt-1.40",
+    pages = "392--418",
+    abstract = "Large language models (LLMs) implicitly learn to perform a range of language tasks, including machine translation (MT). Previous studies explore aspects of LLMs{'} MT capabilities. However, there exist a wide variety of languages for which recent LLM MT performance has never before been evaluated. Without published experimental evidence on the matter, it is difficult for speakers of the world{'}s diverse languages to know how and whether they can use LLMs for their languages. We present the first experimental evidence for an expansive set of 204 languages, along with MT cost analysis, using the FLORES-200 benchmark. Trends reveal that GPT models approach or exceed traditional MT model performance for some high-resource languages (HRLs) but consistently lag for low-resource languages (LRLs), under-performing traditional MT for 84.1{\%} of languages we covered. Our analysis reveals that a language{'}s resource level is the most important feature in determining ChatGPT{'}s relative ability to translate it, and suggests that ChatGPT is especially disadvantaged for LRLs and African languages.",
+}
+@misc{hinton2015distilling,
+      title={Distilling the Knowledge in a Neural Network}, 
+      author={Geoffrey Hinton and Oriol Vinyals and Jeff Dean},
+      year={2015},
+      eprint={1503.02531},
+      archivePrefix={arXiv},
+      primaryClass={stat.ML}
+}
+@misc{kim2016sequencelevel,
+      title={Sequence-Level Knowledge Distillation}, 
+      author={Yoon Kim and Alexander M. Rush},
+      year={2016},
+      eprint={1606.07947},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+@misc{nllbteam2022language,
+      title={No Language Left Behind: Scaling Human-Centered Machine Translation}, 
+      author={NLLB Team and Marta R. Costa-jussà and James Cross and Onur Çelebi and Maha Elbayad and Kenneth Heafield and Kevin Heffernan and Elahe Kalbassi and Janice Lam and Daniel Licht and Jean Maillard and Anna Sun and Skyler Wang and Guillaume Wenzek and Al Youngblood and Bapi Akula and Loic Barrault and Gabriel Mejia Gonzalez and Prangthip Hansanti and John Hoffman and Semarley Jarrett and Kaushik Ram Sadagopan and Dirk Rowe and Shannon Spruit and Chau Tran and Pierre Andrews and Necip Fazil Ayan and Shruti Bhosale and Sergey Edunov and Angela Fan and Cynthia Gao and Vedanuj Goswami and Francisco Guzmán and Philipp Koehn and Alexandre Mourachko and Christophe Ropers and Safiyyah Saleem and Holger Schwenk and Jeff Wang},
+      year={2022},
+      eprint={2207.04672},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+@misc{kaplan2020scaling,
+      title={Scaling Laws for Neural Language Models}, 
+      author={Jared Kaplan and Sam McCandlish and Tom Henighan and Tom B. Brown and Benjamin Chess and Rewon Child and Scott Gray and Alec Radford and Jeffrey Wu and Dario Amodei},
+      year={2020},
+      eprint={2001.08361},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG}
+}
+
+@misc{hoffmann2022training,
+      title={Training Compute-Optimal Large Language Models}, 
+      author={Jordan Hoffmann and Sebastian Borgeaud and Arthur Mensch and Elena Buchatskaya and Trevor Cai and Eliza Rutherford and Diego de Las Casas and Lisa Anne Hendricks and Johannes Welbl and Aidan Clark and Tom Hennigan and Eric Noland and Katie Millican and George van den Driessche and Bogdan Damoc and Aurelia Guy and Simon Osindero and Karen Simonyan and Erich Elsen and Jack W. Rae and Oriol Vinyals and Laurent Sifre},
+      year={2022},
+      eprint={2203.15556},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+@misc{muennighoff2023scaling,
+      title={Scaling Data-Constrained Language Models}, 
+      author={Niklas Muennighoff and Alexander M. Rush and Boaz Barak and Teven Le Scao and Aleksandra Piktus and Nouamane Tazi and Sampo Pyysalo and Thomas Wolf and Colin Raffel},
+      year={2023},
+      eprint={2305.16264},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+@misc{sennrich2016improving,
+      title={Improving Neural Machine Translation Models with Monolingual Data}, 
+      author={Rico Sennrich and Barry Haddow and Alexandra Birch},
+      year={2016},
+      eprint={1511.06709},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+
+
+@inproceedings{flores101,
+  title={The FLORES-101  Evaluation Benchmark for Low-Resource and Multilingual Machine Translation},
+  author={Goyal, Naman and Gao, Cynthia and Chaudhary, Vishrav and Chen, Peng-Jen and Wenzek, Guillaume and Ju, Da and Krishnan, Sanjana and Ranzato, Marc'Aurelio and Guzm\'{a}n, Francisco and Fan, Angela},
+  year={2021}
+}
+
+@inproceedings{flores-two,
+  title={Two New Evaluation Datasets for Low-Resource Machine Translation: Nepali-English and Sinhala-English},
+  author={Guzm\'{a}n, Francisco and Chen, Peng-Jen and Ott, Myle and Pino, Juan and Lample, Guillaume and Koehn, Philipp and Chaudhary, Vishrav and Ranzato, Marc'Aurelio},
+  journal={arXiv preprint arXiv:1902.01382},
+  year={2019}
+}
+@inproceedings{kocmi-federmann-2023-large,
+    title = "Large Language Models Are State-of-the-Art Evaluators of Translation Quality",
+    author = "Kocmi, Tom  and
+      Federmann, Christian",
+    editor = "Nurminen, Mary  and
+      Brenner, Judith  and
+      Koponen, Maarit  and
+      Latomaa, Sirkku  and
+      Mikhailov, Mikhail  and
+      Schierl, Frederike  and
+      Ranasinghe, Tharindu  and
+      Vanmassenhove, Eva  and
+      Vidal, Sergi Alvarez  and
+      Aranberri, Nora  and
+      Nunziatini, Mara  and
+      Escart{\'\i}n, Carla Parra  and
+      Forcada, Mikel  and
+      Popovic, Maja  and
+      Scarton, Carolina  and
+      Moniz, Helena",
+    booktitle = "Proceedings of the 24th Annual Conference of the European Association for Machine Translation",
+    month = jun,
+    year = "2023",
+    address = "Tampere, Finland",
+    publisher = "European Association for Machine Translation",
+    url = "https://aclanthology.org/2023.eamt-1.19",
+    pages = "193--203",
+    abstract = "We describe GEMBA, a GPT-based metric for assessment of translation quality, which works both with a reference translation and without. In our evaluation, we focus on zero-shot prompting, comparing four prompt variants in two modes, based on the availability of the reference. We investigate seven versions of GPT models, including ChatGPT. We show that our method for translation quality assessment only works with GPT 3.5 and larger models. Comparing to results from WMT22{'}s Metrics shared task, our method achieves state-of-the-art accuracy in both modes when compared to MQM-based human labels. Our results are valid on the system level for all three WMT22 Metrics shared task language pairs, namely English into German, English into Russian, and Chinese into English. This provides a first glimpse into the usefulness of pre-trained, generative large language models for quality assessment of translations. We publicly release all our code and prompt templates used for the experiments described in this work, as well as all corresponding scoring results, to allow for external validation and reproducibility.",
+}
+
+@inproceedings{koishekenov-etal-2023-memory,
+    title = "Memory-efficient {NLLB}-200: Language-specific Expert Pruning of a Massively Multilingual Machine Translation Model",
+    author = "Koishekenov, Yeskendir  and
+      Berard, Alexandre  and
+      Nikoulina, Vassilina",
+    editor = "Rogers, Anna  and
+      Boyd-Graber, Jordan  and
+      Okazaki, Naoaki",
+    booktitle = "Proceedings of the 61st Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)",
+    month = jul,
+    year = "2023",
+    address = "Toronto, Canada",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2023.acl-long.198",
+    doi = "10.18653/v1/2023.acl-long.198",
+    pages = "3567--3585",
+    abstract = "The recently released NLLB-200 is a set of multilingual Neural Machine Translation models that cover 202 languages. The largest model is based on a Mixture of Experts architecture and achieves SoTA results across many language pairs. It contains 54.5B parameters and requires at least four 32GB GPUs just for inference. In this work, we propose a pruning method that enables the removal of up to 80{\%} of experts without further finetuning and with a negligible loss in translation quality, which makes it feasible to run the model on a single 32GB GPU. Further analysis suggests that our pruning metrics can identify language-specific experts.",
+}
+@incollection{ethnologue2024yoruba,
+author = {Eberhard, David M. and Simons, Gary F. and Fennig, Charles D.},
+title = {Yoruba},
+editor = {Eberhard, David M. and Simons, Gary F. and Fennig, Charles D.},
+booktitle = {Ethnologue: Languages of the World},
+edition = {27},
+year = {2024},
+publisher = {SIL International},
+address = {Dallas, Texas},
+url = {http://ethnologue.com/language/yor/},
+urldate = {2024-03-19}
+}
+@misc{adelani2021effect,
+      title={The Effect of Domain and Diacritics in Yor\`ub\'a-English Neural Machine Translation}, 
+      author={David I. Adelani and Dana Ruiter and Jesujoba O. Alabi and Damilola Adebonojo and Adesina Ayeni and Mofe Adeyemi and Ayodele Awokoya and Cristina España-Bonet},
+      year={2021},
+      eprint={2103.08647},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+@misc{wang2023documentlevel,
+      title={Document-Level Machine Translation with Large Language Models}, 
+      author={Longyue Wang and Chenyang Lyu and Tianbo Ji and Zhirui Zhang and Dian Yu and Shuming Shi and Zhaopeng Tu},
+      year={2023},
+      eprint={2304.02210},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+@article{srivastava2022imitation,
+  title={Beyond the imitation game: Quantifying and extrapolating the capabilities of language models},
+  author={Srivastava, Aarohi and Rastogi, Abhinav and Rao, Abhishek and Shoeb, Abu Awal Md and Abid, Abubakar and Fisch, Adam and Brown, Adam R and Santoro, Adam and Gupta, Aditya and Garriga-Alonso, Adri{\`a} and others},
+  journal={arXiv preprint arXiv:2206.04615},
+  year={2022}
+}
+@inproceedings{karpinska-iyyer-2023-large,
+    title = "Large Language Models Effectively Leverage Document-level Context for Literary Translation, but Critical Errors Persist",
+    author = "Karpinska, Marzena  and
+      Iyyer, Mohit",
+    editor = "Koehn, Philipp  and
+      Haddow, Barry  and
+      Kocmi, Tom  and
+      Monz, Christof",
+    booktitle = "Proceedings of the Eighth Conference on Machine Translation",
+    month = dec,
+    year = "2023",
+    address = "Singapore",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2023.wmt-1.41",
+    doi = "10.18653/v1/2023.wmt-1.41",
+    pages = "419--451",
+    abstract = "Large language models (LLMs) are competitive with the state of the art on a wide range of sentence-level translation datasets. However, their ability to translate paragraphs and documents remains unexplored because evaluation in these settings is costly and difficult. We show through a rigorous human evaluation that asking the GPT-3.5 (text-davinci-003) LLM to translate an entire literary paragraph (e.g., from a novel) at once results in higher-quality translations than standard sentence-by-sentence translation across 18 linguistically-diverse language pairs (e.g., translating into and out of Japanese, Polish, and English). Our evaluation, which took approximately 350 hours of effort for annotation and analysis, is conducted by hiring translators fluent in both the source and target language and asking them to provide both span-level error annotations as well as preference judgments of which system{'}s translations are better. We observe that discourse-level LLM translators commit fewer mistranslations, grammar errors, and stylistic inconsistencies than sentence-level approaches. With that said, critical errors still abound, including occasional content omissions, and a human translator{'}s intervention remains necessary to ensure that the author{'}s voice remains intact. We publicly release our dataset and error annotations to spur future research on the evaluation of document-level literary translation.",
+}
+
+@misc{loshchilov2019decoupled,
+      title={Decoupled Weight Decay Regularization}, 
+      author={Ilya Loshchilov and Frank Hutter},
+      year={2019},
+      eprint={1711.05101},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG}
+}
+@misc{zhao2024large,
+      title={How do Large Language Models Handle Multilingualism?}, 
+      author={Yiran Zhao and Wenxuan Zhang and Guizhen Chen and Kenji Kawaguchi and Lidong Bing},
+      year={2024},
+      eprint={2402.18815},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+@misc{agrawal2022incontext,
+      title={In-context Examples Selection for Machine Translation}, 
+      author={Sweta Agrawal and Chunting Zhou and Mike Lewis and Luke Zettlemoyer and Marjan Ghazvininejad},
+      year={2022},
+      eprint={2212.02437},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+@inproceedings{ebrahimi-etal-2023-findings,
+    title = "Findings of the {A}mericas{NLP} 2023 Shared Task on Machine Translation into Indigenous Languages",
+    author = "Ebrahimi, Abteen  and
+      Mager, Manuel  and
+      Rijhwani, Shruti  and
+      Rice, Enora  and
+      Oncevay, Arturo  and
+      Baltazar, Claudia  and
+      Cort{\'e}s, Mar{\'\i}a  and
+      Monta{\~n}o, Cynthia  and
+      Ortega, John E.  and
+      Coto-solano, Rolando  and
+      Cruz, Hilaria  and
+      Palmer, Alexis  and
+      Kann, Katharina",
+    editor = "Mager, Manuel  and
+      Ebrahimi, Abteen  and
+      Oncevay, Arturo  and
+      Rice, Enora  and
+      Rijhwani, Shruti  and
+      Palmer, Alexis  and
+      Kann, Katharina",
+    booktitle = "Proceedings of the Workshop on Natural Language Processing for Indigenous Languages of the Americas (AmericasNLP)",
+    month = jul,
+    year = "2023",
+    address = "Toronto, Canada",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2023.americasnlp-1.23",
+    doi = "10.18653/v1/2023.americasnlp-1.23",
+    pages = "206--219",
+    abstract = "In this work, we present the results of the AmericasNLP 2023 Shared Task on Machine Translation into Indigenous Languages of the Americas. This edition of the shared task featured eleven language pairs, one of which {--} Chatino-Spanish {--} uses a newly collected evaluation dataset, consisting of professionally translated text from the legal domain. Seven teams participated in the shared task, with a total of 181 submissions. Additionally, we conduct a human evaluation of the best system outputs, and compare them to the best submissions from the prior shared task. We find that this analysis agrees with the quantitative measures used to rank submissions, which shows further improvements of 9.64 ChrF on average across all languages, when compared to the prior winning system.",
+}
+@misc{bojanowski2017enriching,
+      title={Enriching Word Vectors with Subword Information}, 
+      author={Piotr Bojanowski and Edouard Grave and Armand Joulin and Tomas Mikolov},
+      year={2017},
+      eprint={1607.04606},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+@misc{li2024mtpatcher,
+      title={MT-PATCHER: Selective and Extendable Knowledge Distillation from Large Language Models for Machine Translation}, 
+      author={Jiahuan Li and Shanbo Cheng and Shujian Huang and Jiajun Chen},
+      year={2024},
+      eprint={2403.09522},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+@inproceedings{wang-etal-2023-document-level,
+    title = "Document-Level Machine Translation with Large Language Models",
+    author = "Wang, Longyue  and
+      Lyu, Chenyang  and
+      Ji, Tianbo  and
+      Zhang, Zhirui  and
+      Yu, Dian  and
+      Shi, Shuming  and
+      Tu, Zhaopeng",
+    editor = "Bouamor, Houda  and
+      Pino, Juan  and
+      Bali, Kalika",
+    booktitle = "Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing",
+    month = dec,
+    year = "2023",
+    address = "Singapore",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2023.emnlp-main.1036",
+    doi = "10.18653/v1/2023.emnlp-main.1036",
+    pages = "16646--16661",
+    abstract = "Large language models (LLMs) such as ChatGPT can produce coherent, cohesive, relevant, and fluent answers for various natural language processing (NLP) tasks. Taking document-level machine translation (MT) as a testbed, this paper provides an in-depth evaluation of LLMs{'} ability on discourse modeling. The study focuses on three aspects: 1) Effects of Context-Aware Prompts, where we investigate the impact of different prompts on document-level translation quality and discourse phenomena; 2) Comparison of Translation Models, where we compare the translation performance of ChatGPT with commercial MT systems and advanced document-level MT methods; 3) Analysis of Discourse Modelling Abilities, where we further probe discourse knowledge encoded in LLMs and shed light on impacts of training techniques on discourse modeling. By evaluating on a number of benchmarks, we surprisingly find that LLMs have demonstrated superior performance and show potential to become a new paradigm for document-level translation: 1) leveraging their powerful long-text modeling capabilities, GPT-3.5 and GPT-4 outperform commercial MT systems in terms of human evaluation; 2) GPT-4 demonstrates a stronger ability for probing linguistic knowledge than GPT-3.5. This work highlights the challenges and opportunities of LLMs for MT, which we hope can inspire the future design and evaluation of LLMs (We release our data and annotations at https://github.com/longyuewangdcu/Document-MT-LLM).",
+}
+@inproceedings{sainz-etal-2023-nlp,
+    title = "{NLP} Evaluation in trouble: On the Need to Measure {LLM} Data Contamination for each Benchmark",
+    author = "Sainz, Oscar  and
+      Campos, Jon  and
+      Garc{\'\i}a-Ferrero, Iker  and
+      Etxaniz, Julen  and
+      de Lacalle, Oier Lopez  and
+      Agirre, Eneko",
+    editor = "Bouamor, Houda  and
+      Pino, Juan  and
+      Bali, Kalika",
+    booktitle = "Findings of the Association for Computational Linguistics: EMNLP 2023",
+    month = dec,
+    year = "2023",
+    address = "Singapore",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2023.findings-emnlp.722",
+    doi = "10.18653/v1/2023.findings-emnlp.722",
+    pages = "10776--10787",
+    abstract = "In this position paper we argue that the classical evaluation on Natural Language Processing (NLP) tasks using annotated benchmarks is in trouble. The worst kind of data contamination happens when a Large Language Model (LLM) is trained on the test split of a benchmark, and then evaluated in the same benchmark. The extent of the problem is unknown, as it is not straightforward to measure. Contamination causes an overestimation of the performance of a contaminated model in a target benchmark and associated task with respect to their non-contaminated counterparts. The consequences can be very harmful, with wrong scientific conclusions being published while other correct ones are discarded. This position paper defines different levels of data contamination and argues for a community effort, including the development of automatic and semi-automatic measures to detect when data from a benchmark was exposed to a model, and suggestions for flagging papers with conclusions that are compromised by data contamination.",
+}
+@inproceedings{heffernan-etal-2022-bitext,
+    title = "Bitext Mining Using Distilled Sentence Representations for Low-Resource Languages",
+    author = "Heffernan, Kevin  and
+      {\c{C}}elebi, Onur  and
+      Schwenk, Holger",
+    editor = "Goldberg, Yoav  and
+      Kozareva, Zornitsa  and
+      Zhang, Yue",
+    booktitle = "Findings of the Association for Computational Linguistics: EMNLP 2022",
+    month = dec,
+    year = "2022",
+    address = "Abu Dhabi, United Arab Emirates",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2022.findings-emnlp.154",
+    doi = "10.18653/v1/2022.findings-emnlp.154",
+    pages = "2101--2112",
+    abstract = "Scaling multilingual representation learning beyond the hundred most frequent languages is challenging, in particular to cover the long tail of low-resource languages. We move away from the popular one-for-all multilingual models and focus on training multiple language (family) specific representations, but most prominently enable all languages to still be encoded in the same representational space. We focus on teacher-student training, allowing all encoders to be mutually compatible for bitext mining, and enabling fast learning of new languages. We also combine supervised and self-supervised training, allowing encoders to take advantage of monolingual training data. Our approach significantly outperforms the original LASER encoder. We study very low-resource languages and handle 44 African languages, many of which are not covered by any other model. For these languages, we train sentence encoders and mine bitexts. Adding these mined bitexts yielded an improvement of 3.8 BLEU for NMT into English.",
+}
+
+@article{wald1943tests,
+  title={Tests of statistical hypotheses concerning several parameters when the number of observations is large},
+  author={Wald, Abraham},
+  journal={Transactions of the American Mathematical society},
+  volume={54},
+  number={3},
+  pages={426--482},
+  year={1943}
+}
+@misc{carlini2023quantifying,
+      title={Quantifying Memorization Across Neural Language Models}, 
+      author={Nicholas Carlini and Daphne Ippolito and Matthew Jagielski and Katherine Lee and Florian Tramer and Chiyuan Zhang},
+      year={2023},
+      eprint={2202.07646},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG}
+}
+@misc{Turovsky2016,
+author = {Turovsky, Barak},
+title = {Ten Years of Google Translate},
+year = {2016},
+month = {April},
+day = {28},
+howpublished = {\url{https://blog.google/products/translate/ten-years-of-google-translate/}},
+note = {Accessed: 2024-04-11}
+}
+@inproceedings{muennighoff-etal-2023-crosslingual,
+    title = "Crosslingual Generalization through Multitask Finetuning",
+    author = "Muennighoff, Niklas  and
+      Wang, Thomas  and
+      Sutawika, Lintang  and
+      Roberts, Adam  and
+      Biderman, Stella  and
+      Le Scao, Teven  and
+      Bari, M Saiful  and
+      Shen, Sheng  and
+      Yong, Zheng Xin  and
+      Schoelkopf, Hailey  and
+      Tang, Xiangru  and
+      Radev, Dragomir  and
+      Aji, Alham Fikri  and
+      Almubarak, Khalid  and
+      Albanie, Samuel  and
+      Alyafeai, Zaid  and
+      Webson, Albert  and
+      Raff, Edward  and
+      Raffel, Colin",
+    editor = "Rogers, Anna  and
+      Boyd-Graber, Jordan  and
+      Okazaki, Naoaki",
+    booktitle = "Proceedings of the 61st Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)",
+    month = jul,
+    year = "2023",
+    address = "Toronto, Canada",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2023.acl-long.891",
+    doi = "10.18653/v1/2023.acl-long.891",
+    pages = "15991--16111",
+    abstract = "Multitask prompted finetuning (MTF) has been shown to help large language models generalize to new tasks in a zero-shot setting, but so far explorations of MTF have focused on English data and models. We apply MTF to the pretrained multilingual BLOOM and mT5 model families to produce finetuned variants called BLOOMZ and mT0. We find finetuning large multilingual language models on English tasks with English prompts allows for task genrealization to non-English languages that appear only in the pretraining corpus. Finetuning on multilingual tasks with English prompts further improves performance on English and non-English tasks leading to various state-of-the-art zero-shot results. We also investigate finetuning on multilingual tasks with prompts that have been machine-translated from English to match the language of each dataset. We find training on these machine-translated prompts leads to better performance on human-written prompts in the respective languages. Surprisingly, we find models are capable of zero-shot generalization to tasks in languages they have never intentionally seen. We conjecture that the models are learning higher-level capabilities that are both task- and language-agnostic. In addition, we introduce xP3, a composite of supervised datasets in 46 languages with English and machine-translated prompts. Our code, datasets and models are freely available at \url{https://github.com/bigscience-workshop/xmtf}.",
+}
+
+
+@article{DBLP:journals/corr/abs-1910-01348,
+  author       = {Jang Hyun Cho and
+                  Bharath Hariharan},
+  title        = {On the Efficacy of Knowledge Distillation},
+  journal      = {CoRR},
+  volume       = {abs/1910.01348},
+  year         = {2019},
+  url          = {http://arxiv.org/abs/1910.01348},
+  eprinttype    = {arXiv},
+  eprint       = {1910.01348},
+  timestamp    = {Fri, 04 Oct 2019 12:28:06 +0200},
+  biburl       = {https://dblp.org/rec/journals/corr/abs-1910-01348.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+@INPROCEEDINGS{5206848,
+  author={Deng, Jia and Dong, Wei and Socher, Richard and Li, Li-Jia and Kai Li and Li Fei-Fei},
+  booktitle={2009 IEEE Conference on Computer Vision and Pattern Recognition}, 
+  title={ImageNet: A large-scale hierarchical image database}, 
+  year={2009},
+  volume={},
+  number={},
+  pages={248-255},
+  keywords={Large-scale systems;Image databases;Explosions;Internet;Robustness;Information retrieval;Image retrieval;Multimedia databases;Ontologies;Spine},
+  doi={10.1109/CVPR.2009.5206848}}
+
+@inproceedings{wicks-post-2021-unified,
+    title = "A unified approach to sentence segmentation of punctuated text in many languages",
+    author = "Wicks, Rachel  and
+      Post, Matt",
+    editor = "Zong, Chengqing  and
+      Xia, Fei  and
+      Li, Wenjie  and
+      Navigli, Roberto",
+    booktitle = "Proceedings of the 59th Annual Meeting of the Association for Computational Linguistics and the 11th International Joint Conference on Natural Language Processing (Volume 1: Long Papers)",
+    month = aug,
+    year = "2021",
+    address = "Online",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2021.acl-long.309",
+    doi = "10.18653/v1/2021.acl-long.309",
+    pages = "3995--4007",
+    abstract = "The sentence is a fundamental unit of text processing. Yet sentences in the wild are commonly encountered not in isolation, but unsegmented within larger paragraphs and documents. Therefore, the first step in many NLP pipelines is \textit{sentence segmentation}. Despite its importance, this step is the subject of relatively little research. There are no standard test sets or even methods for evaluation, leaving researchers and engineers without a clear footing for evaluating and selecting models for the task. Existing tools have relatively small language coverage, and efforts to extend them to other languages are often ad hoc. We introduce a modern context-based modeling approach that provides a solution to the problem of segmenting punctuated text in many languages, and show how it can be trained on noisily-annotated data. We also establish a new 23-language multilingual evaluation set. Our approach exceeds high baselines set by existing methods on prior English corpora (WSJ and Brown corpora), and also performs well on average on our new evaluation set. We release our tool, ersatz, as open source.",
+}
+@misc{pythainlp,
+    title = "{P}y{T}hai{NLP}: {T}hai Natural Language Processing in {P}ython",
+    author = "Phatthiyaphaibun, Wannaphong  and
+      Chaovavanich, Korakot  and
+      Polpanumas, Charin  and
+      Suriyawongkul, Arthit  and
+      Lowphansirikul, Lalita  and
+      Chormai, Pattarawat",
+    month = jun,
+    year = "2016",
+    doi = {10.5281/zenodo.3519354},
+    publisher = {Zenodo},
+    url = {http://doi.org/10.5281/zenodo.3519354}
+}
+
+@inproceedings{hernandez-mena-etal-2020-masri,
+    title = "{MASRI}-{HEADSET}: A {M}altese Corpus for Speech Recognition",
+    author = "Hernandez Mena, Carlos Daniel  and
+      Gatt, Albert  and
+      DeMarco, Andrea  and
+      Borg, Claudia  and
+      van der Plas, Lonneke  and
+      Muscat, Amanda  and
+      Padovani, Ian",
+    editor = "Calzolari, Nicoletta  and
+      B{\'e}chet, Fr{\'e}d{\'e}ric  and
+      Blache, Philippe  and
+      Choukri, Khalid  and
+      Cieri, Christopher  and
+      Declerck, Thierry  and
+      Goggi, Sara  and
+      Isahara, Hitoshi  and
+      Maegaard, Bente  and
+      Mariani, Joseph  and
+      Mazo, H{\'e}l{\`e}ne  and
+      Moreno, Asuncion  and
+      Odijk, Jan  and
+      Piperidis, Stelios",
+    booktitle = "Proceedings of the Twelfth Language Resources and Evaluation Conference",
+    month = may,
+    year = "2020",
+    address = "Marseille, France",
+    publisher = "European Language Resources Association",
+    url = "https://aclanthology.org/2020.lrec-1.784",
+    pages = "6381--6388",
+    abstract = "Maltese, the national language of Malta, is spoken by approximately 500,000 people. Speech processing for Maltese is still in its early stages of development. In this paper, we present the first spoken Maltese corpus designed purposely for Automatic Speech Recognition (ASR). The MASRI-HEADSET corpus was developed by the MASRI project at the University of Malta. It consists of 8 hours of speech paired with text, recorded by using short text snippets in a laboratory environment. The speakers were recruited from different geographical locations all over the Maltese islands, and were roughly evenly distributed by gender. This paper also presents some initial results achieved in baseline experiments for Maltese ASR using Sphinx and Kaldi. The MASRI HEADSET Corpus is publicly available for research/academic purposes.",
+    language = "English",
+    ISBN = "979-10-95546-34-4",
+}
+@inproceedings{popovic-2017-chrf,
+    title = "chr{F}++: words helping character n-grams",
+    author = "Popovi{\'c}, Maja",
+    editor = "Bojar, Ond{\v{r}}ej  and
+      Buck, Christian  and
+      Chatterjee, Rajen  and
+      Federmann, Christian  and
+      Graham, Yvette  and
+      Haddow, Barry  and
+      Huck, Matthias  and
+      Yepes, Antonio Jimeno  and
+      Koehn, Philipp  and
+      Kreutzer, Julia",
+    booktitle = "Proceedings of the Second Conference on Machine Translation",
+    month = sep,
+    year = "2017",
+    address = "Copenhagen, Denmark",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/W17-4770",
+    doi = "10.18653/v1/W17-4770",
+    pages = "612--618",
+}
+@inproceedings{rei-etal-2020-comet,
+    title = "{COMET}: A Neural Framework for {MT} Evaluation",
+    author = "Rei, Ricardo  and
+      Stewart, Craig  and
+      Farinha, Ana C  and
+      Lavie, Alon",
+    editor = "Webber, Bonnie  and
+      Cohn, Trevor  and
+      He, Yulan  and
+      Liu, Yang",
+    booktitle = "Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing (EMNLP)",
+    month = nov,
+    year = "2020",
+    address = "Online",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2020.emnlp-main.213",
+    doi = "10.18653/v1/2020.emnlp-main.213",
+    pages = "2685--2702",
+    abstract = "We present COMET, a neural framework for training multilingual machine translation evaluation models which obtains new state-of-the-art levels of correlation with human judgements. Our framework leverages recent breakthroughs in cross-lingual pretrained language modeling resulting in highly multilingual and adaptable MT evaluation models that exploit information from both the source input and a target-language reference translation in order to more accurately predict MT quality. To showcase our framework, we train three models with different types of human judgements: Direct Assessments, Human-mediated Translation Edit Rate and Multidimensional Quality Metric. Our models achieve new state-of-the-art performance on the WMT 2019 Metrics shared task and demonstrate robustness to high-performing systems.",
+}
+
+@inproceedings{adelani-etal-2021-effect,
+    title = "The Effect of Domain and Diacritics in {Y}oruba{--}{E}nglish Neural Machine Translation",
+    author = "Adelani, David  and
+      Ruiter, Dana  and
+      Alabi, Jesujoba  and
+      Adebonojo, Damilola  and
+      Ayeni, Adesina  and
+      Adeyemi, Mofe  and
+      Awokoya, Ayodele Esther  and
+      Espa{\~n}a-Bonet, Cristina",
+    editor = "Duh, Kevin  and
+      Guzm{\'a}n, Francisco",
+    booktitle = "Proceedings of Machine Translation Summit XVIII: Research Track",
+    month = aug,
+    year = "2021",
+    address = "Virtual",
+    publisher = "Association for Machine Translation in the Americas",
+    url = "https://aclanthology.org/2021.mtsummit-research.6",
+    pages = "61--75",
+    abstract = "Massively multilingual machine translation (MT) has shown impressive capabilities and including zero and few-shot translation between low-resource language pairs. However and these models are often evaluated on high-resource languages with the assumption that they generalize to low-resource ones. The difficulty of evaluating MT models on low-resource pairs is often due to lack of standardized evaluation datasets. In this paper and we present MENYO-20k and the first multi-domain parallel corpus with a especially curated orthography for Yoruba{--}English with standardized train-test splits for benchmarking. We provide several neural MT benchmarks and compare them to the performance of popular pre-trained (massively multilingual) MT models both for the heterogeneous test set and its subdomains. Since these pre-trained models use huge amounts of data with uncertain quality and we also analyze the effect of diacritics and a major characteristic of Yoruba and in the training data. We investigate how and when this training condition affects the final quality of a translation and its understandability.Our models outperform massively multilingual models such as Google ($+8.7$ BLEU) and Facebook M2M ($+9.1$) when translating to Yoruba and setting a high quality benchmark for future research.",
+}
+@misc{thompson2024shocking,
+      title={A Shocking Amount of the Web is Machine Translated: Insights from Multi-Way Parallelism}, 
+      author={Brian Thompson and Mehak Preet Dhaliwal and Peter Frisch and Tobias Domhan and Marcello Federico},
+      year={2024},
+      eprint={2401.05749},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+
+@BOOK{Unesco2010-hx,
+  title     = "Atlas of the world's languages in danger",
+  editor    = "{UNESCO}",
+  publisher = "UNESCO",
+  series    = "Memory of Peoples Series",
+  edition   =  3,
+  month     =  feb,
+  year      =  2010
+}
+@inproceedings{schwenk-etal-2021-wikimatrix,
+    title = "{W}iki{M}atrix: Mining 135{M} Parallel Sentences in 1620 Language Pairs from {W}ikipedia",
+    author = "Schwenk, Holger  and
+      Chaudhary, Vishrav  and
+      Sun, Shuo  and
+      Gong, Hongyu  and
+      Guzm{\'a}n, Francisco",
+    editor = "Merlo, Paola  and
+      Tiedemann, Jorg  and
+      Tsarfaty, Reut",
+    booktitle = "Proceedings of the 16th Conference of the European Chapter of the Association for Computational Linguistics: Main Volume",
+    month = apr,
+    year = "2021",
+    address = "Online",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2021.eacl-main.115",
+    doi = "10.18653/v1/2021.eacl-main.115",
+    pages = "1351--1361",
+    abstract = "We present an approach based on multilingual sentence embeddings to automatically extract parallel sentences from the content of Wikipedia articles in 96 languages, including several dialects or low-resource languages. We do not limit the extraction process to alignments with English, but we systematically consider all possible language pairs. In total, we are able to extract 135M parallel sentences for 16720 different language pairs, out of which only 34M are aligned with English. This corpus is freely available. To get an indication on the quality of the extracted bitexts, we train neural MT baseline systems on the mined data only for 1886 languages pairs, and evaluate them on the TED corpus, achieving strong BLEU scores for many language pairs. The WikiMatrix bitexts seem to be particularly interesting to train MT systems between distant languages without the need to pivot through English.",
+}
+
+@inproceedings{schwenk-etal-2021-ccmatrix,
+    title = "{CCM}atrix: Mining Billions of High-Quality Parallel Sentences on the Web",
+    author = "Schwenk, Holger  and
+      Wenzek, Guillaume  and
+      Edunov, Sergey  and
+      Grave, Edouard  and
+      Joulin, Armand  and
+      Fan, Angela",
+    editor = "Zong, Chengqing  and
+      Xia, Fei  and
+      Li, Wenjie  and
+      Navigli, Roberto",
+    booktitle = "Proceedings of the 59th Annual Meeting of the Association for Computational Linguistics and the 11th International Joint Conference on Natural Language Processing (Volume 1: Long Papers)",
+    month = aug,
+    year = "2021",
+    address = "Online",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2021.acl-long.507",
+    doi = "10.18653/v1/2021.acl-long.507",
+    pages = "6490--6500",
+    abstract = "We show that margin-based bitext mining in a multilingual sentence space can be successfully scaled to operate on monolingual corpora of billions of sentences. We use 32 snapshots of a curated common crawl corpus (Wenzel et al, 2019) totaling 71 billion unique sentences. Using one unified approach for 90 languages, we were able to mine 10.8 billion parallel sentences, out of which only 2.9 billions are aligned with English. We illustrate the capability of our scalable mining system to create high quality training sets from one language to any other by training hundreds of different machine translation models and evaluating them on the many-to-many TED benchmark. Further, we evaluate on competitive translation benchmarks such as WMT and WAT. Using only mined bitext, we set a new state of the art for a single system on the WMT{'}19 test set for English-German/Russian/Chinese. In particular, our English/German and English/Russian systems outperform the best single ones by over 4 BLEU points and are on par with best WMT{'}19 systems, which train on the WMT training data and augment it with backtranslation. We also achieve excellent results for distant languages pairs like Russian/Japanese, outperforming the best submission at the 2020 WAT workshop. All of the mined bitext will be freely available.",
+}
+@article{goyal-etal-2022-flores,
+    title = "The {F}lores-101 Evaluation Benchmark for Low-Resource and Multilingual Machine Translation",
+    author = "Goyal, Naman  and
+      Gao, Cynthia  and
+      Chaudhary, Vishrav  and
+      Chen, Peng-Jen  and
+      Wenzek, Guillaume  and
+      Ju, Da  and
+      Krishnan, Sanjana  and
+      Ranzato, Marc{'}Aurelio  and
+      Guzm{\'a}n, Francisco  and
+      Fan, Angela",
+    editor = "Roark, Brian  and
+      Nenkova, Ani",
+    journal = "Transactions of the Association for Computational Linguistics",
+    volume = "10",
+    year = "2022",
+    address = "Cambridge, MA",
+    publisher = "MIT Press",
+    url = "https://aclanthology.org/2022.tacl-1.30",
+    doi = "10.1162/tacl_a_00474",
+    pages = "522--538",
+    abstract = "One of the biggest challenges hindering progress in low-resource and multilingual machine translation is the lack of good evaluation benchmarks. Current evaluation benchmarks either lack good coverage of low-resource languages, consider only restricted domains, or are low quality because they are constructed using semi-automatic procedures. In this work, we introduce the Flores-101 evaluation benchmark, consisting of 3001 sentences extracted from English Wikipedia and covering a variety of different topics and domains. These sentences have been translated in 101 languages by professional translators through a carefully controlled process. The resulting dataset enables better assessment of model quality on the long tail of low-resource languages, including the evaluation of many-to-many multilingual translation systems, as all translations are fully aligned. By publicly releasing such a high-quality and high-coverage dataset, we hope to foster progress in the machine translation community and beyond.",
+}
+@misc{devlin2019bert,
+      title={BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding}, 
+      author={Jacob Devlin and Ming-Wei Chang and Kenton Lee and Kristina Toutanova},
+      year={2019},
+      eprint={1810.04805},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+@misc{chowdhery2022palm,
+      title={PaLM: Scaling Language Modeling with Pathways}, 
+      author={Aakanksha Chowdhery and Sharan Narang and Jacob Devlin and Maarten Bosma and Gaurav Mishra and Adam Roberts and Paul Barham and Hyung Won Chung and Charles Sutton and Sebastian Gehrmann and Parker Schuh and Kensen Shi and Sasha Tsvyashchenko and Joshua Maynez and Abhishek Rao and Parker Barnes and Yi Tay and Noam Shazeer and Vinodkumar Prabhakaran and Emily Reif and Nan Du and Ben Hutchinson and Reiner Pope and James Bradbury and Jacob Austin and Michael Isard and Guy Gur-Ari and Pengcheng Yin and Toju Duke and Anselm Levskaya and Sanjay Ghemawat and Sunipa Dev and Henryk Michalewski and Xavier Garcia and Vedant Misra and Kevin Robinson and Liam Fedus and Denny Zhou and Daphne Ippolito and David Luan and Hyeontaek Lim and Barret Zoph and Alexander Spiridonov and Ryan Sepassi and David Dohan and Shivani Agrawal and Mark Omernick and Andrew M. Dai and Thanumalayan Sankaranarayana Pillai and Marie Pellat and Aitor Lewkowycz and Erica Moreira and Rewon Child and Oleksandr Polozov and Katherine Lee and Zongwei Zhou and Xuezhi Wang and Brennan Saeta and Mark Diaz and Orhan Firat and Michele Catasta and Jason Wei and Kathy Meier-Hellstern and Douglas Eck and Jeff Dean and Slav Petrov and Noah Fiedel},
+      year={2022},
+      eprint={2204.02311},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+
+@article{radford2018improving,
+  added-at = {2020-07-14T16:37:42.000+0200},
+  author = {Radford, Alec and Narasimhan, Karthik and Salimans, Tim and Sutskever, Ilya},
+  biburl = {https://www.bibsonomy.org/bibtex/273ced32c0d4588eb95b6986dc2c8147c/jonaskaiser},
+  interhash = {5c343ed9a31ac52fd17a898f72af228f},
+  intrahash = {73ced32c0d4588eb95b6986dc2c8147c},
+  keywords = {final thema:transformer},
+  timestamp = {2020-07-14T16:49:42.000+0200},
+  title = {Improving language understanding by generative pre-training},
+  year = 2018
+}
+
+@misc{touvron2023llama,
+      title={Llama 2: Open Foundation and Fine-Tuned Chat Models}, 
+      author={Hugo Touvron and Louis Martin and Kevin Stone and Peter Albert and Amjad Almahairi and Yasmine Babaei and Nikolay Bashlykov and Soumya Batra and Prajjwal Bhargava and Shruti Bhosale and Dan Bikel and Lukas Blecher and Cristian Canton Ferrer and Moya Chen and Guillem Cucurull and David Esiobu and Jude Fernandes and Jeremy Fu and Wenyin Fu and Brian Fuller and Cynthia Gao and Vedanuj Goswami and Naman Goyal and Anthony Hartshorn and Saghar Hosseini and Rui Hou and Hakan Inan and Marcin Kardas and Viktor Kerkez and Madian Khabsa and Isabel Kloumann and Artem Korenev and Punit Singh Koura and Marie-Anne Lachaux and Thibaut Lavril and Jenya Lee and Diana Liskovich and Yinghai Lu and Yuning Mao and Xavier Martinet and Todor Mihaylov and Pushkar Mishra and Igor Molybog and Yixin Nie and Andrew Poulton and Jeremy Reizenstein and Rashi Rungta and Kalyan Saladi and Alan Schelten and Ruan Silva and Eric Michael Smith and Ranjan Subramanian and Xiaoqing Ellen Tan and Binh Tang and Ross Taylor and Adina Williams and Jian Xiang Kuan and Puxin Xu and Zheng Yan and Iliyan Zarov and Yuchen Zhang and Angela Fan and Melanie Kambadur and Sharan Narang and Aurelien Rodriguez and Robert Stojnic and Sergey Edunov and Thomas Scialom},
+      year={2023},
+      eprint={2307.09288},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+
+@inproceedings{artetxe-schwenk-2019-margin,
+    title = "Margin-based Parallel Corpus Mining with Multilingual Sentence Embeddings",
+    author = "Artetxe, Mikel  and
+      Schwenk, Holger",
+    editor = "Korhonen, Anna  and
+      Traum, David  and
+      M{\`a}rquez, Llu{\'\i}s",
+    booktitle = "Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics",
+    month = jul,
+    year = "2019",
+    address = "Florence, Italy",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/P19-1309",
+    doi = "10.18653/v1/P19-1309",
+    pages = "3197--3203",
+    abstract = "Machine translation is highly sensitive to the size and quality of the training data, which has led to an increasing interest in collecting and filtering large parallel corpora. In this paper, we propose a new method for this task based on multilingual sentence embeddings. In contrast to previous approaches, which rely on nearest neighbor retrieval with a hard threshold over cosine similarity, our proposed method accounts for the scale inconsistencies of this measure, considering the margin between a given sentence pair and its closest candidates instead. Our experiments show large improvements over existing methods. We outperform the best published results on the BUCC mining task and the UN reconstruction task by more than 10 F1 and 30 precision points, respectively. Filtering the English-German ParaCrawl corpus with our approach, we obtain 31.2 BLEU points on newstest2014, an improvement of more than one point over the best official filtered version.",
+}
+@inproceedings{guo-etal-2018-effective,
+    title = "Effective Parallel Corpus Mining using Bilingual Sentence Embeddings",
+    author = "Guo, Mandy  and
+      Shen, Qinlan  and
+      Yang, Yinfei  and
+      Ge, Heming  and
+      Cer, Daniel  and
+      Hernandez Abrego, Gustavo  and
+      Stevens, Keith  and
+      Constant, Noah  and
+      Sung, Yun-Hsuan  and
+      Strope, Brian  and
+      Kurzweil, Ray",
+    editor = "Bojar, Ond{\v{r}}ej  and
+      Chatterjee, Rajen  and
+      Federmann, Christian  and
+      Fishel, Mark  and
+      Graham, Yvette  and
+      Haddow, Barry  and
+      Huck, Matthias  and
+      Yepes, Antonio Jimeno  and
+      Koehn, Philipp  and
+      Monz, Christof  and
+      Negri, Matteo  and
+      N{\'e}v{\'e}ol, Aur{\'e}lie  and
+      Neves, Mariana  and
+      Post, Matt  and
+      Specia, Lucia  and
+      Turchi, Marco  and
+      Verspoor, Karin",
+    booktitle = "Proceedings of the Third Conference on Machine Translation: Research Papers",
+    month = oct,
+    year = "2018",
+    address = "Brussels, Belgium",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/W18-6317",
+    doi = "10.18653/v1/W18-6317",
+    pages = "165--176",
+    abstract = "This paper presents an effective approach for parallel corpus mining using bilingual sentence embeddings. Our embedding models are trained to produce similar representations exclusively for bilingual sentence pairs that are translations of each other. This is achieved using a novel training method that introduces hard negatives consisting of sentences that are not translations but have some degree of semantic similarity. The quality of the resulting embeddings are evaluated on parallel corpus reconstruction and by assessing machine translation systems trained on gold vs. mined sentence pairs. We find that the sentence embeddings can be used to reconstruct the United Nations Parallel Corpus (Ziemski et al., 2016) at the sentence-level with a precision of 48.9{\%} for en-fr and 54.9{\%} for en-es. When adapted to document-level matching, we achieve a parallel document matching accuracy that is comparable to the significantly more computationally intensive approach of Uszkoreit et al. (2010). Using reconstructed parallel data, we are able to train NMT models that perform nearly as well as models trained on the original data (within 1-2 BLEU).",
+}
+@inproceedings{graham-etal-2013-continuous,
+    title = "Continuous Measurement Scales in Human Evaluation of Machine Translation",
+    author = "Graham, Yvette  and
+      Baldwin, Timothy  and
+      Moffat, Alistair  and
+      Zobel, Justin",
+    editor = "Pareja-Lora, Antonio  and
+      Liakata, Maria  and
+      Dipper, Stefanie",
+    booktitle = "Proceedings of the 7th Linguistic Annotation Workshop and Interoperability with Discourse",
+    month = aug,
+    year = "2013",
+    address = "Sofia, Bulgaria",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/W13-2305",
+    pages = "33--41",
+}
+@inproceedings{white-etal-1994-arpa,
+    title = "The {ARPA} {MT} Evaluation Methodologies: Evolution, Lessons, and Future Approaches",
+    author = "White, John S.  and
+      O{'}Connell, Theresa A.  and
+      O{'}Mara, Francis E.",
+    booktitle = "Proceedings of the First Conference of the Association for Machine Translation in the Americas",
+    month = oct # " 5-8",
+    year = "1994",
+    address = "Columbia, Maryland, USA",
+    url = "https://aclanthology.org/1994.amta-1.25",
+}
