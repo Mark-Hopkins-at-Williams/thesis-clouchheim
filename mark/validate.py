@@ -1,28 +1,33 @@
-import sacrebleu
-from nllbseed import NllbSeedData
+import evaluate
+import os
+import sys
 from tqdm import tqdm
-from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
-
+from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, GenerationConfig
+from multilingualdata import MultilingualCorpus
 
 def translate(
     text, tokenizer, model, 
     src_lang, tgt_lang, 
     a=32, b=3, max_input_length=1024, num_beams=4, **kwargs
 ):
-    model.eval() # turn off training mode
+    model.eval()
     tokenizer.src_lang = src_lang
     tokenizer.tgt_lang = tgt_lang
     inputs = tokenizer(
         text, return_tensors='pt', padding=True, truncation=True, 
         max_length=max_input_length
     )
+    generation_config = GenerationConfig(
+        max_length=200
+    )
     result = model.generate(
         **inputs.to(model.device),
         forced_bos_token_id=tokenizer.convert_tokens_to_ids(tgt_lang),
+        generation_config=generation_config,
         max_new_tokens=int(a + b * inputs.input_ids.shape[1]),
         num_beams=num_beams, **kwargs
     )
-    return tokenizer.batch_decode(result, skip_special_tokens=True)
+    return tokenizer.batch_decode(result[:, 2:], skip_special_tokens=True) # TODO: the slicing shouldn't be necessary if special tokens are properly recognized
 
 
 def batched_translate(texts, batch_size=16, **kwargs):
@@ -33,33 +38,39 @@ def batched_translate(texts, batch_size=16, **kwargs):
     return [p for _, p in sorted(zip(idxs, results))]
 
 
-def evaluate(candidate_translations, reference_translations):
-    bleu_calc = sacrebleu.BLEU()
-    chrf_calc = sacrebleu.CHRF( # I think this is the official metric of AmericasNLP
-        word_order=0, 
-        char_order=6, 
-        lowercase=False, 
-        whitespace=False
-    )
+def evaluate_translations(candidate_translations, reference_translations):
+    bleu_calc = evaluate.load("sacrebleu")
+    chrf_calc = evaluate.load("chrf")
     reference_translations = [[ref] for ref in reference_translations]
-    bleu_result  = str(bleu_calc.corpus_score(candidate_translations, reference_translations))
-    chrf_result = str(chrf_calc.corpus_score(candidate_translations, reference_translations))
-    print(bleu_result)
-    print(chrf_result)
+    bleu_result = bleu_calc.compute(predictions = candidate_translations, references = reference_translations)
+    chrf_result = chrf_calc.compute(predictions = candidate_translations, references = reference_translations)
+    return round(bleu_result["score"], 3), round(chrf_result["score"], 3)
     
     
 if __name__ == "__main__":
-    base_model = "facebook/nllb-200-distilled-600M" 
-    dev_data = NllbSeedData(split="dev", langs=['eng_Latn', 'lij_Latn'])
-    tokenizer = AutoTokenizer.from_pretrained(base_model)
-    model = AutoModelForSeq2SeqLM.from_pretrained(base_model)
-    model.cuda()
-    src_texts = dev_data.get_sents('lij_Latn')[:50]
-    tgt_texts = dev_data.get_sents('eng_Latn')[:50]
-    candidate_translations = batched_translate(src_texts, tokenizer=tokenizer, model=model, src_lang='lij_Latn', tgt_lang='eng_Latn')
-    for candidate, gold in zip(candidate_translations, tgt_texts):
-        print('-'*5)
-        print(f'candidate: {candidate}')
-        print(f'gold:      {gold}')
-        
-    evaluate(candidate_translations, tgt_texts)
+    base_model = "./f2n_model-v0" 
+    corpus = MultilingualCorpus('eng_to_f2n.csv')
+    lps = [('eng_Latn', 'f0n_Latn'), ('eng_Latn', 'f1n_Latn')]
+    bleu_scores = []
+    chrf_scores = []
+    for lp in lps:
+        bitext = corpus.create_bitext(lp[0], lp[1], 'test')
+        tokenizer = AutoTokenizer.from_pretrained(base_model, use_fast=False)
+        model = AutoModelForSeq2SeqLM.from_pretrained(base_model)
+        model.cuda()
+        src_texts = bitext.lang1_sents
+        tgt_texts = bitext.lang2_sents
+        candidate_translations = batched_translate(src_texts, tokenizer=tokenizer, model=model, src_lang=lp[0], tgt_lang=lp[1])        
+        bleu, chrf = evaluate_translations(candidate_translations, tgt_texts)
+        with open(os.path.join(base_model, f'candidates.{lp[1]}'), 'w') as writer:
+            for candidate in candidate_translations:
+                writer.write(f'{candidate}\n')
+        with open(os.path.join(base_model, f'references.{lp[1]}'), 'w') as writer:
+            for ref in tgt_texts:
+                writer.write(f'{ref}\n')
+        bleu_scores.append(bleu)
+        chrf_scores.append(chrf)
+    with open(os.path.join(base_model, 'scores.csv'), 'w') as writer:
+        writer.write(','.join(['src', 'tgt', 'bleu', 'chrf']) + '\n')
+        for i, (src, tgt) in enumerate(lps):
+            writer.write(','.join([src, tgt, str(bleu_scores[i]), str(chrf_scores[i])]) + '\n')

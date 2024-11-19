@@ -6,4 +6,4 @@
 #SBATCH -o log_%j.out  
 #SBATCH -e log_%j.err
 #SBATCH --gres=gpu:1
-python finetune.py --data americas-nlp --dev_src spa_Latn --dev_tgt nah_Latn --model_dir anlp3
+python finetune.py --config f4n.json --model_dir f4n_model --steps 60000
