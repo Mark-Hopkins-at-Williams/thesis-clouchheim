@@ -285,3 +285,9 @@ sheff_new_tok/wixarika,bi,2024-11-16 16:37:58,wixarika,3.38,19.302,bilinugal she
 sheff_new_tok/raramuri,bi,2024-11-16 17:33:03,raramuri,0.071,9.06,bilinugal sheff style with new tokenizer
 test_gen/without_gen,bi,2024-11-18 10:15:26,encypted english,28.761,44.458,"encrypted english (gne_Test) gen test, without <gen> encrypted monolingual addition"
 test_gen/with_gen,other,2024-11-18 10:16:18,encypted english,18.225,40.125,"encrypted english (gne_Test) gen test, with <gen> encrypted monolingual addition"
+encrypt_exp/exp_1/control/n0d-v0,2024-11-22 11:45:12,n0d_Latn,19.936,46.357,test to see if multilingual training helps on parallel data sets, using english to encrypted dutch
+encrypt_exp/exp_1/control/n1d-v0,2024-11-22 11:50:12,n1d_Latn,19.907,48.218,test to see if multilingual training helps on parallel data sets, using english to encrypted dutch
+encrypt_exp/exp_1/control/n2d-v0,2024-11-22 11:57:12,n2d_Latn,20.672,46.399,test to see if multilingual training helps on parallel data sets, using english to encrypted dutch
+encrypt_exp/exp_1/multi_parallel-v1, 2024-11-23 1:57:10,n0d_Latn,13.999,39.925,test to see if multilingual training helps on parallel data sets, using english to encrypted dutch
+encrypt_exp/exp_1/multi_parallel-v1, 2024-11-23 1:57:10,n1d_Latn,19.266,48.162,test to see if multilingual training helps on parallel data sets, using english to encrypted dutch
+encrypt_exp/exp_1/multi_parallel-v1, 2024-11-23 1:57:10,n2d_Latn,15.944,41.799,test to see if multilingual training helps on parallel data sets, using english to encrypted dutch
