@@ -79,9 +79,9 @@ class MultilingualCorpus:
                 lang2_sents.append(lang2_sent)
         return Bitext(lang1_code, lang2_code, lang1_sents, lang2_sents)
     
-    def create_mixture_of_bitexts(self, lps, batch_size):
+    def create_mixture_of_bitexts(self, lps, batch_size, split):
         bitexts = []
         for (l1, l2) in tqdm(lps):
-            bitexts.append(self.create_bitext(l1, l2, 'train'))
+            bitexts.append(self.create_bitext(l1, l2, split))
         return MixtureOfBitexts(bitexts, batch_size)
   

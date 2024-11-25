@@ -1,5 +1,8 @@
 import gc
+import json
+import matplotlib.pyplot as plt
 import os
+import shutil
 import sys
 import torch
 import argparse
@@ -8,12 +11,9 @@ from tqdm import tqdm
 from transformers.optimization import Adafactor
 from transformers import get_constant_schedule_with_warmup
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
-from validate import evaluate, batched_translate
 from configure import USE_CUDA
-from configure import AMERICAS_NLP_CSV, AMERICAS_NLP_LPS
-from configure import NLLB_SEED_CSV, NLLB_SEED_LPS
 from multilingualdata import MultilingualCorpus
-
+from validate import evaluate_translations, batched_translate
 
 def cleanup():
     """Try to free GPU memory"""
@@ -30,16 +30,20 @@ def tokenize(sents, lang, tokenizer, max_length, alt_pad_token=None):
     return tokens
 
 
-def finetune(mixture_of_bitexts, dev_bitext, base_model, finetuned_model_dir,
-             training_steps=60000,
+def finetune(mixture_of_bitexts, dev_bitexts, base_model, finetuned_model_dir, training_steps,
              max_length=128, # token sequences will be truncated to this many tokens
-             report_every=100,
-             validate_every=1000,
+             report_every=500,
+             validate_every=500,
+             patience=10
              ):    
     tokenizer = AutoTokenizer.from_pretrained(base_model)
     model = AutoModelForSeq2SeqLM.from_pretrained(base_model)
-    new_lang_codes = [code for code in mixture_of_bitexts.get_language_codes() if code in tokenizer.get_vocab()]
-    tokenizer.add_tokens(new_lang_codes)
+    new_lang_codes = [code for code in mixture_of_bitexts.get_language_codes() if code not in tokenizer.get_vocab()]
+    print(f"Augmenting vocabulary with the following tokens:")
+    for lang_code in new_lang_codes:
+        print(f"  {lang_code}")
+    tokenizer.add_special_tokens({"additional_special_tokens": new_lang_codes})
+    tokenizer.save_pretrained(finetuned_model_dir)
     model.resize_token_embeddings(len(tokenizer))
     if USE_CUDA: 
         model.cuda()
@@ -53,10 +57,12 @@ def finetune(mixture_of_bitexts, dev_bitext, base_model, finetuned_model_dir,
     )
     scheduler = get_constant_schedule_with_warmup(optimizer, num_warmup_steps=1000)
     x, y, train_loss = None, None, None
-    last_best = 0
-    patience = 30000
+    best_dev_loss = None
+    max_patience = patience
     cleanup()
     train_losses = []   # tracks average loss
+    train_plot_x, train_plot_y = [], []
+    dev_plot_x, dev_plot_y = [], []
     for i in tqdm(range(training_steps)):
         lang1_sents, lang2_sents, lang1, lang2 = mixture_of_bitexts.next_batch()  
         try:
@@ -77,64 +83,93 @@ def finetune(mixture_of_bitexts, dev_bitext, base_model, finetuned_model_dir,
             continue
         if i % report_every == 0 and i > 0: # report average loss at regular intervals         
             print(f'step {i} (train): {np.mean(train_losses[-report_every:])}')
+            train_plot_x.append(i)
+            train_plot_y.append(np.mean(train_losses[-report_every:]))
             sys.stdout.flush()
         if i % validate_every == 0:
-            print("Validating on a sample...")
-            src_texts, tgt_texts = dev_bitext.lang1_sents, dev_bitext.lang2_sents
-            candidate_translations = batched_translate(src_texts, tokenizer=tokenizer, model=model, src_lang=dev_bitext.lang1_code, tgt_lang=dev_bitext.lang2_code)
-            for candidate, gold in zip(candidate_translations[:5], tgt_texts[:5]):
-                print('-'*5)
-                print(f'candidate: {candidate}')
-                print(f'gold:      {gold}')
-            evaluate(candidate_translations, tgt_texts)
-            print("Saving new best model!")
-            #TODO: save only if the evaluation result is better than previous
-            tokenizer.save_pretrained(finetuned_model_dir) #TODO: check that we can use the same directory
-            model.save_pretrained(finetuned_model_dir)           
-            last_best = i        
-        if i - last_best >= patience:
-            break
- 
- 
-def finetune_dress_rehearsal(mixture_of_bitexts, dev_bitext, base_model, finetuned_model_dir,
-             training_steps=60000,
-             max_length=128, # token sequences will be truncated to this many tokens
-             report_every=100,
-             validate_every=1000,
-             ):    
-    
-    tokenizer = AutoTokenizer.from_pretrained(base_model)
-    model = AutoModelForSeq2SeqLM.from_pretrained(base_model)
-    new_tokens = ['nah_Latn', 'oto_Latn']
-    tokenizer.add_tokens(new_tokens)
-    model.resize_token_embeddings(len(tokenizer))
-    for i in tqdm(range(training_steps)):
-        lang1_sents, lang2_sents, lang1, lang2 = mixture_of_bitexts.next_batch()  
-        x = tokenize(lang1_sents, lang1, tokenizer, max_length)
-        
-        y = tokenize(lang2_sents, lang2, tokenizer, max_length, alt_pad_token=-100)
-        print(y)
+            print("Validating on a sample...")   
+            model.eval()         
+            dev_losses = []
+            dev_batches = 100
+            for _ in range(dev_batches):
+                lang1_sents, lang2_sents, lang1, lang2 = dev_bitexts.next_batch()                
+                x = tokenize(lang1_sents, lang1, tokenizer, max_length).to(model.device)
+                y = tokenize(lang2_sents, lang2, tokenizer, max_length, alt_pad_token=-100).to(model.device)
+                with torch.no_grad():
+                    dev_loss = model(**x, labels=y.input_ids).loss
+                    dev_losses.append(dev_loss.item())
+            dev_loss = np.mean(dev_losses)
+            dev_plot_x.append(i)
+            dev_plot_y.append(dev_loss)
+            print(f'dev loss: {dev_loss}')
+            sys.stdout.flush()
+            # plot the current training progress
+            plt.clf()
+            plt.plot(train_plot_x, train_plot_y, label='train', color='blue', linewidth=2)  
+            plt.plot(dev_plot_x, dev_plot_y, label='dev', color='red', linewidth=2) 
+            plt.xlabel("training steps")
+            plt.ylabel("loss")
+            plt.legend()
+            plt.grid(True)
+            plt.savefig(os.path.join(finetuned_model_dir, 'training.png'))
             
-        
-        
+            # save only if the evaluation result is better than previous best
+            if best_dev_loss is None or dev_loss < best_dev_loss:
+                print("Saving new best model!")
+                model.save_pretrained(finetuned_model_dir)  
+                patience = max_patience    
+                best_dev_loss = dev_loss
+            else:                
+                patience -= 1               
+                print(f"Model is worse than the best so far. Current patience: {patience}") 
+        if patience <= 0:
+            break
+   
+ 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Finetuning script for NLLB models.")
-    parser.add_argument("--data", type=str, required=True, choices=['nllb-seed', 'americas-nlp'], help="Finetuning data")
+    parser.add_argument("--config", type=str, required=True, help="Experiment configuration (JSON)")
     parser.add_argument("--model_dir", type=str, help="Directory for storing the trained model")
-    parser.add_argument("--nllb_model", type=str, default="600M", choices=['600M', '1.3B', '3.3B'], help="NLLB base model.")
-    parser.add_argument("--dev_src", type=str, required=True, help="Source language for validation.")
-    parser.add_argument("--dev_tgt", type=str, required=True, help="Target language for validation.")
-    
+    parser.add_argument("--steps", type=int, default=60_000, help="Number of training steps")
     args = parser.parse_args()
-    model_dir = args.model_dir
-    model_name = "facebook/nllb-200-distilled-" + args.nllb_model
-    if os.path.exists(model_dir):
-        print(f"model directory already exists: {model_dir}")
-        exit()
-    csv_file = NLLB_SEED_CSV if args.data == 'nllb-seed' else AMERICAS_NLP_CSV
-    lps = NLLB_SEED_LPS if args.data == 'nllb-seed' else AMERICAS_NLP_LPS
+    with open(args.config, "r") as file:
+        config = json.load(file)
+    model_dir = args.model_dir        
+    model_version = 0
+    while os.path.exists(model_dir + f"-v{model_version}"):
+        model_version += 1
+    model_dir = model_dir + f"-v{model_version}"
+    os.mkdir(model_dir)
+    shutil.copyfile(args.config, os.path.join(model_dir, 'experiment.json'))       
+    csv_file = config['csv_file']
+    lps = config['lps']
     corpus = MultilingualCorpus(csv_file)
-    train_data = corpus.create_mixture_of_bitexts(lps, batch_size=2)
-    dev_bitext = corpus.create_bitext(args.dev_src, args.dev_tgt, 'dev')
-    finetune(train_data, dev_bitext, model_name, model_dir)
+    train_data = corpus.create_mixture_of_bitexts(lps, batch_size=32, split='train')
+    dev_data = corpus.create_mixture_of_bitexts(lps, batch_size=32, split='dev')
+    model_name = config['base_model']
+    finetune(train_data, dev_data, model_name, model_dir, training_steps=args.steps)
     
+    # now evaluate the trained model
+    bleu_scores = []
+    chrf_scores = []
+    for lp in lps:
+        bitext = corpus.create_bitext(lp[0], lp[1], 'test')
+        tokenizer = AutoTokenizer.from_pretrained(model_dir, use_fast=False)
+        model = AutoModelForSeq2SeqLM.from_pretrained(model_dir)
+        model.cuda()
+        src_texts = bitext.lang1_sents
+        tgt_texts = bitext.lang2_sents
+        candidate_translations = batched_translate(src_texts, tokenizer=tokenizer, model=model, src_lang=lp[0], tgt_lang=lp[1])        
+        bleu, chrf = evaluate_translations(candidate_translations, tgt_texts)
+        with open(os.path.join(model_dir, f'candidates.{lp[1]}'), 'w') as writer:
+            for candidate in candidate_translations:
+                writer.write(f'{candidate}\n')
+        with open(os.path.join(model_dir, f'references.{lp[1]}'), 'w') as writer:
+            for ref in tgt_texts:
+                writer.write(f'{ref}\n')
+        bleu_scores.append(bleu)
+        chrf_scores.append(chrf)
+    with open(os.path.join(model_dir, 'scores.csv'), 'w') as writer:
+        writer.write(','.join(['src', 'tgt', 'bleu', 'chrf']) + '\n')
+        for i, (src, tgt) in enumerate(lps):
+            writer.write(','.join([src, tgt, str(bleu_scores[i]), str(chrf_scores[i])]) + '\n')

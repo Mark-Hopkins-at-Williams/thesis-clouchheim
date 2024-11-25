@@ -1,0 +1,8 @@
+{
+    "csv_file": "./f1n.50k.csv",
+    "lps": [
+        ["eng_Latn", "f0n_Latn"]
+    ],
+    "base_model": "facebook/nllb-200-distilled-600M"
+}
+  
