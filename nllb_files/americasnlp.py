@@ -94,16 +94,10 @@ if __name__ == "__main__":
     'ᴷ': 'K', 'ᴸ': 'L', 'ᴹ': 'M', 'ᴺ': 'N', 'ᴼ': 'O', 'ᴾ': 'P', 'ʳ': 'R', 
     'ᵀ': 'T', 'ᵁ': 'U', 'ⱽ': 'V', 'ʷ': 'W', 'ⁱ': 'i', 'ⁿ': 'n', '⁺': '+', 
     '⁻': '-', '⁼': '=', '⁽': '(', '⁾': ')', 'ᶠ': 'F', 'ᴳ': 'G', 'ᴿ': 'R',
-    '“':'"', '”':'"', '—': '', 'č':'C', 'ç': 'C', '""': '"', '’':"'", '‘':"'",
-    '–': '', '«': '"', '': '', 'ⴘ':'', 'ô':'o', 'ƌ':'d', 'ȥ':'z', '»':'"', 'Ƌ':'d',
-    'ᶎ':'z', 'o̮':'o', 'î':'i', 'u̡':'u', '„':'"', '‟':'"', '☹':'', 'ⴁ':'', 'ḱ':'k', '₲':'$'
+    '“':'"', '”':'"', '—': '', 'č':'c', 'ç': 'c', '""': '"', '’':"'", '‘':"'",
+    '–': '', '«': '"', 'ⴘ':'', 'ô':'o', 'ƌ':'d', 'ȥ':'z', '»':'"', 'Ƌ':'d',
+    'ᶎ':'z', 'o̮':'o', 'î':'i', 'u̡':'u', '„':'"', '‟':'"', 'ḱ':'k', '₲':'$'
     }
-    #'č': 'C', or curacao c
-    
-    # detokenize nah and oto --> move punctuation back into right place
-    def remove_space_before_punctuation(text):
-        # Substitute any space followed by punctuation with just the punctuation
-        return re.sub(r'\s+([,.;:!?"\'’])', r'\1', text)
     
     # this works for one line
     def replace_characters(text):
@@ -125,12 +119,11 @@ if __name__ == "__main__":
         return text
 
     df['text'] = df['text'].str.strip()
-    df['text'] = df['text'].apply(replace_characters)
-    df['text'] = df['text'].str.lstrip('"').str.rstrip('"')
-    df['text'] = df['text'].str.strip()
-    df['text'] = df['text'].str.lstrip('"').str.rstrip('"')
-    df['text'] = df['text'].apply(remove_space_before_punctuation)
     df['text'] = df['text'].apply(clean_text)
+    
+    # only apply normalization to 
+    languages_to_normalize = ['oto', 'ctp', 'nah', 'shp']
+    df.loc[df['language'].isin(languages_to_normalize), 'text'] = df.loc[df['language'].isin(languages_to_normalize), 'text'].apply(replace_characters)
     
     
     df.to_csv("americas_nlp_data.csv", index = False)
