@@ -1,6 +1,7 @@
 %%%%%%%% Chapters %%%%%%%%%%%%
 %% Introduction
-\chapter{Introduction}
+\newcommand\tab[1][1cm]{\hspace*{#1}}
+\chapter{Introduction and Background}
 \label{chap:introduction}
 
 \section{AmericasNLP Shared Task}
@@ -42,22 +43,29 @@ In our example sentence, traditional sequential models would need to process eac
 The core innovation of the Transformer is the attention mechanism, which enables it to focus on different parts of the input sequence with varying intensity, or "attention." In the Transformer, this mechanism is implemented as scaled dot-product attention, which computes the relevance of each word in the sequence relative to others using query, key, and value vectors. Here’s how this works in more detail:
 
 \subsubsection{Self-Attention}
-In the self-attention mechanism, each word (or token) in a sequence is represented as a query, a key, and a value. These vectors are created by projecting the original embedding of each word through learned weight matrices: 
-Q =WQX, K =WKX, V =WVX 
-where Q, K , and V are the query, key, and value matrices, respectively, and X is the input matrix of embeddings. The attention score between two tokens is calculated by taking the dot product of the query vector for one token and the key vector of another, scaled by the square root of the dimension (dk) to stabilize gradients:
-	Attention(Q, K, V) = softmax(QKTdk)V
+In the self-attention mechanism, each word (or token) in a sequence is represented as a query, a key, and a value. These vectors are created by projecting the original embedding of each word through learned weight matrices: \\
+\tab[1cm]$Q =WQX, K =WKX, V = WVX $ \\
+where $Q$, $K$ , and $V$ are the query, key, and value matrices, respectively, and $X$ is the input matrix of embeddings. The attention score between two tokens is calculated by taking the dot product of the query vector for one token and the key vector of another, scaled by the square root of the dimension ($d_k$) to stabilize gradients:\\
+\tab[1cm]$Attention(Q, K, V) = softmax(\frac{QK^T}{\sqrt{d_k}})V$ \\
 This operation generates a weight for each relevant token pair, enabling the model to weigh the importance of each word to another. After obtaining these attention weights, the model calculates a weighted sum of the values to create the output representation.
 
 \subsubsection{Masked Self-Attention}
-For the decoder stack, the Transformer incorporates a variant called masked self-attention. This is crucial for generating sequences (like translations) where each word prediction depends only on the words generated so far. Masked self-attention prevents the model from attending to “future” tokens by applying a mask over the attention weights, effectively blocking connections from later positions to earlier ones. With the mask the equation becomes: 
-	Attention(Q, K, V) = softmax(mask((QKTdk))V
-In practice, the mask is a matrix where the — triangle of the matrix is -inf. When multiplied this effectively zeros out all tokens that come sequentially after token i in the sequence. Here is an example of a mask matrix for a small, toy example.This, when applied, would zero out all of the elements at the positions with the negative infinity values, ensuring that the prediction can only come from past information, mimicking next token prediction. 
+For the decoder stack, the Transformer incorporates a variant called masked self-attention. This is crucial for generating sequences (like translations) where each word prediction depends only on the words generated so far. Masked self-attention prevents the model from attending to “future” tokens by applying a mask over the attention weights, effectively blocking connections from later positions to earlier ones. With the mask the equation becomes: \\
+	\tab[1cm]$Attention(Q, K, V) = softmax(mask(\frac{QK^T}{\sqrt{d_k}}))V$ \\
+In practice, the mask is a matrix where the — triangle of the matrix is $-\infty$. When multiplied this effectively zeros out all tokens that come sequentially after token i in the sequence. Here is an example of a mask matrix for a small, toy example.This, when applied, would zero out all of the elements at the positions with the negative infinity values, ensuring that the prediction can only come from past information, mimicking next token prediction. Here is an example of a masking matrix: 
+    \[
+\begin{bmatrix}
+    1 & -\infty & -\infty \\
+    1 & 1 & -\infty \\
+    1 & 1 & 1
+\end{bmatrix}
+\]
 
 \subsubsection{Multi-Head Attention}
-A single attention head captures one aspect of the relationships in the sequence. To capture richer, more diverse relationships, the Transformer employs multiple attention heads, each with its own set of query, key, and value matrices:
-	MultiHead(Q, K, V) = Concat(head1,…,headh)WO 
-	Where each headi =Attention(QWiQ,KWiK, VWiV)  
-where each head performs the attention operation in parallel. In this model, there are 8 attention heads working in parallel. These outputs are concatenated and projected through a final weight matrix (WO). This design allows each head to focus on different aspects of language, such as syntactic or semantic relationships, and combine them to form a more comprehensive representation of the input.
+A single attention head captures one aspect of the relationships in the sequence. To capture richer, more diverse relationships, the Transformer employs multiple attention heads, each with its own set of query, key, and value matrices:\\
+	\tab$MultiHead(Q, K, V) = Concat(head_1,\dots,head_h)WO $ \\
+	\tab Where each $head_i =Attention(QW_iQ,KW_iK, VW_iV) $ \\
+where each head performs the attention operation in parallel. In this model, there are 8 attention heads working in parallel. These outputs are concatenated and projected through a final weight matrix ($WO$). This design allows each head to focus on different aspects of language, such as syntactic or semantic relationships, and combine them to form a more comprehensive representation of the input.
 
 \subsubsection{Layer Norm}
 Layer normalization is a technique used in the Transformer architecture to help stabilize the training process. It normalizes the inputs to a layer by subtracting the mean and dividing by the standard deviation of the layer's activations, helping to reduce internal output shift.
@@ -79,19 +87,21 @@ Each token is embedded into a 512-dimensional vector (in the base model), and po
 \subsubsection{The Encoder Stack}
 The encoder consists of six identical layers, each containing two sub-layers: a multi-head self-attention mechanism and a position-wise dense feed-forward network. The self-attention mechanism allows each word to attend to all other words in the sentence up to and including itself, capturing contextual relationships. In our example, when processing "negro," the attention mechanism might focus heavily on "gato" to establish agreement, while also maintaining awareness of other contextual elements. 
 
-The multi-head attention mechanism can be visualized as multiple parallel attention computations, each potentially focusing on different aspects of the relationships between words. For instance, one attention head might focus on grammatical structure, while another captures semantic relationships.
+The multi-head attention mechanism can be visualized as multiple parallel attention computations, each potentially focusing on different aspects of the relationships between words. For instance, one attention head might focus on grammatical structure, while another captures semantic relationships. Each sub-layer in the encoder layer is wrapped with residual connections, followed by layer normalization, which helps stabilize the training process. The combination of multi-head self-attention and feed-forward layers allows the encoder to produce a rich, contextualized representation of the input sequence. 
 
-Each sub-layer in the encoder layer is wrapped with residual connections, followed by layer normalization, which helps stabilize the training process. The combination of multi-head self-attention and feed-forward layers allows the encoder to produce a rich, contextualized representation of the input sequence. 
-
-Therefore, the output of each sublayer is:
-	LayerNorm(x + Sublayer(x)) for each sublayer in a transformer block. 
+Therefore, the output of each sublayer is: \\
+	\tab$LayerNorm(x + Sublayer(x))$ for each sublayer in a transformer block. \\
 For encoders, we see that the two sublayers are a FFN which is then fed into and a multi-attention head. For the decoder stack, the logic is the same but with one additional sublayer. 
 
 In our example, the tokenized and embedded Spanish inputs are passed into the encoder, which consists of six identical transformer blocks. Within each block, the self-attention mechanism allows each word to dynamically attend to all other words in the sequence, capturing important contextual relationships.
 
-For example, when processing the token "negro" (black), the self-attention mechanism might focus heavily on "gato" (cat) to establish the correct grammatical agreement, while also maintaining awareness of other relevant context like "duerme" (sleeps) and "en" (in). The multi-head design of the attention mechanism enables it to capture diverse linguistic phenomena, such as syntactic and semantic connections.
+For example, when processing the token "negro" (black), the self-attention mechanism might focus heavily on "gato" (cat) to establish the correct grammatical agreement, while also maintaining awareness of other relevant context like "duerme" (sleeps) and "en" (in). The multi-head design of the attention mechanism enables it to capture diverse linguistic phenomena, such as syntactic and semantic connections. After the self-attention sub-layer, the position-wise feed-forward network further refines the contextual representations of each token. This combination of attention and feed-forward processing allows the encoder to produce rich, contextualized embeddings for the entire input sequence.
 
-After the self-attention sub-layer, the position-wise feed-forward network further refines the contextual representations of each token. This combination of attention and feed-forward processing allows the encoder to produce rich, contextualized embeddings for the entire input sequence.
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.5\textwidth]{chapters/images/transformer.jpeg} 
+    \caption {The Diagram shows the transformer architecture. \cite{NIPS2017_3f5ee243} On the left is a single encoder block and on the right is a single decoder block. In use, multiple of each of these blocks would be stacked on themselves, and the outputs from the final encoder block would be added at the multi-head attention stage of each decoder block.}
+\end{figure}
 
 \subsubsection{The Decoder Stack}
 The decoder, crucial for our translation task, also contains six layers but with an additional sub-layer for attending to the encoder's output. This extra sublayer, the masked-multi attention head comes before the other two layers, is subject to the same residual addition and layer norming. Because of this new sublayer, the decoder's operation is particularly interesting as it must generate text auto-regressively (one word at a time taking into account the previous words it has predicted) despite the parallel nature of the architecture. Here, the input to the decoder is the the output of the encoder and the previous outputs of decoder block itself. 
