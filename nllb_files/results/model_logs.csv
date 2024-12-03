@@ -1,0 +1,293 @@
+model_name,train_scope,date,target_lang,BLEU,ChrF++,notes
+sheff/anlp_ashaninka,bi,2024-10-23 11:06:42,ashaninka,2.138,27.384,Nllb finetune bilingual
+sheff/anlp_guarani,bi,2024-10-23 11:09:14,guarani,4.351,30.298,Nllb finetune bilingual
+sheff/anlp_bribri,bi,2024-10-23 11:09:20,bribri,3.404,19.182,Nllb finetune bilingual
+sheff/anlp_quechua,bi,2024-10-23 11:09:21,quechua,2.782,34.551,Nllb finetune bilingual
+sheff/anlp_aymara,bi,2024-10-23 11:10:32,aymara,3.215,33.661,Nllb finetune bilingual
+sheff/anlp_hñähñu,bi,2024-10-23 11:10:44,hñähñu,0.408,10.045,Nllb finetune bilingual
+sheff/anlp_chatino,bi,2024-10-23 11:11:27,chatino,0.964,17.572,Nllb finetune bilingual
+sheff/anlp_nahuatl,bi,2024-10-23 11:11:35,nahuatl,0.708,29.254,Nllb finetune bilingual
+sheff/anlp_raramuri,bi,2024-10-23 11:12:18,raramuri,0.162,14.576,Nllb finetune bilingual
+sheff/anlp_wixarika,bi,2024-10-23 11:12:34,wixarika,8.124,28.679,Nllb finetune bilingual
+sheff_multi/anlp_multi_v1,multi,2024-10-23 11:13:21,ashaninka,1.585,11.909,"Nllb finetune multi, nah dev"
+sheff_multi/anlp_multi_v2,multi,2024-10-23 11:14:03,ashaninka,1.618,12.865,"Nllb finetune multi, oto dev"
+sheff_multi/anlp_multi_v1,multi,2024-10-23 11:15:03,bribri,2.757,12.364,"Nllb finetune multi, nah dev"
+sheff_multi/anlp_multi_v2,multi,2024-10-23 11:15:36,bribri,2.509,14.228,"Nllb finetune multi, oto dev"
+sheff_multi/anlp_multi_v1,multi,2024-10-23 11:15:46,guarani,4.769,29.134,"Nllb finetune multi, nah dev"
+sheff_multi/anlp_multi_v2,multi,2024-10-23 11:16:16,guarani,4.972,29.003,"Nllb finetune multi, oto dev"
+sheff_multi/anlp_multi_v1,multi,2024-10-23 11:17:17,quechua,1.908,29.34,"Nllb finetune multi, nah dev"
+sheff_multi/anlp_multi_v2,multi,2024-10-23 11:17:39,quechua,2.217,31.839,"Nllb finetune multi, oto dev"
+sheff_multi/anlp_multi_v1,multi,2024-10-23 11:18:59,aymara,2.231,18.513,"Nllb finetune multi, nah dev"
+sheff_multi/anlp_multi_v2,multi,2024-10-23 11:19:11,aymara,2.211,21.684,"Nllb finetune multi, oto dev"
+sheff_multi/anlp_multi_v1,multi,2024-10-23 11:20:42,shipibo_konibo,2.09,16.254,"Nllb finetune multi, nah dev"
+sheff_multi/anlp_multi_v2,multi,2024-10-23 11:20:43,shipibo_konibo,2.293,17.419,"Nllb finetune multi, oto dev"
+sheff_multi/anlp_multi_v1,multi,2024-10-23 11:22:18,chatino,1.18,16.461,"Nllb finetune multi, nah dev"
+sheff_multi/anlp_multi_v2,multi,2024-10-23 11:22:25,chatino,1.358,16.629,"Nllb finetune multi, oto dev"
+sheff_multi/anlp_multi_v2,multi,2024-10-23 11:23:08,hñähñu,0.878,10.891,"Nllb finetune multi, nah dev"
+sheff_multi/anlp_multi_v1,multi,2024-10-23 11:23:09,hñähñu,0.876,9.31,"Nllb finetune multi, oto dev"
+sheff_multi/anlp_multi_v2,multi,2024-10-23 11:24:02,nahuatl,1.327,10.601,"Nllb finetune multi, nah dev"
+sheff_multi/anlp_multi_v1,multi,2024-10-23 11:24:11,nahuatl,1.206,9.146,"Nllb finetune multi, oto dev"
+sheff_multi/anlp_multi_v2,multi,2024-10-23 11:25:34,raramuri,1.106,12.518,"Nllb finetune multi, nah dev"
+sheff_multi/anlp_multi_v1,multi,2024-10-23 11:25:54,raramuri,1.208,11.209,"Nllb finetune multi, oto dev"
+sheff_multi/anlp_multi_v2,multi,2024-10-23 11:27:07,wixarika,2.126,14.794,"Nllb finetune multi, nah dev"
+sheff_multi/anlp_multi_v1,multi,2024-10-23 11:27:37,wixarika,0.998,11.899,"Nllb finetune multi, oto dev"
+sheff/anlp_shipbo-konibo,bi,2024-10-23 11:51:08,shipibo_konibo,1.551,24.113,Nllb finetune bilingual
+sheff_norm/anlp_hñähñu_sheff,bi,2024-10-26 09:51:24,hñähñu,0.636,14.677,Sheffield normalization nllb finetune
+sheff_norm/anlp_nahuatl_sheff,bi,2024-10-26 09:51:47,nahuatl,2.28,31.042,Sheffield normalization nllb finetune
+sheff_norm/anlp_chatino_sheff,bi,2024-10-26 09:53:14,chatino,9.152,34.292,Sheffield normalization nllb finetune
+sheff_norm/anlp_ashaninka_sheff,bi,2024-11-03 12:01:25,ashaninka,1.471,26.616,Sheffield normalization nllb finetune
+sheff_norm/anlp_bribri_sheff,bi,2024-11-03 12:04:55,bribri,3.076,19.297,Sheffield normalization nllb finetune
+sheff_norm/anlp_guarani_sheff,bi,2024-11-03 12:05:19,guarani,0.141,10.31,Sheffield normalization nllb finetune
+sheff_norm/anlp_quechua_sheff,bi,2024-11-03 12:05:19,quechua,0.258,10.931,Sheffield normalization nllb finetune
+sheff_norm/anlp_aymara_sheff,bi,2024-11-03 12:05:42,aymara,0.285,11.138,Sheffield normalization nllb finetune
+sheff_norm/anlp_shipibo_konibo_sheff,bi,2024-11-03 12:06:02,shipibo_konibo,1.401,25.061,Sheffield normalization nllb finetune
+helsinki/v3/phase_2/model_step_195000,multi,2024-11-03 12:14:39,ashaninka,0.016,10.886,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_92000,multi,2024-11-03 12:14:41,ashaninka,0.013,7.932,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_94000,multi,2024-11-03 12:14:42,ashaninka,0.008,7.473,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_184000,multi,2024-11-03 12:15:22,ashaninka,0.018,10.008,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_195000,multi,2024-11-03 12:16:35,bribri,0.048,6.473,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_92000,multi,2024-11-03 12:16:55,bribri,0.034,4.302,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_94000,multi,2024-11-03 12:17:08,bribri,0.013,3.484,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_184000,multi,2024-11-03 12:17:52,bribri,0.023,4.615,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_195000,multi,2024-11-03 12:19:14,guarani,0.02,6.467,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_92000,multi,2024-11-03 12:19:34,guarani,0.028,5.222,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_94000,multi,2024-11-03 12:19:53,guarani,0.036,4.723,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_184000,multi,2024-11-03 12:20:14,guarani,0.043,8.25,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_92000,multi,2024-11-03 12:20:46,quechua,0.073,15.782,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_195000,multi,2024-11-03 12:20:47,quechua,0.021,16.708,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_94000,multi,2024-11-03 12:21:38,quechua,0.055,14.578,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_184000,multi,2024-11-03 12:21:49,quechua,0.061,13.652,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_195000,multi,2024-11-03 12:22:42,aymara,0.014,9.141,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_92000,multi,2024-11-03 12:22:54,aymara,0.011,6.643,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_94000,multi,2024-11-03 12:24:09,aymara,0.007,5.945,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_184000,multi,2024-11-03 12:24:18,aymara,0.008,6.907,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_195000,multi,2024-11-03 12:24:37,shipibo_konibo,0.031,11.989,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_92000,multi,2024-11-03 12:25:01,shipibo_konibo,0.019,7.378,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_94000,multi,2024-11-03 12:26:41,shipibo_konibo,0.007,6.948,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_184000,multi,2024-11-03 12:26:48,shipibo_konibo,0.014,7.925,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_195000,multi,2024-11-03 12:29:48,chatino,0.678,9.451,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_92000,multi,2024-11-03 12:30:16,chatino,0.306,11.593,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_195000,multi,2024-11-03 12:30:38,hñähñu,0.027,8.877,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_92000,multi,2024-11-03 12:31:17,hñähñu,0.027,4.692,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_195000,multi,2024-11-03 12:31:43,nahuatl,0.02,8.369,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_184000,multi,2024-11-03 12:31:59,chatino,0.381,10.68,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_94000,multi,2024-11-03 12:32:00,chatino,0.244,9.556,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_92000,multi,2024-11-03 12:32:28,nahuatl,0.042,4.786,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_184000,multi,2024-11-03 12:33:13,hñähñu,0.015,4.391,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_94000,multi,2024-11-03 12:33:13,hñähñu,0.015,3.852,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_195000,multi,2024-11-03 12:33:39,raramuri,0.014,8.415,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_92000,multi,2024-11-03 12:34:36,raramuri,0.012,5.506,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_94000,multi,2024-11-03 12:34:41,nahuatl,0.011,4.101,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_184000,multi,2024-11-03 12:34:42,nahuatl,0.012,4.92,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_195000,multi,2024-11-03 12:35:33,wixarika,0.326,9.314,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_92000,multi,2024-11-03 12:36:45,wixarika,0.104,5.715,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_184000,multi,2024-11-03 12:37:13,raramuri,0.008,5.697,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_94000,multi,2024-11-03 12:37:14,raramuri,0.007,4.783,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_143000,multi,2024-11-03 12:37:48,ashaninka,0.013,11.236,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_184000,multi,2024-11-03 12:39:45,wixarika,0.502,6.894,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_94000,multi,2024-11-03 12:39:47,wixarika,0.188,5.133,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_143000,multi,2024-11-03 12:40:06,bribri,0.046,5.147,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_143000,multi,2024-11-03 12:42:13,guarani,0.035,6.419,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_143000,multi,2024-11-03 12:43:16,quechua,0.067,13.179,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_143000,multi,2024-11-03 12:45:33,aymara,0.012,7.77,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_143000,multi,2024-11-03 12:47:52,shipibo_konibo,0.032,10.404,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_143000,multi,2024-11-03 12:53:04,chatino,0.276,9.631,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_143000,multi,2024-11-03 12:54:08,hñähñu,0.021,6.24,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_143000,multi,2024-11-03 12:55:27,nahuatl,0.016,6.183,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_143000,multi,2024-11-03 12:57:44,raramuri,0.012,7.149,Phase 2 Helsinki
+helsinki/v3/phase_2/model_step_143000,multi,2024-11-03 13:00:02,wixarika,0.409,7.704,Phase 2 Helsinki
+anlp_wixarika_sheff,other,2024-11-03 18:03:43,wixarika,8.282,28.231,Sheffield normalization nllb finetune
+anlp_raramuri_sheff,other,2024-11-03 18:14:10,raramuri,0.077,14.512,Sheffield normalization nllb finetune
+helsinki/v3/phase_3/ashaninka_finetune,multi,2024-11-04 11:45:21,ashaninka,0.018,14.464,Helsinki Phase 3 Finetune
+helsinki/v3/phase_3/guarani_finetune,multi,2024-11-04 12:02:46,guarani,0.111,9.419,Helsinki Phase 3 Finetune
+helsinki/v3/phase_3/raramuri_finetune,multi,2024-11-04 12:09:16,raramuri,0.009,4.844,Helsinki Phase 3 Finetune
+helsinki/v3/phase_1,multi,2024-11-05 19:49:07,english,0.36,3.702,Testing Helsinki Phase 1 pretrain
+helsinki/v4/phase_1,multi,2024-11-07 15:33:49,english,5.417,12.046,Helsinki Phase 1 New Tokenizer
+helsinki/v4/phase_2/model_step_99000,multi,2024-11-08 10:09:07,ashaninka,0.534,13.404,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_5000,multi,2024-11-08 10:09:18,ashaninka,0.066,7.756,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_99000,multi,2024-11-08 10:10:38,bribri,0.903,11.263,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_5000,multi,2024-11-08 10:11:21,bribri,0.245,7.041,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_99000,multi,2024-11-08 10:11:43,guarani,1.695,20.132,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_5000,multi,2024-11-08 10:12:45,guarani,0.388,12.292,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_99000,multi,2024-11-08 10:12:48,quechua,0.363,23.449,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_5000,multi,2024-11-08 10:13:40,quechua,0.23,18.579,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_99000,multi,2024-11-08 10:14:22,aymara,0.585,13.447,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_5000,multi,2024-11-08 10:15:41,aymara,0.042,7.222,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_99000,multi,2024-11-08 10:15:54,shipibo_konibo,0.746,14.117,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_5000,multi,2024-11-08 10:17:40,shipibo_konibo,0.138,8.266,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_99000,multi,2024-11-08 10:17:51,chatino,5.088,26.154,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_99000,multi,2024-11-08 10:18:36,hñähñu,0.218,8.827,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_99000,multi,2024-11-08 10:19:27,nahuatl,0.611,9.728,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_99000,multi,2024-11-08 10:20:57,raramuri,0.193,10.847,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_5000,multi,2024-11-08 10:21:25,chatino,3.444,20.296,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_5000,multi,2024-11-08 10:22:18,hñähñu,0.136,5.378,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_99000,multi,2024-11-08 10:22:28,wixarika,0.796,11.915,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_5000,multi,2024-11-08 10:23:24,nahuatl,0.072,6.172,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_28000,multi,2024-11-08 10:24:28,ashaninka,0.197,11.642,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_5000,multi,2024-11-08 10:25:26,raramuri,0.054,6.903,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_28000,multi,2024-11-08 10:26:22,bribri,0.437,8.882,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_5000,multi,2024-11-08 10:27:27,wixarika,0.216,6.954,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_28000,multi,2024-11-08 10:27:41,guarani,1.187,17.092,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_28000,multi,2024-11-08 10:28:41,quechua,0.342,21.343,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_25000,multi,2024-11-08 10:29:38,ashaninka,0.215,10.432,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_28000,multi,2024-11-08 10:30:33,aymara,0.349,11.63,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_25000,multi,2024-11-08 10:31:55,bribri,0.652,8.473,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_28000,multi,2024-11-08 10:32:27,shipibo_konibo,0.39,11.39,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_25000,multi,2024-11-08 10:33:10,guarani,0.932,16.628,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_25000,multi,2024-11-08 10:34:23,quechua,0.301,20.548,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_28000,multi,2024-11-08 10:34:35,chatino,4.894,26.798,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_28000,multi,2024-11-08 10:35:31,hñähñu,0.194,7.839,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_28000,multi,2024-11-08 10:36:38,nahuatl,0.33,8.521,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_25000,multi,2024-11-08 10:36:44,aymara,0.247,10.175,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_28000,multi,2024-11-08 10:38:31,raramuri,0.141,9.262,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_25000,multi,2024-11-08 10:39:02,shipibo_konibo,0.294,10.929,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_28000,multi,2024-11-08 10:40:27,wixarika,0.294,9.812,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_25000,multi,2024-11-08 10:41:14,chatino,4.563,25.455,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_110000,multi,2024-11-08 10:42:03,ashaninka,0.47,13.327,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_25000,multi,2024-11-08 10:42:28,hñähñu,0.135,8.513,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_110000,multi,2024-11-08 10:43:34,bribri,0.725,10.681,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_25000,multi,2024-11-08 10:43:50,nahuatl,0.165,8.753,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_110000,multi,2024-11-08 10:44:45,guarani,1.386,19.876,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_110000,multi,2024-11-08 10:45:46,quechua,0.434,23.884,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_25000,multi,2024-11-08 10:46:06,raramuri,0.139,9.109,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_110000,multi,2024-11-08 10:47:16,aymara,0.747,14.405,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_25000,multi,2024-11-08 10:48:23,wixarika,0.912,9.645,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_110000,multi,2024-11-08 10:48:45,shipibo_konibo,0.846,15.055,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_110000,multi,2024-11-08 10:50:54,chatino,5.214,26.572,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_110000,multi,2024-11-08 10:51:37,hñähñu,0.401,9.94,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_110000,multi,2024-11-08 10:52:26,nahuatl,0.516,10.422,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_110000,multi,2024-11-08 10:53:56,raramuri,0.362,11.472,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_110000,multi,2024-11-08 10:55:27,wixarika,0.89,12.297,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_28000,multi,2024-11-10 14:35:54,ashaninka,0.197,11.642,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+helsinki/v4/phase_2/model_step_25000,multi,2024-11-10 14:36:03,ashaninka,0.215,10.432,"Helsinki Phase 2 Finetune new Tokenizer and Non-Normalized data (except for ctp, bzd,nah)"
+mono_gen/gen_quechua,bi,2024-11-11 02:36:45,quechua,1.8,32.858,testing <gen> addition for quy monolingual corpora
+helsinki/v5/phase_2/model_step_25000,multi,2024-11-12 10:47:52,ashaninka,0.25,10.981, time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_28000,multi,2024-11-12 10:48:09,ashaninka,0.388,11.62,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_0,multi,2024-11-12 10:48:21,ashaninka,0.09,6.956,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_25000,multi,2024-11-12 10:49:35,bribri,0.369,8.25,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_28000,multi,2024-11-12 10:50:07,bribri,0.581,9.198,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_0,multi,2024-11-12 10:50:50,bribri,0.159,6.052,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_25000,multi,2024-11-12 10:50:53,guarani,0.934,16.317,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_28000,multi,2024-11-12 10:51:32,guarani,0.945,16.983,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_25000,multi,2024-11-12 10:51:51,quechua,0.324,21.057,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_28000,multi,2024-11-12 10:52:37,quechua,0.429,21.674,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_0,multi,2024-11-12 10:52:41,guarani,0.266,12.046,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_0,multi,2024-11-12 10:53:35,quechua,0.23,17.833,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_25000,multi,2024-11-12 10:53:38,aymara,0.264,10.605,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_28000,multi,2024-11-12 10:54:37,aymara,0.333,11.417,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_25000,multi,2024-11-12 10:55:26,shipibo_konibo,0.379,12.817,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_0,multi,2024-11-12 10:56:02,aymara,0.082,6.45,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_28000,multi,2024-11-12 10:56:36,shipibo_konibo,0.393,11.824,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_25000,multi,2024-11-12 10:57:37,chatino,4.783,25.431,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_25000,multi,2024-11-12 10:58:29,hñähñu,0.195,8.564,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_0,multi,2024-11-12 10:58:29,shipibo_konibo,0.095,6.965,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_28000,multi,2024-11-12 10:58:38,chatino,4.797,26.524,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_25000,multi,2024-11-12 10:59:28,nahuatl,0.315,8.636,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_28000,multi,2024-11-12 10:59:34,hñähñu,0.349,8.277,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_28000,multi,2024-11-12 11:00:43,nahuatl,0.363,9.258,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_25000,multi,2024-11-12 11:01:15,raramuri,0.154,9.642,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_0,multi,2024-11-12 11:02:28,chatino,1.76,16.417,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_28000,multi,2024-11-12 11:02:44,raramuri,0.222,9.661,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_25000,multi,2024-11-12 11:03:03,wixarika,1.191,10.319,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_0,multi,2024-11-12 11:03:44,hñähñu,0.078,4.549,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_28000,multi,2024-11-12 11:04:45,wixarika,0.9,10.456,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_33000,multi,2024-11-12 11:04:47,ashaninka,0.399,13.927,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_0,multi,2024-11-12 11:05:15,nahuatl,0.11,5.429,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_33000,multi,2024-11-12 11:06:29,bribri,0.464,8.265,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_50000,multi,2024-11-12 11:06:35,ashaninka,0.742,14.233,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_0,multi,2024-11-12 11:07:45,raramuri,0.032,5.7,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_33000,multi,2024-11-12 11:07:46,guarani,0.885,16.168,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_50000,multi,2024-11-12 11:08:20,bribri,0.749,8.836,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_33000,multi,2024-11-12 11:08:39,quechua,0.275,18.837,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_50000,multi,2024-11-12 11:09:37,guarani,0.968,18.529,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_0,multi,2024-11-12 11:10:14,wixarika,0.705,6.361,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_33000,multi,2024-11-12 11:10:21,aymara,0.215,12.212,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_50000,multi,2024-11-12 11:10:37,quechua,0.483,22.691,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_33000,multi,2024-11-12 11:12:03,shipibo_konibo,0.515,13.86,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_50000,multi,2024-11-12 11:12:20,aymara,0.346,14.204,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_50000,multi,2024-11-12 11:14:03,shipibo_konibo,0.816,14.29,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_33000,multi,2024-11-12 11:14:04,chatino,4.851,25.853,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_33000,multi,2024-11-12 11:14:53,hñähñu,0.151,9.28,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_50000,multi,2024-11-12 11:16:06,chatino,4.816,27.118,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_50000,multi,2024-11-12 11:16:57,hñähñu,0.136,9.19,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_33000,multi,2024-11-12 11:17:34,raramuri,0.143,10.266,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_50000,multi,2024-11-12 11:17:58,nahuatl,0.756,10.526,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_33000,multi,2024-11-12 11:19:16,wixarika,0.515,11.138,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_50000,multi,2024-11-12 11:19:43,raramuri,0.147,10.864,time cut short dev on 0.3*12 of langs
+helsinki/v5/phase_2/model_step_50000,multi,2024-11-12 11:21:27,wixarika,0.666,11.824,time cut short dev on 0.3*12 of langs
+helsinki/v6/phase_2/model_step_195000,multi,2024-11-12 12:58:21,ashaninka,0.338,11.869,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_155000,multi,2024-11-12 12:58:24,ashaninka,0.637,13.48,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_175000,multi,2024-11-12 12:58:29,ashaninka,0.601,12.323,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_180000,multi,2024-11-12 12:58:32,ashaninka,0.778,12.322,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_175000,multi,2024-11-12 12:59:59,bribri,0.821,10.33,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_180000,multi,2024-11-12 13:00:00,bribri,0.738,10.043,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_155000,multi,2024-11-12 13:00:05,bribri,0.858,9.824,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_195000,multi,2024-11-12 13:00:57,guarani,1.846,20.699,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_175000,multi,2024-11-12 13:01:03,guarani,1.291,20.686,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_195000,multi,2024-11-12 12:59:50,bribri,0.532,10.151,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_180000,multi,2024-11-12 13:01:10,guarani,1.413,19.925,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_155000,multi,2024-11-12 13:01:36,guarani,1.161,19.695,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_195000,multi,2024-11-12 13:02:06,quechua,0.96,24.366,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_175000,multi,2024-11-12 13:02:09,quechua,0.708,24.615,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_180000,multi,2024-11-12 13:02:26,quechua,0.776,23.659,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_155000,multi,2024-11-12 13:02:36,quechua,0.576,24.146,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_195000,multi,2024-11-12 13:03:34,aymara,0.421,14.912,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_175000,multi,2024-11-12 13:03:39,aymara,0.658,15.04,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_180000,multi,2024-11-12 13:03:54,aymara,0.586,14.274,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_155000,multi,2024-11-12 13:04:19,aymara,0.592,15.247,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_195000,multi,2024-11-12 13:05:03,shipibo_konibo,0.479,13.978,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_175000,multi,2024-11-12 13:05:10,shipibo_konibo,0.717,13.325,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_180000,multi,2024-11-12 13:05:24,shipibo_konibo,0.866,13.285,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_155000,multi,2024-11-12 13:06:03,shipibo_konibo,0.657,13.843,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_195000,multi,2024-11-12 13:07:03,chatino,4.863,27.285,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_175000,multi,2024-11-12 13:07:16,chatino,4.969,26.174,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_180000,multi,2024-11-12 13:07:28,chatino,5.089,26.572,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_195000,multi,2024-11-12 13:07:46,hñähñu,0.278,9.074,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_175000,multi,2024-11-12 13:07:57,hñähñu,0.273,8.87,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_180000,multi,2024-11-12 13:08:11,hñähñu,0.492,8.65,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_155000,multi,2024-11-12 13:08:17,chatino,5.264,26.526,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_195000,multi,2024-11-12 13:08:35,nahuatl,0.225,9.912,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_175000,multi,2024-11-12 13:08:48,nahuatl,0.491,9.792,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_180000,multi,2024-11-12 13:09:03,nahuatl,0.643,9.578,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_155000,multi,2024-11-12 13:09:05,hñähñu,0.434,10.117,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_155000,multi,2024-11-12 13:10:03,nahuatl,0.621,10.803,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_195000,multi,2024-11-12 13:10:05,raramuri,0.203,10.893,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_175000,multi,2024-11-12 13:10:18,raramuri,0.317,10.551,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_180000,multi,2024-11-12 13:10:31,raramuri,0.271,10.447,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_195000,multi,2024-11-12 13:11:34,wixarika,0.455,11.654,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_155000,multi,2024-11-12 13:11:46,raramuri,0.188,11.098,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_175000,multi,2024-11-12 13:11:49,wixarika,0.579,11.837,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_180000,multi,2024-11-12 13:12:01,wixarika,0.847,11.708,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_1,multi,2024-11-12 13:12:12,spanish,20.692,37.538,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_100000,multi,2024-11-12 13:13:21,ashaninka,0.323,12.279,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_155000,multi,2024-11-12 13:13:30,wixarika,1.091,12.841,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_100000,multi,2024-11-12 13:15:06,bribri,0.568,8.985,changed direction of spa-->eng and validated on all langs
+helsinki/v5/phase_1,multi,2024-11-12 13:16:17,spanish,3.443,12.926,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_100000,multi,2024-11-12 13:16:26,guarani,0.798,18.757,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_100000,multi,2024-11-12 13:17:32,quechua,0.456,21.864,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_100000,multi,2024-11-12 13:19:17,aymara,0.391,13.769,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_100000,multi,2024-11-12 13:21:02,shipibo_konibo,0.557,13.481,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_100000,multi,2024-11-12 13:23:04,chatino,5.343,27.35,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_100000,multi,2024-11-12 13:23:52,hñähñu,0.337,8.99,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_100000,multi,2024-11-12 13:24:52,nahuatl,0.207,9.904,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_100000,multi,2024-11-12 13:26:38,raramuri,0.222,10.181,changed direction of spa-->eng and validated on all langs
+helsinki/v6/phase_2/model_step_100000,multi,2024-11-12 13:28:23,wixarika,0.85,11.592,changed direction of spa-->eng and validated on all langs
+sheff_new_tok/ashaninka,bi,2024-11-13 22:58:06,ashaninka,0.07,19.053,bilinugal sheff style with new tokenizer
+sheff_new_tok/bribri,bi,2024-11-13 23:22:41,bribri,0.481,11.326,bilinugal sheff style with new tokenizer
+sheff_new_tok/guarani,bi,2024-11-14 04:15:09,guarani,1.77,19.234,bilinugal sheff style with new tokenizer
+sheff_new_tok/quechua,bi,2024-11-14 17:35:58,quechua,0.534,19.1,bilinugal sheff style with new tokenizer
+sheff_new_tok/aymara,bi,2024-11-14 18:15:06,aymara,1.628,17.137,bilinugal sheff style with new tokenizer
+sheff_new_tok/shipibo_konibo,bi,2024-11-14 22:54:32,shipibo_konibo,0.181,15.996,bilinugal sheff style with new tokenizer
+sheff_new_tok/hñähñu,bi,2024-11-15 14:37:01,hñähñu,0.048,11.165,bilinugal sheff style with new tokenizer
+sheff_new_tok/nahuatl,bi,2024-11-15 15:05:52,nahuatl,0.215,13.79,bilinugal sheff style with new tokenizer
+sheff_new_tok/chatino,bi,2024-11-15 15:23:18,chatino,8.093,37.023,bilinugal sheff style with new tokenizer
+sheff_new_tok/wixarika,bi,2024-11-16 16:37:58,wixarika,3.38,19.302,bilinugal sheff style with new tokenizer
+sheff_new_tok/raramuri,bi,2024-11-16 17:33:03,raramuri,0.071,9.06,bilinugal sheff style with new tokenizer
+test_gen/without_gen,bi,2024-11-18 10:15:26,encypted english,28.761,44.458,"encrypted english (gne_Test) gen test, without <gen> encrypted monolingual addition"
+test_gen/with_gen,other,2024-11-18 10:16:18,encypted english,18.225,40.125,"encrypted english (gne_Test) gen test, with <gen> encrypted monolingual addition"
+encrypt_exp/exp_1/control/n0d-v0,2024-11-22 11:45:12,n0d_Latn,19.936,46.357,test to see if multilingual training helps on parallel data sets, using english to encrypted dutch
+encrypt_exp/exp_1/control/n1d-v0,2024-11-22 11:50:12,n1d_Latn,19.907,48.218,test to see if multilingual training helps on parallel data sets, using english to encrypted dutch
+encrypt_exp/exp_1/control/n2d-v0,2024-11-22 11:57:12,n2d_Latn,20.672,46.399,test to see if multilingual training helps on parallel data sets, using english to encrypted dutch
+encrypt_exp/exp_1/multi_parallel-v1, 2024-11-23 1:57:10,n0d_Latn,13.999,39.925,test to see if multilingual training helps on parallel data sets, using english to encrypted dutch
+encrypt_exp/exp_1/multi_parallel-v1, 2024-11-23 1:57:10,n1d_Latn,19.266,48.162,test to see if multilingual training helps on parallel data sets, using english to encrypted dutch
+encrypt_exp/exp_1/multi_parallel-v1, 2024-11-23 1:57:10,n2d_Latn,15.944,41.799,test to see if multilingual training helps on parallel data sets, using english to encrypted dutch
