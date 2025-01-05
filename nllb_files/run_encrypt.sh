@@ -6,4 +6,4 @@
 #SBATCH -o logs/log_%j.out  
 #SBATCH -e logs/log_%j.err
 #SBATCH --gres=gpu:1
-python finetune.py --config one.json --model_dir models/encrypt_exp/exp_2/control/n1d --steps 60000
+python encrypt.py --num_sents 52000 --num_langs 3 --parallel False --output_file data/eng-dutch/eng_dutch_encrypted_not_parallel.csv
