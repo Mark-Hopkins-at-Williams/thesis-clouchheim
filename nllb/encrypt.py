@@ -4,10 +4,47 @@ import pandas as pd
 from transformers import AutoTokenizer
 from tqdm import tqdm
 
-def tokenize(sents, lang, tokenizer, max_length):
-    tokenizer.src_lang = lang
-    tokens = tokenizer(sents, return_tensors='pt', padding=True, truncation=True, max_length=max_length)
-    return tokens
+
+class TokenPermuter:
+    """Permutes the token ids of an NLLB tokenizer."""
+    
+    def __init__(self, permutation):    
+        self.permutation = permutation
+
+    def map_token_id(self, token_id):
+        if token_id > 256000: # tokens above this are language ids
+            return 3          # UNK token
+        elif token_id not in self.permutation:  # if the token id isn't in the permutation, it maps to itself
+            return token_id
+        else:
+            return self.permutation[token_id]
+                
+
+def create_token_permuter(tokenizer, sents):
+    def permute(indexed_tokens):        
+        indices = [tok[1] for tok in indexed_tokens]
+        permutation = [tok[1] for tok in indexed_tokens]
+        random.shuffle(permutation)
+        return dict(zip(indices, permutation))
+    tokenized = tokenizer(sents, return_tensors='pt', padding=True, truncation=True, max_length=128)
+    ids = [idx for idx in tokenized['input_ids'].unique().tolist() if 4 <= idx <= 256000]
+    tokens = [(tokenizer.convert_ids_to_tokens(next_id), next_id) for next_id in ids]
+    length1_tokens = [tok for tok in tokens if len(tok[0]) == 1]
+    other_tokens = [tok for tok in tokens if len(tok[0]) > 1]
+    underscore_tokens = [tok for tok in other_tokens if tok[0].startswith("▁")]
+    no_underscore_tokens = [tok for tok in other_tokens if not tok[0].startswith("▁")]        
+    vocab = permute(underscore_tokens)
+    vocab.update(permute(no_underscore_tokens))
+    vocab.update(permute(length1_tokens))
+    return TokenPermuter(vocab)
+
+
+def encrypt_sentences(sents, tokenizer):
+    tokenized = tokenizer(sents, return_tensors='pt', padding=True, truncation=True, max_length=128)
+    original_ids = tokenized['input_ids'].clone()
+    original_ids.apply_(permuter.map_token_id)
+    encrypted = tokenizer.batch_decode(original_ids, skip_special_tokens=True)
+    return encrypted
 
 
 def choose_split(i):
@@ -17,49 +54,24 @@ def choose_split(i):
         return 'dev'
     else:
         return 'test'
-    
-    
-class TokenPermuter:
-    
-    def __init__(self, tokenizer, corpus):    
-        tokenized = tokenize(corpus, 'por_Latn', tokenizer, max_length=128)
-        ids = [idx for idx in tokenized['input_ids'].unique().tolist() if 4 <= idx <= 256000]
-        tokens = [(tokenizer.convert_ids_to_tokens(next_id), next_id) for next_id in ids]
-        length1_tokens = [tok for tok in tokens if len(tok[0]) == 1]
-        other_tokens = [tok for tok in tokens if len(tok[0]) > 1]
-        underscore_tokens = [tok for tok in other_tokens if tok[0].startswith("▁")]
-        no_underscore_tokens = [tok for tok in other_tokens if not tok[0].startswith("▁")]        
-        self.vocab = self._permute(underscore_tokens)
-        self.vocab.update(self._permute(no_underscore_tokens))
-        self.vocab.update(self._permute(length1_tokens))
-
-    def map_token_id(self, token_id):
-        if token_id > 256000: # tokens above this are language ids
-            return 3
-        elif token_id not in self.vocab:
-            return token_id
-        else:
-            return self.vocab[token_id]
-                
-    def _permute(self, indexed_tokens):        
-        indices = [tok[1] for tok in indexed_tokens]
-        permutation = [tok[1] for tok in indexed_tokens]
-        random.shuffle(permutation)
-        return dict(zip(indices, permutation))
 
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Encrypts a Finnish-English OPUS corpus")
+    parser = argparse.ArgumentParser(description="Encrypts a parallel corpus")
+    parser.add_argument("--base_model", type=str, required=True, help="The NLLB model")
     parser.add_argument("--num_sents", type=int, required=True, help="Number of sentences to encrypt")
     parser.add_argument("--num_langs", type=int, required=True, help="Number of artificial languages to create")
     parser.add_argument("--output_file", type=str, required=True, help="The output CSV filename")
     parser.add_argument("--parallel", type=lambda x: x.lower() == 'true', required=True, help="If artificial langs should be parallel to src lang (True/False)")
+    parser.add_argument("--src_file", type=str, required=True, help="The file containing the source sentences")
+    parser.add_argument("--tgt_file", type=str, required=True, help="The file containing the target sentences")
     
+
     args = parser.parse_args()
-    base_model = "facebook/nllb-200-distilled-600M"
-    src_file = '/mnt/storage/clouchheim/thesis-clouchheim/nllb_files/data/eng_por/Europarl.en-pt.en'
-    tgt_file = '/mnt/storage/clouchheim/thesis-clouchheim/nllb_files/data/eng_por/Europarl.en-pt.pt'
+    base_model = args.base_model
+    src_file = args.src_file
+    tgt_file = args.tgt_file
     max_sents = args.num_sents
     num_artificial_langs = args.num_langs
     parallel = args.parallel
@@ -78,24 +90,24 @@ if __name__ == "__main__":
                 if len(tgt_sents) >= (max_sents * num_artificial_langs):
                     print('in not parallel tgt')
                     break
+    tokenized = tokenizer(tgt_sents, return_tensors='pt', padding=True, truncation=True, max_length=128)
 
-    tokenized = tokenize(tgt_sents, 'por_Latn', tokenizer, max_length=128)
     ids = [idx for idx in tokenized['input_ids'].unique().tolist() if 4 <= idx <= 256000]
     data = {'language': [], 'script': [], 'sent_id': [], 'text': [], 'split': []}
     for k in range(num_artificial_langs):  
          
         if parallel == True:
             sents = tgt_sents 
-            permuter = TokenPermuter(tokenizer, sents)
+            permuter = create_token_permuter(tokenizer, sents)
             
         else:
             s = max_sents*k
             e = max_sents*(k+1)
             sents = tgt_sents[s:e] 
-            tokenized = tokenize(sents, 'por_Latn', tokenizer, max_length=128)
+            tokenized = tokenizer(tgt_sents, return_tensors='pt', padding=True, truncation=True, max_length=128)
             ids = [idx for idx in tokenized['input_ids'].unique().tolist() if 4 <= idx <= 256000]
               
-        permuter = TokenPermuter(tokenizer, tgt_sents)        
+        permuter = create_token_permuter(tokenizer, tgt_sents)        
         original_ids = tokenized['input_ids'].clone()
         original_ids.apply_(permuter.map_token_id)
         encrypted = tokenizer.batch_decode(original_ids, skip_special_tokens=True)
