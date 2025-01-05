@@ -1,4 +1,5 @@
 from finetune import *
+from multilingualdata import MixtureOfBitexts
 
 # main method to add a monolingual (bitext <gen> --> quy_Latn) to the data
 if __name__ == "__main__":
@@ -24,12 +25,12 @@ if __name__ == "__main__":
     csv_file = NLLB_SEED_CSV if args.data == 'nllb-seed' else AMERICAS_NLP_CSV
     lps = NLLB_SEED_LPS if args.data == 'nllb-seed' else AMERICAS_NLP_LPS ### this is where I can add the <generate>
     corpus = MultilingualCorpus(csv_file)
-    gen_corpus = MultilingualCorpus('data/monolingual_quechua_train_cleaned.csv')
+    gen_corpus = MultilingualCorpus('data/monolingual_quechua_train_cleaned.csv') # TODO: generalize to other languages
     
     bitexts = []
     for lp in lps:
         bitexts.append(corpus.create_bitext(lp[0], lp[1], 'train'))
-    bitexts.append(gen_corpus.create_gen('quy_Latn')) 
+    bitexts.append(gen_corpus.create_gen('quy_Latn')) # TODO: generalize to other languages
     
     train_data = MixtureOfBitexts(bitexts, batch_size = 8, sampling_probs = [0.9, 0.1]) # sample parallel 90% and <gen> 10% 
     dev_bitext = [corpus.create_bitext(args.dev_src, args.dev_tgt, split = 'dev')]

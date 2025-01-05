@@ -127,7 +127,7 @@ class MultilingualCorpus:
         
     def create_gen(self, lang_code):
         sents = self.df["text"].values.tolist()
-        none_sents = [['<pad>']] * len(sents)     
+        none_sents = [['<gen>']] * len(sents)     
         assert len(none_sents) == len(sents)       
         return Bitext('<gen>', lang_code, none_sents, sents)
     
