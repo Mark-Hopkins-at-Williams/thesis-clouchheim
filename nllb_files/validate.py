@@ -55,7 +55,7 @@ def evaluate_translations(candidate_translations, reference_translations):
     sys.stdout.flush()
     return round(bleu_result["score"], 3), round(chrf_result["score"], 3)
 
-def log_evaluation(log_file, model_name, target_lang, bleu, chrf, notes):
+def log_evaluation(log_file, model_name, train_scope, target_lang, bleu, chrf, notes):
 
     file_exists = os.path.isfile(log_file)
 
@@ -65,12 +65,13 @@ def log_evaluation(log_file, model_name, target_lang, bleu, chrf, notes):
 
         # Write the header if the file is empty
         if not file_exists:
-            writer.writerow(['model_name', 'date', 'target_lang', 'BLEU', 'ChrF++', 'notes'])
+            writer.writerow(['model_name', 'train_scope', 'date', 'target_lang', 'BLEU', 'ChrF++', 'notes'])
 
         # Write the new row with the evaluation data
         date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         writer.writerow(
             [model_name,
+             train_scope, 
              date,
              target_lang,
              bleu,
@@ -89,32 +90,62 @@ if __name__ == "__main__":
     args = parser.parse_args()
     model_dir = args.model_dir
     tgt = args.tgt
+    print(tgt)
     
     # load in pretrained models
     model = AutoModelForSeq2SeqLM.from_pretrained(model_dir, local_files_only=True).cuda()
     tokenizer = NllbTokenizer.from_pretrained(model_dir)
 
     csv_file = NLLB_SEED_CSV if args.data == 'nllb-seed' else AMERICAS_NLP_CSV
+    corpus = MultilingualCorpus(csv_file)
     
     # create lanauge pairs for evaluatuon
     if tgt == "multi":
-        lps = [('spa_Latn', lang) for lang in ALL_AMERICAS_NLP_LANGS]
+        lps = [('spa_Latn', lang) for lang in ALL_LANGS]
+        #lps.append(('spa_Latn', 'eng_Latn'))
+        train_scope = 'multi'
+    elif tgt == 'eng_Latn' or tgt == 'gne_Test':
+        lps = [('spa_Latn', tgt)]
+        corpus = MultilingualCorpus(None, streaming = True)
+        train_scope = 'other'
     else:
         lps = [('spa_Latn', tgt)]
+        train_scope = 'bi'
     
-    corpus = MultilingualCorpus(csv_file)
+    
 
     print('Starting logging to ', LOG_FILE)
     notes = TRAINING_NOTES # get notes from configure.py
     for src, tgt in lps:
         try:
-            print('Evaluating ', model_dir.split('/'), 'on: ', src, '-->', tgt)
-            eval_bitext = corpus.create_bitext(src, tgt, 'dev')
-            src_texts, tgt_texts = eval_bitext.lang1_sents, eval_bitext.lang2_sents
+            print('Evaluating ', model_dir, 'on: ', src, '-->', tgt)
+            if tgt == 'eng_Latn' or src == 'eng_Latn':
+                eval_bitext = corpus.create_bitext('spa_Latn', 'eng_Latn', 'dev', lang1_file = 'data/opus_data/dev.es', lang2_file = 'data/opus_data/dev.en')
+                src_texts = []
+                tgt_texts = []
+                for _ in range(100):
+                    pair = next(iter(eval_bitext))
+                    src_texts.append(pair[0])
+                    tgt_texts.append(pair[1])
+                    assert len(src_texts) == len(tgt_texts)
+            elif tgt == 'gne_Test':
+                print('in gne_Test area')
+                eval_bitext = corpus.create_bitext('spa_Latn', 'gne_Test', 'dev', lang1_file = 'data/opus_data/dev.es', lang2_file = 'data/opus_data/encrypt/dev_encrypted.en')
+                src_texts = []
+                tgt_texts = []
+                for _ in range(100):
+                    pair = next(iter(eval_bitext))
+                    src_texts.append(pair[0])
+                    tgt_texts.append(pair[1])
+                    assert len(src_texts) == len(tgt_texts)
+            else:
+                eval_bitext = corpus.create_bitext(src, tgt, 'dev')
+                src_texts, tgt_texts = eval_bitext.lang1_sents, eval_bitext.lang2_sents
+            
             candidate_translations = batched_translate(src_texts, tokenizer=tokenizer, model=model, src_lang=eval_bitext.lang1_code, tgt_lang=eval_bitext.lang2_code)
             bleu, chrf = evaluate_translations(candidate_translations, tgt_texts)
             tgt_lang = AMERICAS_NLP_CODE_TO_LANG[tgt.split('_')[0]]
-            log_evaluation(LOG_FILE, model_dir.split('/')[-1], tgt_lang, bleu, chrf, notes) # log a line for each evaluation
+            log_evaluation(LOG_FILE, model_dir.replace("models/", ""), train_scope, tgt_lang, bleu, chrf, notes) # log a line for each evaluation
             print('Wrote all evaluations to ', LOG_FILE)
         except Exception as e:
             print(f"Error occurred while evaluating {src} --> {tgt}: {str(e)}")

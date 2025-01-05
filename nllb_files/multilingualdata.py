@@ -36,18 +36,6 @@ class StreamingBitext(Dataset):
     def _count_lines(self, file_path):
         with open(file_path, 'r') as file:
             return sum(1 for _ in file)            
-
-    @property
-    def lang1_sents(self):
-        # Read all lines in lang1_file as a list
-        with open(self.lang1_file, 'r') as file:
-            return [line.strip() for line in file]
-
-    @property
-    def lang2_sents(self):
-        # Read all lines in lang2_file as a list
-        with open(self.lang2_file, 'r') as file:
-            return [line.strip() for line in file]
     
     def __len__(self):
         return self.length
@@ -108,7 +96,7 @@ class MultilingualCorpus:
     def create_bitext(self, lang1_code, lang2_code, split, lang1_file = None, lang2_file = None):
         
         if self.streaming:
-            return StreamingBitext(lang1_code, lang2_code, lang1_file, lang2_file)
+            return StreamingBitext(lang1_code, lang2_code, lang1_file, lang2_file)    
         else:
             df = self.df[self.df['split']==split]
             lang1, script1 = lang1_code.split('_')
@@ -116,7 +104,6 @@ class MultilingualCorpus:
             
             df = df[(df['language'] == lang1)
                     | (df['language'] == lang2)]
-            
             sents = dict()
             for _, row in df.iterrows():
                 if row['sent_id'] not in sents:
@@ -137,6 +124,30 @@ class MultilingualCorpus:
                     lang1_sents.append(lang1_sent)
                     lang2_sents.append(lang2_sent)
             return Bitext(lang1_code, lang2_code, lang1_sents, lang2_sents)
+        
+    def create_gen(self, lang_code):
+        column_name = self.df.columns[0]  
+        sents = self.df[column_name].values.tolist()  
+        none_sents = [['<gen>']] * len(sents)
+        assert len(none_sents) == len(sents)
+        return Bitext('<gen>', lang_code, none_sents, sents)
+    
+    def create_monolingual(self, lang_code, split = 'train', stream_file = None):
+        if self.streaming:
+            return StreamingMonolingual(lang_code, stream_file)
+        else:
+            df = self.df[self.df['split']==split]
+            lang, script = lang_code.split('_')
+            df = df[(df['language'] == lang)]
+            
+            used_ids = []
+            sents = []
+            for _, row in df.iterrows():
+                if row['sent_id'] not in used_ids:
+                    sents.append(row['text'])
+                    used_ids.append(row['sent_id'])
+            
+            return Monolingual(lang_code, sents)
     
     def create_mixture_of_bitexts(self, lps, batch_size, split):
         bitexts = []
@@ -144,5 +155,47 @@ class MultilingualCorpus:
             bitexts.append(self.create_bitext(l1, l2, split))
         return MixtureOfBitexts(bitexts, batch_size)
     
+
+class Monolingual(Dataset):
+    def __init__(self, lang_code, lang_sents):
+        self.lang_code = lang_code
+        self.lang_sents = lang_sents
+        self.current_index = 0
+
+    def __len__(self):
+        return len(self.lang_sents)
+
+    def __getitem__(self, idx):
+        return self.lang_sents[idx]
+
+    def get_next(self):
+        if self.current_index < len(self.lang_sents):
+            sentence = self.lang_sents[self.current_index]
+            self.current_index += 1
+            return sentence
+        else:
+            raise StopIteration
+    
+class StreamingMonolingual(Dataset):
+    def __init__(self, lang_code, lang_file):
+        self.lang_code = lang_code
+        self.lang_file = lang_file
+        self.streamer = self.line_streamer(lang_file)
         
+        self.length = self._count_lines(lang_file)
         
+    def line_streamer(self, file_path):
+        with open(file_path, 'r') as file:
+            for line in file:
+                yield line.strip()
+                
+    def _count_lines(self, file_path):
+        with open(file_path, 'r') as file:
+            return sum(1 for _ in file)            
+    
+    def __len__(self):
+        return self.length
+    
+    def __getitem__(self, idx):
+        # Fetch the next line from the streamer
+        return next(self.streamer)

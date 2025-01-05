@@ -1,22 +1,25 @@
 USE_CUDA=True
 
-LOG_FILE = 'model_logs.csv'
-TRAINING_NOTES = 'Helsinki Phase 3 Finetune'
+LOG_FILE = 'results/model_logs.csv'
+TRAINING_NOTES = 'encrypted english (gne_Test) gen test, with <gen> encrypted monolingual addition'
 
 # hñähñu (worst performing lang)
 
 AMERICAS_NLP_CODE_TO_LANG = {
-    "cni": "ashaninka", # training sheff
-    "bzd": "bribri", # training sheff
-    "grn": "guarani",  # training sheff
-    "quy": "quechua",  # training sheff
-    "aym": "aymara", # training sheff
-    "shp": "shipibo_konibo", # training sheff
-    "ctp": "chatino", # trained sheff
-    "oto": "hñähñu", # trained sheff
-    "nah": "nahuatl", # trained sheff
+    "cni": "ashaninka", 
+    "bzd": "bribri", 
+    "grn": "guarani",  
+    "quy": "quechua",  
+    "aym": "aymara", 
+    "shp": "shipibo_konibo", 
+    "ctp": "chatino", 
+    "oto": "hñähñu", 
+    "nah": "nahuatl",
     "tar": "raramuri",
-    "hch": "wixarika"
+    "hch": "wixarika",
+    "eng": "english",
+    "spa": "spanish",
+    "gne": "encypted english"
 }
 
 NLLB_SEED_CSV = '/mnt/storage/hopkins/data/nllb/seed/nllb_seed.csv'
@@ -28,11 +31,11 @@ NLLB_SEED_LANGS = ['pbt_Arab', 'bho_Deva', 'nus_Latn', 'ban_Latn', 'dzo_Tibt', '
                    'taq_Tfng', 'shn_Mymr', 'mag_Deva']
 NLLB_SEED_LPS = [(src, 'eng_Latn') for src in NLLB_SEED_LANGS if src != 'eng_Latn']
 
-AMERICAS_NLP_CSV = '/mnt/storage/clouchheim/thesis-clouchheim/nllb_files/americas_nlp_data.csv'
+AMERICAS_NLP_CSV = '/mnt/storage/clouchheim/thesis-clouchheim/nllb_files/data/americas_nlp_data.csv'
 
 # For multi lingual training all 11
 
-ALL_AMERICAS_NLP_LANGS = ["cni_Latn", "bzd_Latn", "grn_Latn", "quy_Latn", "aym_Latn", "shp_Latn",
+ALL_LANGS = ["cni_Latn", "bzd_Latn", "grn_Latn", "quy_Latn", "aym_Latn", "shp_Latn",
                       "ctp_Latn", "oto_Latn", "nah_Latn", "tar_Latn", "hch_Latn"]
 
 
@@ -40,6 +43,6 @@ ALL_AMERICAS_NLP_LANGS = ["cni_Latn", "bzd_Latn", "grn_Latn", "quy_Latn", "aym_L
                       #"ctp_Latn", "oto_Latn", "nah_Latn", "tar_Latn", "hch_Latn"]
 
 # For bilingual or more language training
-AMERICAS_NLP_LANGS = ['tar_Latn'] # REMEMBER TO SET DEV LANAGUAGE IN RUN.SH
+AMERICAS_NLP_LANGS = ['gne_Test'] # REMEMBER TO SET DEV LANAGUAGE IN RUN.SH
 AMERICAS_NLP_LPS = [('spa_Latn', tgt) for tgt in AMERICAS_NLP_LANGS]
 

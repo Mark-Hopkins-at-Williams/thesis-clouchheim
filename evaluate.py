@@ -27,7 +27,7 @@ TGT_LANG = ('quechua', 'quy', 'quy_Latn')
 LANGS = [SRC_LANG, TGT_LANG]
 
 ######################## EVALUATE MODEL ###########################
-model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_LOAD_NAME, local_files_only=True).cuda()
+model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_LOAD_NAME).cuda()
 tokenizer = NllbTokenizer.from_pretrained(MODEL_LOAD_NAME)
 print('loaded model', MODEL_LOAD_NAME)
 
@@ -43,5 +43,5 @@ print('finished translation!')
 
 # print evaluations 
 print('Model Evaluation:')
-print(bleu_calc.corpus_score(translations, [df_dev['tgt'].tolist()]))
-print(chrf_calc.corpus_score(translations, [df_dev['tgt'].tolist()]))
+print(bleu_calc.corpus_score(translations, [[ref] for ref in df_dev['tgt']]))
+print(chrf_calc.corpus_score(translations, [[ref] for ref in df_dev['tgt']]))

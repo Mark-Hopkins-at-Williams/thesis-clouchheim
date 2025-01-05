@@ -36,7 +36,6 @@ def finetune(mixture_of_bitexts, dev_bitexts, base_model, finetuned_model_dir, t
              validate_every=500,
              patience=10
              ):    
-    print('Training', finetuned_model_dir)
     tokenizer = AutoTokenizer.from_pretrained(base_model)
     model = AutoModelForSeq2SeqLM.from_pretrained(base_model)
     new_lang_codes = [code for code in mixture_of_bitexts.get_language_codes() if code not in tokenizer.get_vocab()]
