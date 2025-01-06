@@ -39,7 +39,7 @@ def create_token_permuter(tokenizer, sents):
     return TokenPermuter(vocab)
 
 
-def encrypt_sentences(sents, tokenizer):
+def encrypt_sentences(sents, tokenizer, permuter):
     tokenized = tokenizer(sents, return_tensors='pt', padding=True, truncation=True, max_length=128)
     original_ids = tokenized['input_ids'].clone()
     original_ids.apply_(permuter.map_token_id)
