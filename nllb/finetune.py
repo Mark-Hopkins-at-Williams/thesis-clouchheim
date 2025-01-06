@@ -142,12 +142,78 @@ if __name__ == "__main__":
     model_dir = model_dir + f"-v{model_version}"
     os.mkdir(model_dir)
     shutil.copyfile(args.config, os.path.join(model_dir, 'experiment.json'))       
+    
+    ###################### Change to work with new json ##########################
+    
+    train = config['training_data']
+    dev = config['validation_data']
+    test = config['test_data']
+    tokenizer = AutoTokenizer.from_pretrained(config['base_model'])
+    all_data = train + dev + test
+    
+    # get scope of data needed and read in for each individual copora
+    indices_by_corpus = defaultdict(lambda: {"lowest_start_index": float('inf'), "highest_end_index": float('-inf')})
+
+    # Process all entries and update the dictionary
+    for entry in all_data:
+        corpus = entry['corpus']
+        indices_by_corpus[corpus]['lowest_start_index'] = min(indices_by_corpus[corpus]['lowest_start_index'], entry['start_index'])
+        indices_by_corpus[corpus]['highest_end_index'] = max(indices_by_corpus[corpus]['highest_end_index'], entry['end_index'])
+
+    # Add the corresponding file paths from corpora (one entry for each corpus)
+    corpora_scope = {}
+    for corpus, indices in indices_by_corpus.items():
+        corpora_scope[corpus] = {
+            "src_file": config['corpora'][corpus]['src_file'],
+            "tgt_file": config['corpora'][corpus]['tgt_file'],
+            "lowest_start_index": indices['lowest_start_index'],
+            "highest_end_index": indices['highest_end_index']
+        }
+    
+    data = {'language': [], 'script': [], 'sent_id': [], 'text': [], 'split': []} # data frame to add all bitexts to 
+     
+    # tokenize and get ids for all langauges
+    tgt_sents = {}
+    for corpus, info in copora_scope.items():
+        tgt_file = info['tgt_file']
+        start = info['lowest_start_index']
+        end = info['highest_end_index']
+        sents = []
+        with open(tgt_file, 'r') as reader:
+            for current_index, line in enumerate(reader):  
+                if start <= current_index <= end: 
+                    sents.append(line.strip())
+                elif current_index > end:  
+                    break
+                
+        tgt_sents[corpus] = sents
+        
+        # tokenize and get ids
+        tokenized = tokenizer(tgt_sents, return_tensors='pt', padding=True, truncation=True, max_length=128)
+        ids = [idx for idx in tokenized['input_ids'].unique().tolist() if 4 <= idx <= 256000]
+    
+        # use create_token_permuter but wihtou repetition HEREHEHEHEHEHE
+        
+    
+    # tokenize each sentence
+    
+    # for loop starts here
+    # create a permuter for each aritifical langauge pair using the correct indicies
+    
+    # permute each language and add to a data frame with the language pairs, split, and sentneces
+        # ex// 
+        # language,script,sent_id,text,split
+        # p0r,Latn,0,custasqpena bí irponsa,test
+    
+          
     csv_file = config['csv_file']
     lps = config['lps']
-    corpus = MultilingualCorpus(csv_file)
+    corpus = MultilingualCorpus(csv_file) # change corpus to work with data frame rather than csv file
     train_data = corpus.create_mixture_of_bitexts(lps, batch_size=32, split='train')
     dev_data = corpus.create_mixture_of_bitexts(lps, batch_size=32, split='dev')
     model_name = config['base_model']
+    ###################### 
+    
     finetune(train_data, dev_data, model_name, model_dir, training_steps=args.steps)
     
     # now evaluate the trained model
