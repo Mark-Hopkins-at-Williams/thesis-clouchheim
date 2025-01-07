@@ -152,13 +152,14 @@ if __name__ == "__main__":
     all_data = train + dev + test
     
     # get scope of data needed and read in for each individual copora
-    indices_by_corpus = defaultdict(lambda: {"lowest_start_index": float('inf'), "highest_end_index": float('-inf')})
+    indices_by_corpus = defaultdict(lambda: {"lowest_start_index": float('inf'), "highest_end_index": float('-inf'), "num_langs": 0})
 
     # Process all entries and update the dictionary
     for entry in all_data:
         corpus = entry['corpus']
         indices_by_corpus[corpus]['lowest_start_index'] = min(indices_by_corpus[corpus]['lowest_start_index'], entry['start_index'])
         indices_by_corpus[corpus]['highest_end_index'] = max(indices_by_corpus[corpus]['highest_end_index'], entry['end_index'])
+        indices_by_corpus[corpus]['num_langs'] += 1
 
     # Add the corresponding file paths from corpora (one entry for each corpus)
     corpora_scope = {}
@@ -173,33 +174,58 @@ if __name__ == "__main__":
     data = {'language': [], 'script': [], 'sent_id': [], 'text': [], 'split': []} # data frame to add all bitexts to 
      
     # tokenize and get ids for all langauges
-    tgt_sents = {}
+    tgt_sents_permuters = {}
     for corpus, info in copora_scope.items():
+        # get langauage name
+        src_lang, tgt_lang = corpus.split('-')
+        
+        # read in correct bitext sections
+        sents = []
         tgt_file = info['tgt_file']
+        src_file = info['src_file']
         start = info['lowest_start_index']
         end = info['highest_end_index']
-        sents = []
         with open(tgt_file, 'r') as reader:
             for current_index, line in enumerate(reader):  
                 if start <= current_index <= end: 
                     sents.append(line.strip())
                 elif current_index > end:  
                     break
-                
-        tgt_sents[corpus] = sents
+        tgt_sents_permuters[corpus]['tgt_sents'] = sents
+        
+        with open(src_file, 'r') as reader:
+            for current_index, line in enumerate(reader):  
+                if start <= current_index <= end: 
+                    sents.append(line.strip())
+                elif current_index > end:  
+                    break
+        tgt_sents_permuters[corpus]['src_sents'] = sents        
         
         # tokenize and get ids
         tokenized = tokenizer(tgt_sents, return_tensors='pt', padding=True, truncation=True, max_length=128)
         ids = [idx for idx in tokenized['input_ids'].unique().tolist() if 4 <= idx <= 256000]
+
+        # create a permuter for each artificial lang for given corpora
+        tgt_sents_permuters[corpus]['permuters'] = [] 
+        num_artificial_langs = indices_by_corpus[corpus]['num_langs']
+        for l in range(num_artificial_langs):
+            permuter = create_token_permuter(tokenizer, tokenized, ids) 
+            tgt_sents_permuters[corpus]['permuters'][l].append(permuter) # indicates the tgt_permutation from json
+            
+             
+            
+    # now tgt_sents_permuters is a dictionary of this form (this is example of one entry) into dictionary
+        # tgt_sents_permuters = { corpus : {
+        # 'tgt_sents' : [list of sentnces in target langauge]
+        # 'src_sents' : [list of parallell sentnces in source langauge]
+        # 'permuters' : [list of unique permuters for creation of each artificial lang]
+        # }}
     
-        # use create_token_permuter but wihtou repetition HEREHEHEHEHEHE
-        
+    for entry in train: 
     
-    # tokenize each sentence
+    for entry in dev:
     
-    # for loop starts here
-    # create a permuter for each aritifical langauge pair using the correct indicies
-    
+    for entry in test: 
     # permute each language and add to a data frame with the language pairs, split, and sentneces
         # ex// 
         # language,script,sent_id,text,split

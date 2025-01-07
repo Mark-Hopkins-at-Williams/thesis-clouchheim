@@ -20,14 +20,12 @@ class TokenPermuter:
             return self.permutation[token_id]
                 
 
-def create_token_permuter(tokenizer, sents):
+def create_token_permuter(tokenizer, tokenized, ids):
     def permute(indexed_tokens):        
         indices = [tok[1] for tok in indexed_tokens]
         permutation = [tok[1] for tok in indexed_tokens]
         random.shuffle(permutation)
         return dict(zip(indices, permutation))
-    tokenized = tokenizer(sents, return_tensors='pt', padding=True, truncation=True, max_length=128)
-    ids = [idx for idx in tokenized['input_ids'].unique().tolist() if 4 <= idx <= 256000]
     tokens = [(tokenizer.convert_ids_to_tokens(next_id), next_id) for next_id in ids]
     length1_tokens = [tok for tok in tokens if len(tok[0]) == 1]
     other_tokens = [tok for tok in tokens if len(tok[0]) > 1]
@@ -98,7 +96,7 @@ if __name__ == "__main__":
          
         if parallel == True:
             sents = tgt_sents 
-            permuter = create_token_permuter(tokenizer, sents)
+            permuter = create_token_permuter(tokenizer, sents) # this might be repetitive # I thi
             
         else:
             s = max_sents*k
