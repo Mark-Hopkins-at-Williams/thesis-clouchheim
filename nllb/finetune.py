@@ -148,31 +148,52 @@ if __name__ == "__main__":
     train = config['training_data']
     dev = config['validation_data']
     test = config['test_data']
-    tokenizer = AutoTokenizer.from_pretrained(config['base_model'])
-    all_data = train + dev + test
     
-    # get scope of data needed and read in for each individual copora
-    indices_by_corpus = defaultdict(lambda: {"lowest_start_index": float('inf'), "highest_end_index": float('-inf'), "num_langs": 0})
+    data_by_corpus_and_permutation = {}
+    
+    def add_scope(data_list, scope_type):
+        for entry in data_list:
+            key = (entry["corpus"], entry["tgt_permutation"])
+            if key not in result: 
+                result[key] = {
+                    "pair": entry["corpus"],
+                    "tgt_num": entry["tgt_permutation"],
+                    "train_scope": None,
+                    "dev_scope": None,
+                    "test_scope": None
+                }
+            data_by_corpus_and_permutation[key][scope_type] = [entry["start_index"], entry["end_index"]]
+    
+    add_scope(config["training_data"], "train_scope")
+    add_scope(config["validation_data"], "dev_scope")
+    add_scope(config["test_data"], "test_scope")
 
-    # Process all entries and update the dictionary
-    for entry in all_data:
-        corpus = entry['corpus']
-        indices_by_corpus[corpus]['lowest_start_index'] = min(indices_by_corpus[corpus]['lowest_start_index'], entry['start_index'])
-        indices_by_corpus[corpus]['highest_end_index'] = max(indices_by_corpus[corpus]['highest_end_index'], entry['end_index'])
-        indices_by_corpus[corpus]['num_langs'] += 1
-
-    # Add the corresponding file paths from corpora (one entry for each corpus)
+    # compute the true scope for each corpus
     corpora_scope = {}
-    for corpus, indices in indices_by_corpus.items():
-        corpora_scope[corpus] = {
-            "src_file": config['corpora'][corpus]['src_file'],
-            "tgt_file": config['corpora'][corpus]['tgt_file'],
-            "lowest_start_index": indices['lowest_start_index'],
-            "highest_end_index": indices['highest_end_index']
-        }
+
+    for key, entry in data_by_corpus_and_permutation.items():
+        corpus = entry['pair']
+        if corpus not in corpora_scope:
+            corpora_scope[corpus] = {
+                "src_file": config['corpora'][corpus]['src_file'],
+                "tgt_file": config['corpora'][corpus]['tgt_file'],
+                "lowest_start_index": float('inf'),
+                "highest_end_index": float('-inf'),
+                "num_permutations": 0
+            }
+
+        # Update scope and permutation count
+        scopes = [entry['train_scope'], entry['dev_scope'], entry['test_scope']]
+        for scope in scopes:
+            if scope:
+                corpora_scope[corpus]['lowest_start_index'] = min(corpora_scope[corpus]['lowest_start_index'], scope[0])
+                corpora_scope[corpus]['highest_end_index'] = max(corpora_scope[corpus]['highest_end_index'], scope[1])
+
+        corpora_scope[corpus]['num_permutations'] += 1
     
     data = {'language': [], 'script': [], 'sent_id': [], 'text': [], 'split': []} # data frame to add all bitexts to 
-     
+    tokenizer = AutoTokenizer.from_pretrained(config['base_model'])
+    
     # tokenize and get ids for all langauges
     tgt_sents_permuters = {}
     for corpus, info in copora_scope.items():
@@ -185,6 +206,8 @@ if __name__ == "__main__":
         src_file = info['src_file']
         start = info['lowest_start_index']
         end = info['highest_end_index']
+        
+        # read in tgt sentences
         with open(tgt_file, 'r') as reader:
             for current_index, line in enumerate(reader):  
                 if start <= current_index <= end: 
@@ -193,6 +216,7 @@ if __name__ == "__main__":
                     break
         tgt_sents_permuters[corpus]['tgt_sents'] = sents
         
+        # read in source sentences
         with open(src_file, 'r') as reader:
             for current_index, line in enumerate(reader):  
                 if start <= current_index <= end: 
@@ -201,18 +225,18 @@ if __name__ == "__main__":
                     break
         tgt_sents_permuters[corpus]['src_sents'] = sents        
         
-        # tokenize and get ids
+        # tokenize and get ids (for all regarless of permutation number)
         tokenized = tokenizer(tgt_sents, return_tensors='pt', padding=True, truncation=True, max_length=128)
         ids = [idx for idx in tokenized['input_ids'].unique().tolist() if 4 <= idx <= 256000]
 
         # create a permuter for each artificial lang for given corpora
         tgt_sents_permuters[corpus]['permuters'] = [] 
-        num_artificial_langs = indices_by_corpus[corpus]['num_langs']
+        num_artificial_langs = info['num_permutations']
         for l in range(num_artificial_langs):
             permuter = create_token_permuter(tokenizer, tokenized, ids) 
             tgt_sents_permuters[corpus]['permuters'][l].append(permuter) # indicates the tgt_permutation from json
             
-             
+             # add sentences to data given the data created in data_by_corpus_and_permutation # HEREHEHRHEHEHEHEH
             
     # now tgt_sents_permuters is a dictionary of this form (this is example of one entry) into dictionary
         # tgt_sents_permuters = { corpus : {
