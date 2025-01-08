@@ -29,6 +29,13 @@ def tokenize(sents, lang, tokenizer, max_length, alt_pad_token=None):
                                                                                       # in the loss function because we don't want the model to learn to predict padding ids
     return tokens
 
+def add_lines(sents, lang, current_max_id, start, end, split):
+                for line in range(start, end + 1): #TODO; CHANGE THIS SO THAT I AM ADDING LINES RATHER THAN RELYING ON PERFECTLY PARALLEL APPENDS
+                    data['language'].append(tgt_lang_encrypt)
+                    data['script'].append('Latn')
+                    data['sent_id'].append(line + current_max_id)
+                    data['text'].append(encrypted[line])
+                    data['split'].append(split)                  
 
 def finetune(mixture_of_bitexts, dev_bitexts, base_model, finetuned_model_dir, training_steps,
              max_length=128, # token sequences will be truncated to this many tokens
@@ -143,12 +150,7 @@ if __name__ == "__main__":
     os.mkdir(model_dir)
     shutil.copyfile(args.config, os.path.join(model_dir, 'experiment.json'))       
     
-    ###################### Change to work with new json ##########################
-    
-    train = config['training_data']
-    dev = config['validation_data']
-    test = config['test_data']
-    
+    lps = []
     data_by_corpus_and_permutation = {}
     
     def add_scope(data_list, scope_type):  # section for each corpora, and then section with boundaries for each permutation within
@@ -165,18 +167,16 @@ if __name__ == "__main__":
                     "train_scope": None,
                     "dev_scope": None,
                     "test_scope": None
-                }
-        
+                }           
         data_by_corpus_and_permutation[key][tgt_perm][scope_type] = [entry["start_index"], entry["end_index"]]
     
+    # get the scope of each lang of data and split
     add_scope(config["training_data"], "train_scope")
     add_scope(config["validation_data"], "dev_scope")
     add_scope(config["test_data"], "test_scope")
 
     # compute the true scope for each corpus
     corpora_scope = {}
-
-  
     for corpus, permutations in data_by_corpus_and_permutation.items():
         for perm, entry in permutations.items():
             if corpus not in corpora_scope:
@@ -231,53 +231,52 @@ if __name__ == "__main__":
                     src_sents.append(line.strip())
                 elif current_index > end:  
                     break
-        tgt_sents_permuters[corpus]['src_sents'] = src_sents        
+        
+        tgt_sents_permuters[corpus]['src_sents'] = src_sents 
         
         # tokenize and get ids (for all regarless of permutation number)
         tokenized = tokenizer(tgt_sents, return_tensors='pt', padding=True, truncation=True, max_length=128)
         ids = [idx for idx in tokenized['input_ids'].unique().tolist() if 4 <= idx <= 256000]
 
-        # create a permuter for each artificial lang for given corpora
-
-        num_artificial_langs = info['num_permutations']
+        # create a permuter for each artificial lang for given corpora (ex// all of the english to portugese encrypted)
         langs = data_by_corpus_and_permutation[corpus] 
-        
         for lang in langs.items():
             permuter = create_token_permuter(tokenizer, tokenized, ids) 
             original_ids = tokenized['input_ids'].clone()
             original_ids.apply_(permuter.map_token_id)
             encrypted = tokenizer.batch_decode(original_ids, skip_special_tokens=True) # these are the sentences encrypted to the new langauge
             
-            tgt_lang_encrypt = tgt_lang + str(lang['tgt_num']) # CREATE LANGUAGE NAME FOR TGT ENCRYPTED LANG
+            tgt_lang_encrypt = tgt_lang + str(lang['tgt_num']) 
+            lps.append(['eng', tgt_lang_encrypt]) # TODO: add functionality to have it go the other direction (encrypted --> eng)
             
-            train_scope = lang['train_scope'] #TODO: DO THE SAME FOR THIS FOR THE OTHER LANGS AND FOR ENGLISH 
-            for line in range(train_scope[0], train_scope[1] + 1): #TODO; CHANGE THIS SO THAT I AM ADDING LINES RATHER THAN RELYING ON PERFECTLY PARALLEL APPENDS
-                data['language'].append(tgt_lang_encrypt)
-                data['script'].append('Latn')
-                data['sent_id'].append(line + current_max_id)
-                data['text'].append(encrypted[line])
-                data['split'].append('train')
-            
+            # add encrypted to dataframe
+            train_scope = lang['train_scope'] 
+            add_lines(encrypted, tgt_lang_encrypt, current_max_id, train_scope[0], train_scope[1], 'train')
             dev_scope = lang['dev_scope']
-            #TODO: ABOVE
-            
+            add_lines(encrypted, tgt_lang_encrypt, current_max_id, dev_scope[0], dev_scope[1], 'dev')
             test_scope = lang['test_scope']
-            #TODO: ABOVE
+            add_lines(encrypted, tgt_lang_encrypt, current_max_id, test_scope[0], test_scope[1], 'test')
             
-            #TODO: ADD SAMES LINES FOR ENGLISH 
-            
-            #TODO: UPDATE CURRENT MAX ID (essentially add the highest value of the highest train scope so that there are no overlapping ids)
-    
-    #TODO: MAKE DICTIONARY INTO DATA FRAME
-          
-    csv_file = config['csv_file']
-    lps = config['lps']
-    corpus = MultilingualCorpus(csv_file) # change corpus to work with data frame rather than csv file
+            # add corresponding english to dataframes 
+            train_scope = lang['train_scope'] 
+            add_lines(src_sents, 'eng', current_max_id, train_scope[0], train_scope[1], 'train')
+            dev_scope = lang['dev_scope']
+            add_lines(src_sents, 'eng', current_max_id, dev_scope[0], dev_scope[1], 'dev')
+            test_scope = lang['test_scope']
+            add_lines((src_sents, 'eng', current_max_id, test_scope[0], test_scope[1], 'test')
+           
+        # update the starting id of the next copora to prevent overlapping ids           
+        current_max_id += end
+      
+    # convert into pandas dataframe and create mixture of bitexts   
+    bitexts = pd.DataFrame(data)
+    bitexts = bitexts.drop_duplicates(subset=["language", "sent_id"])
+    corpus = MultilingualCorpus(bitexts) 
     train_data = corpus.create_mixture_of_bitexts(lps, batch_size=32, split='train')
     dev_data = corpus.create_mixture_of_bitexts(lps, batch_size=32, split='dev')
     model_name = config['base_model']
-    ###################### 
     
+    # finetune model 
     finetune(train_data, dev_data, model_name, model_dir, training_steps=args.steps)
     
     # now evaluate the trained model
