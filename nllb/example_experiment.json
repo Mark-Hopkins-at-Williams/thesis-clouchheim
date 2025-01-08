@@ -1,0 +1,35 @@
+{
+    "base_model": "facebook/nllb-200-distilled-600M",
+    "are_parallel": true,
+    "languages": {
+        "en_src": {
+            "type": "source",
+            "files": [
+                "/mnt/storage/hopkins/data/europarl/europarl-v7.pt-en.en"
+            ],
+            "permutation_id": 1
+        },
+        "pt_tgt_1": {
+            "type": "target",
+            "files": [
+                "/mnt/storage/hopkins/data/europarl/europarl-v7.pt-en.pt"
+            ],
+            "permutation_id": 1
+        }
+    },
+    "training_data": {
+        "source_language": "en_src",
+        "target_language": "pt_tgt_1",
+        "split": 90
+    },
+    "validation_data": {
+        "source_language": "en_src",
+        "target_language": "pt_tgt_1",
+        "split": 5
+    },
+    "test_data": {
+        "source_language": "en_src",
+        "target_language": "pt_tgt_1",
+        "split": 5
+    }
+}
