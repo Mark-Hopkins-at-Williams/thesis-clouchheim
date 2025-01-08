@@ -1,18 +1,20 @@
 import gc
 import json
-import matplotlib.pyplot as plt
 import os
-import shutil
 import sys
 import torch
+import shutil
 import argparse
 import numpy as np
+import pandas as pd
 from tqdm import tqdm
+from configure import USE_CUDA
+import matplotlib.pyplot as plt
+from encrypt import create_token_permuter
 from transformers.optimization import Adafactor
+from multilingualdata import MultilingualCorpus
 from transformers import get_constant_schedule_with_warmup
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
-from configure import USE_CUDA
-from multilingualdata import MultilingualCorpus
 from validate import evaluate_translations, batched_translate
 
 def cleanup():
@@ -29,13 +31,14 @@ def tokenize(sents, lang, tokenizer, max_length, alt_pad_token=None):
                                                                                       # in the loss function because we don't want the model to learn to predict padding ids
     return tokens
 
-def add_lines(sents, lang, current_max_id, start, end, split):
-                for line in range(start, end + 1): #TODO; CHANGE THIS SO THAT I AM ADDING LINES RATHER THAN RELYING ON PERFECTLY PARALLEL APPENDS
-                    data['language'].append(tgt_lang_encrypt)
-                    data['script'].append('Latn')
-                    data['sent_id'].append(line + current_max_id)
-                    data['text'].append(encrypted[line])
-                    data['split'].append(split)                  
+def add_lines(sents, lang, current_max_id, start, end, split, data):
+    for line in range(start, end + 1): #TODO; CHANGE THIS SO THAT I AM ADDING LINES RATHER THAN RELYING ON PERFECTLY PARALLEL APPENDS
+        data['language'].append(lang)
+        data['script'].append('Latn')
+        data['sent_id'].append(line + current_max_id)
+        data['text'].append(sents[line])
+        data['split'].append(split)          
+    return data         
 
 def finetune(mixture_of_bitexts, dev_bitexts, base_model, finetuned_model_dir, training_steps,
              max_length=128, # token sequences will be truncated to this many tokens
@@ -168,13 +171,14 @@ if __name__ == "__main__":
                     "dev_scope": None,
                     "test_scope": None
                 }           
-        data_by_corpus_and_permutation[key][tgt_perm][scope_type] = [entry["start_index"], entry["end_index"]]
+        
+            data_by_corpus_and_permutation[key][tgt_perm][scope_type] = [entry["start_index"], entry["end_index"]]
     
     # get the scope of each lang of data and split
     add_scope(config["training_data"], "train_scope")
     add_scope(config["validation_data"], "dev_scope")
     add_scope(config["test_data"], "test_scope")
-
+    
     # compute the true scope for each corpus
     corpora_scope = {}
     for corpus, permutations in data_by_corpus_and_permutation.items():
@@ -203,7 +207,7 @@ if __name__ == "__main__":
     # tokenize and get ids for all langauges
     tgt_sents_permuters = {}
     current_max_id = 0 
-    for corpus, info in copora_scope.items():
+    for corpus, info in corpora_scope.items():
         # get langauage name
         src_lang, tgt_lang = corpus.split('-')
         
@@ -213,6 +217,10 @@ if __name__ == "__main__":
         start = info['lowest_start_index']
         end = info['highest_end_index']
         
+        # Ensure the key exists in the dictionary to add sentences to
+        if corpus not in tgt_sents_permuters:
+            tgt_sents_permuters[corpus] = {}  
+        
         # read in tgt sentences
         tgt_sents = []
         with open(tgt_file, 'r') as reader:
@@ -220,7 +228,7 @@ if __name__ == "__main__":
                 if start <= current_index <= end: 
                     tgt_sents.append(line.strip())
                 elif current_index > end:  
-                    break
+                    break   
         tgt_sents_permuters[corpus]['tgt_sents'] = tgt_sents # idk if I have to save this to a dictionary right here
         
         # read in source sentences
@@ -231,7 +239,6 @@ if __name__ == "__main__":
                     src_sents.append(line.strip())
                 elif current_index > end:  
                     break
-        
         tgt_sents_permuters[corpus]['src_sents'] = src_sents 
         
         # tokenize and get ids (for all regarless of permutation number)
@@ -240,30 +247,31 @@ if __name__ == "__main__":
 
         # create a permuter for each artificial lang for given corpora (ex// all of the english to portugese encrypted)
         langs = data_by_corpus_and_permutation[corpus] 
-        for lang in langs.items():
+        for permutation, lang in langs.items():
             permuter = create_token_permuter(tokenizer, tokenized, ids) 
             original_ids = tokenized['input_ids'].clone()
             original_ids.apply_(permuter.map_token_id)
             encrypted = tokenizer.batch_decode(original_ids, skip_special_tokens=True) # these are the sentences encrypted to the new langauge
             
-            tgt_lang_encrypt = tgt_lang + str(lang['tgt_num']) 
-            lps.append(['eng', tgt_lang_encrypt]) # TODO: add functionality to have it go the other direction (encrypted --> eng)
+            tgt_lang_encrypt = tgt_lang + str(permutation) 
+            t = tgt_lang_encrypt + '_Latn'
+            lps.append(['eng_Latn', t]) # TODO: add functionality to have it go the other direction (encrypted --> eng)
             
             # add encrypted to dataframe
             train_scope = lang['train_scope'] 
-            add_lines(encrypted, tgt_lang_encrypt, current_max_id, train_scope[0], train_scope[1], 'train')
+            data = add_lines(encrypted, tgt_lang_encrypt, current_max_id, train_scope[0], train_scope[1], 'train', data)
             dev_scope = lang['dev_scope']
-            add_lines(encrypted, tgt_lang_encrypt, current_max_id, dev_scope[0], dev_scope[1], 'dev')
+            data = add_lines(encrypted, tgt_lang_encrypt, current_max_id, dev_scope[0], dev_scope[1], 'dev', data)
             test_scope = lang['test_scope']
-            add_lines(encrypted, tgt_lang_encrypt, current_max_id, test_scope[0], test_scope[1], 'test')
+            data = add_lines(encrypted, tgt_lang_encrypt, current_max_id, test_scope[0], test_scope[1], 'test', data)
             
             # add corresponding english to dataframes 
             train_scope = lang['train_scope'] 
-            add_lines(src_sents, 'eng', current_max_id, train_scope[0], train_scope[1], 'train')
+            data = add_lines(src_sents, 'eng', current_max_id, train_scope[0], train_scope[1], 'train', data)
             dev_scope = lang['dev_scope']
-            add_lines(src_sents, 'eng', current_max_id, dev_scope[0], dev_scope[1], 'dev')
+            data = add_lines(src_sents, 'eng', current_max_id, dev_scope[0], dev_scope[1], 'dev', data)
             test_scope = lang['test_scope']
-            add_lines((src_sents, 'eng', current_max_id, test_scope[0], test_scope[1], 'test')
+            data = add_lines(src_sents, 'eng', current_max_id, test_scope[0], test_scope[1], 'test', data)
            
         # update the starting id of the next copora to prevent overlapping ids           
         current_max_id += end
@@ -271,6 +279,9 @@ if __name__ == "__main__":
     # convert into pandas dataframe and create mixture of bitexts   
     bitexts = pd.DataFrame(data)
     bitexts = bitexts.drop_duplicates(subset=["language", "sent_id"])
+    
+    #bitexts.to_csv('test.csv', index=False)
+    
     corpus = MultilingualCorpus(bitexts) 
     train_data = corpus.create_mixture_of_bitexts(lps, batch_size=32, split='train')
     dev_data = corpus.create_mixture_of_bitexts(lps, batch_size=32, split='dev')
