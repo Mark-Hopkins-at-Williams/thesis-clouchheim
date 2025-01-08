@@ -151,18 +151,23 @@ if __name__ == "__main__":
     
     data_by_corpus_and_permutation = {}
     
-    def add_scope(data_list, scope_type):
+    def add_scope(data_list, scope_type):  # section for each corpora, and then section with boundaries for each permutation within
         for entry in data_list:
-            key = (entry["corpus"], entry["tgt_permutation"])
-            if key not in result: 
-                result[key] = {
-                    "pair": entry["corpus"],
-                    "tgt_num": entry["tgt_permutation"],
+            key = entry["corpus"]
+            tgt_perm = entry["tgt_permutation"]
+            
+            if key not in data_by_corpus_and_permutation:
+                data_by_corpus_and_permutation[key] = {}
+            
+            if tgt_perm not in data_by_corpus_and_permutation[key]:
+                data_by_corpus_and_permutation[key][tgt_perm] = {
+                    "tgt_num": tgt_perm,
                     "train_scope": None,
                     "dev_scope": None,
                     "test_scope": None
                 }
-            data_by_corpus_and_permutation[key][scope_type] = [entry["start_index"], entry["end_index"]]
+        
+        data_by_corpus_and_permutation[key][tgt_perm][scope_type] = [entry["start_index"], entry["end_index"]]
     
     add_scope(config["training_data"], "train_scope")
     add_scope(config["validation_data"], "dev_scope")
@@ -171,90 +176,99 @@ if __name__ == "__main__":
     # compute the true scope for each corpus
     corpora_scope = {}
 
-    for key, entry in data_by_corpus_and_permutation.items():
-        corpus = entry['pair']
-        if corpus not in corpora_scope:
-            corpora_scope[corpus] = {
-                "src_file": config['corpora'][corpus]['src_file'],
-                "tgt_file": config['corpora'][corpus]['tgt_file'],
-                "lowest_start_index": float('inf'),
-                "highest_end_index": float('-inf'),
-                "num_permutations": 0
-            }
+  
+    for corpus, permutations in data_by_corpus_and_permutation.items():
+        for perm, entry in permutations.items():
+            if corpus not in corpora_scope:
+                corpora_scope[corpus] = {
+                    "src_file": config['corpora'][corpus]['src_file'],
+                    "tgt_file": config['corpora'][corpus]['tgt_file'],
+                    "lowest_start_index": float('inf'),
+                    "highest_end_index": float('-inf'),
+                    "num_permutations": 0
+                }
 
-        # Update scope and permutation count
-        scopes = [entry['train_scope'], entry['dev_scope'], entry['test_scope']]
-        for scope in scopes:
-            if scope:
-                corpora_scope[corpus]['lowest_start_index'] = min(corpora_scope[corpus]['lowest_start_index'], scope[0])
-                corpora_scope[corpus]['highest_end_index'] = max(corpora_scope[corpus]['highest_end_index'], scope[1])
+            # Update scope and permutation count
+            scopes = [entry['train_scope'], entry['dev_scope'], entry['test_scope']]
+            for scope in scopes:
+                if scope:
+                    corpora_scope[corpus]['lowest_start_index'] = min(corpora_scope[corpus]['lowest_start_index'], scope[0])
+                    corpora_scope[corpus]['highest_end_index'] = max(corpora_scope[corpus]['highest_end_index'], scope[1])
 
-        corpora_scope[corpus]['num_permutations'] += 1
+            corpora_scope[corpus]['num_permutations'] += 1
     
-    data = {'language': [], 'script': [], 'sent_id': [], 'text': [], 'split': []} # data frame to add all bitexts to 
+    data = {'language': [], 'script': [], 'sent_id': [], 'text': [], 'split': []} # dictionary to make into data frame to add all bitexts to 
     tokenizer = AutoTokenizer.from_pretrained(config['base_model'])
     
     # tokenize and get ids for all langauges
     tgt_sents_permuters = {}
+    current_max_id = 0 
     for corpus, info in copora_scope.items():
         # get langauage name
         src_lang, tgt_lang = corpus.split('-')
         
         # read in correct bitext sections
-        sents = []
         tgt_file = info['tgt_file']
         src_file = info['src_file']
         start = info['lowest_start_index']
         end = info['highest_end_index']
         
         # read in tgt sentences
+        tgt_sents = []
         with open(tgt_file, 'r') as reader:
             for current_index, line in enumerate(reader):  
                 if start <= current_index <= end: 
-                    sents.append(line.strip())
+                    tgt_sents.append(line.strip())
                 elif current_index > end:  
                     break
-        tgt_sents_permuters[corpus]['tgt_sents'] = sents
+        tgt_sents_permuters[corpus]['tgt_sents'] = tgt_sents # idk if I have to save this to a dictionary right here
         
         # read in source sentences
+        src_sents = []
         with open(src_file, 'r') as reader:
             for current_index, line in enumerate(reader):  
                 if start <= current_index <= end: 
-                    sents.append(line.strip())
+                    src_sents.append(line.strip())
                 elif current_index > end:  
                     break
-        tgt_sents_permuters[corpus]['src_sents'] = sents        
+        tgt_sents_permuters[corpus]['src_sents'] = src_sents        
         
         # tokenize and get ids (for all regarless of permutation number)
         tokenized = tokenizer(tgt_sents, return_tensors='pt', padding=True, truncation=True, max_length=128)
         ids = [idx for idx in tokenized['input_ids'].unique().tolist() if 4 <= idx <= 256000]
 
         # create a permuter for each artificial lang for given corpora
-        tgt_sents_permuters[corpus]['permuters'] = [] 
+
         num_artificial_langs = info['num_permutations']
-        for l in range(num_artificial_langs):
+        langs = data_by_corpus_and_permutation[corpus] 
+        
+        for lang in langs.items():
             permuter = create_token_permuter(tokenizer, tokenized, ids) 
-            tgt_sents_permuters[corpus]['permuters'][l].append(permuter) # indicates the tgt_permutation from json
+            original_ids = tokenized['input_ids'].clone()
+            original_ids.apply_(permuter.map_token_id)
+            encrypted = tokenizer.batch_decode(original_ids, skip_special_tokens=True) # these are the sentences encrypted to the new langauge
             
-             # add sentences to data given the data created in data_by_corpus_and_permutation # HEREHEHRHEHEHEHEH
+            tgt_lang_encrypt = tgt_lang + str(lang['tgt_num']) # CREATE LANGUAGE NAME FOR TGT ENCRYPTED LANG
             
-    # now tgt_sents_permuters is a dictionary of this form (this is example of one entry) into dictionary
-        # tgt_sents_permuters = { corpus : {
-        # 'tgt_sents' : [list of sentnces in target langauge]
-        # 'src_sents' : [list of parallell sentnces in source langauge]
-        # 'permuters' : [list of unique permuters for creation of each artificial lang]
-        # }}
+            train_scope = lang['train_scope'] #TODO: DO THE SAME FOR THIS FOR THE OTHER LANGS AND FOR ENGLISH 
+            for line in range(train_scope[0], train_scope[1] + 1): #TODO; CHANGE THIS SO THAT I AM ADDING LINES RATHER THAN RELYING ON PERFECTLY PARALLEL APPENDS
+                data['language'].append(tgt_lang_encrypt)
+                data['script'].append('Latn')
+                data['sent_id'].append(line + current_max_id)
+                data['text'].append(encrypted[line])
+                data['split'].append('train')
+            
+            dev_scope = lang['dev_scope']
+            #TODO: ABOVE
+            
+            test_scope = lang['test_scope']
+            #TODO: ABOVE
+            
+            #TODO: ADD SAMES LINES FOR ENGLISH 
+            
+            #TODO: UPDATE CURRENT MAX ID (essentially add the highest value of the highest train scope so that there are no overlapping ids)
     
-    for entry in train: 
-    
-    for entry in dev:
-    
-    for entry in test: 
-    # permute each language and add to a data frame with the language pairs, split, and sentneces
-        # ex// 
-        # language,script,sent_id,text,split
-        # p0r,Latn,0,custasqpena bí irponsa,test
-    
+    #TODO: MAKE DICTIONARY INTO DATA FRAME
           
     csv_file = config['csv_file']
     lps = config['lps']
