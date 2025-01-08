@@ -9,7 +9,7 @@
             ],
             "permutation_id": 1
         },
-        "pt_tgt_1": {
+        "pt_tgt": {
             "type": "target",
             "files": [
                 "/mnt/storage/hopkins/data/europarl/europarl-v7.pt-en.pt"
@@ -19,17 +19,20 @@
     },
     "training_data": {
         "source_language": "en_src",
-        "target_language": "pt_tgt_1",
-        "split": 90
+        "target_language": "pt_tgt",
+        "start_index": 0,
+        "end_index": 50000
     },
     "validation_data": {
         "source_language": "en_src",
-        "target_language": "pt_tgt_1",
-        "split": 5
+        "target_language": "pt_tgt",
+        "start_index": 50001,
+        "end_index": 51000
     },
     "test_data": {
         "source_language": "en_src",
-        "target_language": "pt_tgt_1",
-        "split": 5
+        "target_language": "pt_tgt",
+        "start_index": 51001,
+        "end_index": 52000
     }
 }
