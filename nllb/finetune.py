@@ -151,7 +151,19 @@ if __name__ == "__main__":
         model_version += 1
     model_dir = model_dir + f"-v{model_version}"
     os.mkdir(model_dir)
-    shutil.copyfile(args.config, os.path.join(model_dir, 'experiment.json'))       
+    shutil.copyfile(args.config, os.path.join(model_dir, 'experiment.json'))  
+    
+    if config["encrypted_source"] == "True":
+        encrypted_source = True
+    else:
+        encrypted_source = False
+     
+    # this is the parameter if you want to do multi source (like many encrypted langs into english)
+    # but it flips the target and source so what is the src_file in the experiment json will actaully be used as the target   
+    if config["multi_source_flip"] == "True": 
+        multi_source = True
+    else:
+        multi_source = False
     
     lps = []
     data_by_corpus_and_permutation = {}
@@ -207,6 +219,7 @@ if __name__ == "__main__":
     # tokenize and get ids for all langauges
     tgt_sents_permuters = {}
     current_max_id = 0 
+    eng_encrypt_count = 1
     for corpus, info in corpora_scope.items():
         # get langauage name
         src_lang, tgt_lang = corpus.split('-')
@@ -241,8 +254,19 @@ if __name__ == "__main__":
                     break
         tgt_sents_permuters[corpus]['src_sents'] = src_sents 
         
+        if encrypted_source: # TODO: see if I want to change this to create one consistent permuter for each corpora or no? 
+                             #       in this case I would need to read in before the loop and create a tokenized and then a permuter that I use for all
+            tokenized_src = tokenizer(src_sents, return_tensors='pt', padding=True, truncation=True, max_length=128)
+            ids_src = [idx for idx in tokenized_src['input_ids'].unique().tolist() if 4 <= idx <= 256000]
+            permuter_src = create_token_permuter(tokenizer, tokenized_src, ids_src)
+            original_ids_src = tokenized_src['input_ids'].clone()
+            original_ids_src.apply_(permuter_src.map_token_id)
+            src_sents = tokenizer.batch_decode(original_ids_src, skip_special_tokens=True)
+            src_lang += str(eng_encrypt_count)
+            eng_encrypt_count += 1
+            
         # tokenize and get ids (for all regarless of permutation number)
-        tokenized = tokenizer(tgt_sents, return_tensors='pt', padding=True, truncation=True, max_length=128)
+        tokenized = tokenizer(tgt_sents, return_tensors='pt', padding=True, truncation=True, max_length=128) 
         ids = [idx for idx in tokenized['input_ids'].unique().tolist() if 4 <= idx <= 256000]
 
         # create a permuter for each artificial lang for given corpora (ex// all of the english to portugese encrypted)
@@ -255,7 +279,11 @@ if __name__ == "__main__":
             
             tgt_lang_encrypt = tgt_lang + str(permutation) 
             t = tgt_lang_encrypt + '_Latn'
-            lps.append(['eng_Latn', t]) # TODO: add functionality to have it go the other direction (encrypted --> eng)
+            s = src_lang + '_Latn'
+            if multi_source:
+                lps.append([t, s])
+            else:
+                lps.append([s, t]) # TODO: add functionality to have it go the other direction (encrypted --> eng)
             
             # add encrypted to dataframe
             train_scope = lang['train_scope'] 
@@ -267,11 +295,11 @@ if __name__ == "__main__":
             
             # add corresponding english to dataframes 
             train_scope = lang['train_scope'] 
-            data = add_lines(src_sents, 'eng', current_max_id, train_scope[0], train_scope[1], 'train', data)
+            data = add_lines(src_sents, src_lang, current_max_id, train_scope[0], train_scope[1], 'train', data)
             dev_scope = lang['dev_scope']
-            data = add_lines(src_sents, 'eng', current_max_id, dev_scope[0], dev_scope[1], 'dev', data)
+            data = add_lines(src_sents, src_lang, current_max_id, dev_scope[0], dev_scope[1], 'dev', data)
             test_scope = lang['test_scope']
-            data = add_lines(src_sents, 'eng', current_max_id, test_scope[0], test_scope[1], 'test', data)
+            data = add_lines(src_sents, src_lang, current_max_id, test_scope[0], test_scope[1], 'test', data)
            
         # update the starting id of the next copora to prevent overlapping ids           
         current_max_id += end
