@@ -1,7 +1,5 @@
 {
     "base_model": "facebook/nllb-200-distilled-600M",
-    "encrypted_source": "False", 
-    "multi_source_flip": "False", 
     "corpora": {
         "eng-por": {
             "src_file": "/mnt/storage/hopkins/data/europarl/europarl-v7.pt-en.en",
@@ -25,13 +23,13 @@
     "validation_data": [
         {
             "corpus": "eng-por",
-            "start_index": 50001,
+            "start_index": 50000,
             "end_index": 51000,
             "tgt_permutation": 1
         },
         {
             "corpus": "eng-por",
-            "start_index": 50001,
+            "start_index": 50000,
             "end_index": 51000,
             "tgt_permutation": 2
         }
@@ -39,13 +37,13 @@
     "test_data": [
         {
             "corpus": "eng-por",
-            "start_index": 51001,
+            "start_index": 51000,
             "end_index": 52000,
             "tgt_permutation": 1
         },
         {
             "corpus": "eng-por",
-            "start_index": 51001,
+            "start_index": 51000,
             "end_index": 52000,
             "tgt_permutation": 2
         }

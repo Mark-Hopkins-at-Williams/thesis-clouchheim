@@ -10,10 +10,11 @@ import pandas as pd
 from tqdm import tqdm
 from configure import USE_CUDA
 import matplotlib.pyplot as plt
-from encrypt import create_token_permuter
+
 from transformers.optimization import Adafactor
 from multilingualdata import MultilingualCorpus
 from transformers import get_constant_schedule_with_warmup
+from encrypt import create_token_permuter, encrypt_sentences
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
 from validate import evaluate_translations, batched_translate
 
@@ -136,8 +137,35 @@ def finetune(mixture_of_bitexts, dev_bitexts, base_model, finetuned_model_dir, t
         if patience <= 0:
             break
    
- 
-if __name__ == "__main__":
+def cache_relevant_lines(config):
+    def in_any_interval(i, intervals):
+        for (start, end) in intervals:
+            if start <= i < end:
+                return True
+        return False
+
+    necessary_lines = dict()  # keys are corpus_name, values are intervals
+    for split in ["training_data", "validation_data", "test_data"]:
+        for corpus_description in config[split]:
+            corpus_id = corpus_description['corpus']
+            start_index = corpus_description['start_index']
+            end_index = corpus_description['end_index']
+            if corpus_id not in necessary_lines:
+                necessary_lines[corpus_id] = []
+            necessary_lines[corpus_id].append((start_index, end_index)) #TODO: smoooosh intervals maybe
+
+    cached_lines = dict()  # keys are (corpus_name, src/tgt, line_num), values are single sentences
+    for corpus_name in necessary_lines:
+        for lang in ['src_file', 'tgt_file']:
+            filename = config['corpora'][corpus_name][lang]
+            with open(filename) as reader:
+                for i, line in enumerate(reader):  #TODO: reads through entire file, perhaps pre-compute max line num for early stopping
+                    if in_any_interval(i, necessary_lines[corpus_name]):
+                        cached_lines[(corpus_name, lang[:3], i)] = line     
+    return cached_lines
+
+
+def main():
     parser = argparse.ArgumentParser(description="Finetuning script for NLLB models.")
     parser.add_argument("--config", type=str, required=True, help="Experiment configuration (JSON)")
     parser.add_argument("--model_dir", type=str, help="Directory for storing the trained model")
@@ -153,162 +181,66 @@ if __name__ == "__main__":
     os.mkdir(model_dir)
     shutil.copyfile(args.config, os.path.join(model_dir, 'experiment.json'))  
     
-    if config["encrypted_source"] == "True":
-        encrypted_source = True
-    else:
-        encrypted_source = False
-     
-    # this is the parameter if you want to do multi source (like many encrypted langs into english)
-    # but it flips the target and source so what is the src_file in the experiment json will actaully be used as the target   
-    if config["multi_source_flip"] == "True": 
-        multi_source = True
-    else:
-        multi_source = False
-    
-    lps = []
-    data_by_corpus_and_permutation = {}
-    
-    def add_scope(data_list, scope_type):  # section for each corpora, and then section with boundaries for each permutation within
-        for entry in data_list:
-            key = entry["corpus"]
-            tgt_perm = entry["tgt_permutation"]
-            
-            if key not in data_by_corpus_and_permutation:
-                data_by_corpus_and_permutation[key] = {}
-            
-            if tgt_perm not in data_by_corpus_and_permutation[key]:
-                data_by_corpus_and_permutation[key][tgt_perm] = {
-                    "tgt_num": tgt_perm,
-                    "train_scope": None,
-                    "dev_scope": None,
-                    "test_scope": None
-                }           
-        
-            data_by_corpus_and_permutation[key][tgt_perm][scope_type] = [entry["start_index"], entry["end_index"]]
-    
-    # get the scope of each lang of data and split
-    add_scope(config["training_data"], "train_scope")
-    add_scope(config["validation_data"], "dev_scope")
-    add_scope(config["test_data"], "test_scope")
-    
-    # compute the true scope for each corpus
-    corpora_scope = {}
-    for corpus, permutations in data_by_corpus_and_permutation.items():
-        for perm, entry in permutations.items():
-            if corpus not in corpora_scope:
-                corpora_scope[corpus] = {
-                    "src_file": config['corpora'][corpus]['src_file'],
-                    "tgt_file": config['corpora'][corpus]['tgt_file'],
-                    "lowest_start_index": float('inf'),
-                    "highest_end_index": float('-inf'),
-                    "num_permutations": 0
-                }
-
-            # Update scope and permutation count
-            scopes = [entry['train_scope'], entry['dev_scope'], entry['test_scope']]
-            for scope in scopes:
-                if scope:
-                    corpora_scope[corpus]['lowest_start_index'] = min(corpora_scope[corpus]['lowest_start_index'], scope[0])
-                    corpora_scope[corpus]['highest_end_index'] = max(corpora_scope[corpus]['highest_end_index'], scope[1])
-
-            corpora_scope[corpus]['num_permutations'] += 1
-    
-    data = {'language': [], 'script': [], 'sent_id': [], 'text': [], 'split': []} # dictionary to make into data frame to add all bitexts to 
     tokenizer = AutoTokenizer.from_pretrained(config['base_model'])
     
-    # tokenize and get ids for all langauges
-    tgt_sents_permuters = {}
-    current_max_id = 0 
-    eng_encrypt_count = 1
-    for corpus, info in corpora_scope.items():
-        # get langauage name
-        src_lang, tgt_lang = corpus.split('-')
-        
-        # read in correct bitext sections
-        tgt_file = info['tgt_file']
-        src_file = info['src_file']
-        start = info['lowest_start_index']
-        end = info['highest_end_index']
-        
-        # Ensure the key exists in the dictionary to add sentences to
-        if corpus not in tgt_sents_permuters:
-            tgt_sents_permuters[corpus] = {}  
-        
-        # read in tgt sentences
-        tgt_sents = []
-        with open(tgt_file, 'r') as reader:
-            for current_index, line in enumerate(reader):  
-                if start <= current_index <= end: 
-                    tgt_sents.append(line.strip())
-                elif current_index > end:  
-                    break   
-        tgt_sents_permuters[corpus]['tgt_sents'] = tgt_sents # idk if I have to save this to a dictionary right here
-        
-        # read in source sentences
-        src_sents = []
-        with open(src_file, 'r') as reader:
-            for current_index, line in enumerate(reader):  
-                if start <= current_index <= end: 
-                    src_sents.append(line.strip())
-                elif current_index > end:  
-                    break
-        tgt_sents_permuters[corpus]['src_sents'] = src_sents 
-        
-        if encrypted_source: # TODO: see if I want to change this to create one consistent permuter for each corpora or no? 
-                             #       in this case I would need to read in before the loop and create a tokenized and then a permuter that I use for all
-            tokenized_src = tokenizer(src_sents, return_tensors='pt', padding=True, truncation=True, max_length=128)
-            ids_src = [idx for idx in tokenized_src['input_ids'].unique().tolist() if 4 <= idx <= 256000]
-            permuter_src = create_token_permuter(tokenizer, tokenized_src, ids_src)
-            original_ids_src = tokenized_src['input_ids'].clone()
-            original_ids_src.apply_(permuter_src.map_token_id)
-            src_sents = tokenizer.batch_decode(original_ids_src, skip_special_tokens=True)
-            src_lang += str(eng_encrypt_count)
-            eng_encrypt_count += 1
-            
-        # tokenize and get ids (for all regarless of permutation number)
-        tokenized = tokenizer(tgt_sents, return_tensors='pt', padding=True, truncation=True, max_length=128) 
-        ids = [idx for idx in tokenized['input_ids'].unique().tolist() if 4 <= idx <= 256000]
-
-        # create a permuter for each artificial lang for given corpora (ex// all of the english to portugese encrypted)
-        langs = data_by_corpus_and_permutation[corpus] 
-        for permutation, lang in langs.items():
-            permuter = create_token_permuter(tokenizer, tokenized, ids) 
-            original_ids = tokenized['input_ids'].clone()
-            original_ids.apply_(permuter.map_token_id)
-            encrypted = tokenizer.batch_decode(original_ids, skip_special_tokens=True) # these are the sentences encrypted to the new langauge
-            
-            tgt_lang_encrypt = tgt_lang + str(permutation) 
-            t = tgt_lang_encrypt + '_Latn'
-            s = src_lang + '_Latn'
-            if multi_source:
-                lps.append([t, s])
-            else:
-                lps.append([s, t]) # TODO: add functionality to have it go the other direction (encrypted --> eng)
-            
-            # add encrypted to dataframe
-            train_scope = lang['train_scope'] 
-            data = add_lines(encrypted, tgt_lang_encrypt, current_max_id, train_scope[0], train_scope[1], 'train', data)
-            dev_scope = lang['dev_scope']
-            data = add_lines(encrypted, tgt_lang_encrypt, current_max_id, dev_scope[0], dev_scope[1], 'dev', data)
-            test_scope = lang['test_scope']
-            data = add_lines(encrypted, tgt_lang_encrypt, current_max_id, test_scope[0], test_scope[1], 'test', data)
-            
-            # add corresponding english to dataframes 
-            train_scope = lang['train_scope'] 
-            data = add_lines(src_sents, src_lang, current_max_id, train_scope[0], train_scope[1], 'train', data)
-            dev_scope = lang['dev_scope']
-            data = add_lines(src_sents, src_lang, current_max_id, dev_scope[0], dev_scope[1], 'dev', data)
-            test_scope = lang['test_scope']
-            data = add_lines(src_sents, src_lang, current_max_id, test_scope[0], test_scope[1], 'test', data)
-           
-        # update the starting id of the next copora to prevent overlapping ids           
-        current_max_id += end
-      
+    # get all relevent lines
+    cached_lines = cache_relevant_lines(config) 
+    
+    # dispatch to token permuters
+    permutation_metadata = dict()   # keys are the permutation indices, values is a list of dicts describing the data
+    for split in ["training_data", "validation_data", "test_data"]:
+        for corpus_description in config[split]:
+            if 'tgt_permutation' in corpus_description:
+                perm_index = corpus_description['tgt_permutation']
+                if perm_index not in permutation_metadata:
+                    permutation_metadata[perm_index] = []
+                permutation_metadata[perm_index].append(
+                    {k: corpus_description[k] for k in corpus_description if k != 'tgt_permutation'}
+                )
+    
+    # create permuters for each permutation given permutation metadata
+    permuters = dict() # keys are permutation ids, vals are permuters
+    for permuter_id in permutation_metadata:
+        sents = []
+        for metadata in permutation_metadata[permuter_id]:
+            corpus_name = metadata['corpus']
+            start_index = metadata['start_index']
+            end_index = metadata['end_index']
+            for sent_id in range(start_index, end_index):
+                sent = cached_lines[(corpus_name, 'tgt', sent_id)]
+                sents.append(sent)
+        permuters[permuter_id] = create_token_permuter(tokenizer, sents)
+       
+    # read and encrypt data, place into dataframe   
+    data = []
+    lps = []
+    split_mapping = { "training_data": "train", "validation_data": "dev", "test_data": "test"}
+    for permuter_id in permuters:
+        permuter = permuters[permuter_id] 
+        for split_data in ["training_data", "validation_data", "test_data"]:
+            for metadata in config[split_data]:
+                if metadata['tgt_permutation'] == permuter_id:
+                    corpus_name = metadata['corpus']
+                    src_lang = corpus_name.split('-')[0]
+                    tgt_lang = corpus_name.split('-')[1] + str(permuter_id)
+                    lps.append([src_lang + '_Latn', tgt_lang + '_Latn'])
+                    start_index = metadata['start_index']
+                    end_index = metadata['end_index']
+                    split = split_mapping[split_data] 
+                    for sent_id in range(start_index, end_index):
+                        tgt_sent = cached_lines[(corpus_name, 'tgt', sent_id)]
+                        encrypted_tgt = encrypt_sentences(tgt_sent, tokenizer, permuter) # TODO: this has a redundant tokenization, but to maintian sent_id I couldnt find another option
+                        data.append({'language': tgt_lang, 'script': 'Latn', 'sent_id': sent_id, 'text': encrypted_tgt[0], 'split': split})
+                        src_sent = cached_lines[(corpus_name, 'src', sent_id)]
+                        data.append({'language': src_lang, 'script': 'Latn', 'sent_id': sent_id, 'text': src_sent.strip(), 'split': split})
+                
     # convert into pandas dataframe and create mixture of bitexts   
     bitexts = pd.DataFrame(data)
     bitexts = bitexts.drop_duplicates(subset=["language", "sent_id"])
-    
-    #bitexts.to_csv('test.csv', index=False)
+    lps = list(set(tuple(pair) for pair in lps))
+    print('wrote data to test.csv')
+    bitexts.to_csv('test.csv', index=False)
+    print(lps)
     
     corpus = MultilingualCorpus(bitexts) 
     train_data = corpus.create_mixture_of_bitexts(lps, batch_size=32, split='train')
@@ -342,3 +274,7 @@ if __name__ == "__main__":
         writer.write(','.join(['src', 'tgt', 'bleu', 'chrf']) + '\n')
         for i, (src, tgt) in enumerate(lps):
             writer.write(','.join([src, tgt, str(bleu_scores[i]), str(chrf_scores[i])]) + '\n')
+
+
+if __name__ == "__main__":
+    main()
