@@ -183,6 +183,9 @@ def main():
     
     tokenizer = AutoTokenizer.from_pretrained(config['base_model'])
     
+    #TODO: add the ability to have source permutations
+    #TODO: add the ability to have multiple sources
+    
     # get all relevent lines
     cached_lines = cache_relevant_lines(config) 
     
@@ -209,7 +212,7 @@ def main():
             for sent_id in range(start_index, end_index):
                 sent = cached_lines[(corpus_name, 'tgt', sent_id)]
                 sents.append(sent)
-        permuters[permuter_id] = create_token_permuter(tokenizer, sents)
+        permuters[permuter_id] = create_token_permuter(tokenizer, sents) # TODO: *this is where the other tokenization of the same sentences is happening
        
     # read and encrypt data, place into dataframe   
     data = []
@@ -229,7 +232,7 @@ def main():
                     split = split_mapping[split_data] 
                     for sent_id in range(start_index, end_index):
                         tgt_sent = cached_lines[(corpus_name, 'tgt', sent_id)]
-                        encrypted_tgt = encrypt_sentences(tgt_sent, tokenizer, permuter) # TODO: this has a redundant tokenization, but to maintian sent_id I couldnt find another option
+                        encrypted_tgt = encrypt_sentences(tgt_sent, tokenizer, permuter) # TODO: this has a redundant tokenization* (check encrypt.py), but to maintian sent_id I couldnt find another option
                         data.append({'language': tgt_lang, 'script': 'Latn', 'sent_id': sent_id, 'text': encrypted_tgt[0], 'split': split})
                         src_sent = cached_lines[(corpus_name, 'src', sent_id)]
                         data.append({'language': src_lang, 'script': 'Latn', 'sent_id': sent_id, 'text': src_sent.strip(), 'split': split})
@@ -238,9 +241,7 @@ def main():
     bitexts = pd.DataFrame(data)
     bitexts = bitexts.drop_duplicates(subset=["language", "sent_id"])
     lps = list(set(tuple(pair) for pair in lps))
-    print('wrote data to test.csv')
-    bitexts.to_csv('test.csv', index=False)
-    print(lps)
+    print('language pairs in model:', lps)
     
     corpus = MultilingualCorpus(bitexts) 
     train_data = corpus.create_mixture_of_bitexts(lps, batch_size=32, split='train')
