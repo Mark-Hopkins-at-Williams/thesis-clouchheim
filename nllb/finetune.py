@@ -152,7 +152,18 @@ def cache_relevant_lines(config):
             end_index = corpus_description['end_index']
             if corpus_id not in necessary_lines:
                 necessary_lines[corpus_id] = []
-            necessary_lines[corpus_id].append((start_index, end_index)) #TODO: smoooosh intervals maybe
+
+            match_existing_interval = False
+            for c, (s, e) in enumerate (necessary_lines[corpus_id]):
+                if start_index < s and end_index > e: # expand an interval contained within this one
+                    necessary_lines[corpus_id][c] = (start_index, end_index)
+                    match_existing_interval = True
+                elif start_index > s and end_index < e: # this interval contained in an existing one
+                    match_existing_interval = True
+                    break
+                    
+            if not match_existing_interval:
+                necessary_lines[corpus_id].append((start_index, end_index))
 
     cached_lines = dict()  # keys are (corpus_name, src/tgt, line_num), values are single sentences
     for corpus_name in necessary_lines:
