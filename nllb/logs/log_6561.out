@@ -1,0 +1,7 @@
+1 train 0 50000
+1 dev 50000 51000
+1 test 51000 52000
+2 train 0 50000
+2 dev 50000 51000
+2 test 51000 52000
+wrote data to test.csv

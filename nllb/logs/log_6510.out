@@ -1,0 +1,58 @@
+True
+[['por1_Latn', 'eng1_Latn']]
+[['por1_Latn', 'eng1_Latn'], ['por2_Latn', 'eng1_Latn']]
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+Training models/encrypted/TEST_2-v9
+Augmenting vocabulary with the following tokens:
+  por1_Latn
+  por2_Latn
+  eng1_Latn
+Validating on a sample...
+dev loss: 12.562176094055175
+Saving new best model!
+step 500 (train): 8.171210444450379
+Validating on a sample...
+dev loss: 6.312991518974304
+Saving new best model!
+step 1000 (train): 5.723801645278931
+Validating on a sample...
+dev loss: 5.3388132476806645
+Saving new best model!
+step 1500 (train): 5.096374558448791
+Validating on a sample...
+dev loss: 4.935092644691467
+Saving new best model!
+step 2000 (train): 4.647030829429626
+Validating on a sample...
+dev loss: 4.503469128608703
+Saving new best model!
+step 2500 (train): 4.324146078109742
+Validating on a sample...
+dev loss: 4.178630480766296
+Saving new best model!
+step 3000 (train): 4.0980280532836915
+Validating on a sample...
+dev loss: 4.0155126047134395
+Saving new best model!
+step 3500 (train): 3.877005871772766
+Validating on a sample...
+dev loss: 3.7842044281959533
+Saving new best model!
+step 4000 (train): 3.6880620985031127
+Validating on a sample...
+dev loss: 3.6135906052589415
+Saving new best model!
+step 4500 (train): 3.5787074036598208
+Validating on a sample...
+dev loss: 3.487532832622528
+Saving new best model!
+step 5000 (train): 3.4251920614242555
+Validating on a sample...
+dev loss: 3.350504846572876

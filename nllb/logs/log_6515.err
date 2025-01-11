@@ -1,0 +1,7 @@
+/mnt/storage/clouchheim/.conda/envs/thesis/lib/python3.11/site-packages/transformers/utils/generic.py:311: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
+  torch.utils._pytree._register_pytree_node(
+Traceback (most recent call last):
+  File "/mnt/storage/clouchheim/thesis-clouchheim/nllb/finetune.py", line 200, in <module>
+    "src_file": config['corpora'][corpus]['src_file'],
+                ~~~~~~~~~~~~~~~~~^^^^^^^^
+KeyError: 'en-pt'

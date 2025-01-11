@@ -1,0 +1,14 @@
+{'tgt_num': 1, 'train_scope': [0, 10], 'dev_scope': [11, 20], 'test_scope': [21, 30]}
+{'tgt_num': 2, 'train_scope': [0, 10], 'dev_scope': [11, 20], 'test_scope': [21, 30]}
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+Training models/encrypted/TEST-v18
+Augmenting vocabulary with the following tokens:
+  por2_Latn
+  por1_Latn

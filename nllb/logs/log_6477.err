@@ -1,0 +1,9 @@
+/mnt/storage/clouchheim/.conda/envs/thesis/lib/python3.11/site-packages/transformers/utils/generic.py:311: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
+  torch.utils._pytree._register_pytree_node(
+/mnt/storage/clouchheim/.conda/envs/thesis/lib/python3.11/site-packages/huggingface_hub/file_download.py:1142: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+Traceback (most recent call last):
+  File "/mnt/storage/clouchheim/thesis-clouchheim/nllb/finetune.py", line 206, in <module>
+    for corpus, info in copora_scope.items():
+                        ^^^^^^^^^^^^
+NameError: name 'copora_scope' is not defined. Did you mean: 'corpora_scope'?

@@ -1,0 +1,32 @@
+1 train 0 50000
+1 dev 50000 51000
+1 test 51000 52000
+2 train 0 50000
+2 dev 50000 51000
+2 test 51000 52000
+wrote data to test.csv
+[['eng_Latn', 'por1_Latn'], ['eng_Latn', 'por1_Latn'], ['eng_Latn', 'por1_Latn'], ['eng_Latn', 'por2_Latn'], ['eng_Latn', 'por2_Latn'], ['eng_Latn', 'por2_Latn']]
+eng_Latn
+eng_Latn
+eng_Latn
+eng_Latn
+eng_Latn
+eng_Latn
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+eng_Latn
+eng_Latn
+eng_Latn
+eng_Latn
+eng_Latn
+eng_Latn
+Training models/encrypted/parallel-v1
+Augmenting vocabulary with the following tokens:
+  por1_Latn
+  por2_Latn

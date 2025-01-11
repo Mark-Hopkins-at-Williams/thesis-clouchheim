@@ -1,0 +1,251 @@
+wrote data to test.csv
+[('eng_Latn', 'por2_Latn'), ('eng_Latn', 'por1_Latn')]
+eng_Latn
+eng_Latn
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+eng_Latn
+eng_Latn
+Training models/encrypted/parallel-v3
+Augmenting vocabulary with the following tokens:
+  por2_Latn
+  por1_Latn
+Validating on a sample...
+dev loss: 11.81412606239319
+Saving new best model!
+step 500 (train): 8.690630626678466
+Validating on a sample...
+dev loss: 6.9098313474655155
+Saving new best model!
+step 1000 (train): 6.329899175643921
+Validating on a sample...
+dev loss: 5.922226634025574
+Saving new best model!
+step 1500 (train): 5.421435046195984
+Validating on a sample...
+dev loss: 4.96061484336853
+Saving new best model!
+step 2000 (train): 4.744520765781402
+Validating on a sample...
+dev loss: 4.379178521633148
+Saving new best model!
+step 2500 (train): 4.211629590988159
+Validating on a sample...
+dev loss: 3.8575962662696837
+Saving new best model!
+step 3000 (train): 3.841516258239746
+Validating on a sample...
+dev loss: 3.4629652953147887
+Saving new best model!
+step 3500 (train): 3.5188125586509704
+Validating on a sample...
+dev loss: 3.2758220291137694
+Saving new best model!
+step 4000 (train): 3.25123893737793
+Validating on a sample...
+dev loss: 2.976993613243103
+Saving new best model!
+step 4500 (train): 3.1061529421806338
+Validating on a sample...
+dev loss: 2.8339980936050413
+Saving new best model!
+step 5000 (train): 2.920374693393707
+Validating on a sample...
+dev loss: 2.6930196571350096
+Saving new best model!
+step 5500 (train): 2.7232130353450774
+Validating on a sample...
+dev loss: 2.6001149559020997
+Saving new best model!
+step 6000 (train): 2.613192199707031
+Validating on a sample...
+dev loss: 2.449976530075073
+Saving new best model!
+step 6500 (train): 2.462347354888916
+Validating on a sample...
+dev loss: 2.3750920498371126
+Saving new best model!
+step 7000 (train): 2.3739693856239317
+Validating on a sample...
+dev loss: 2.3189505231380463
+Saving new best model!
+step 7500 (train): 2.322150634765625
+Validating on a sample...
+dev loss: 2.199005651473999
+Saving new best model!
+step 8000 (train): 2.238002228975296
+Validating on a sample...
+dev loss: 2.205782345533371
+Model is worse than the best so far. Current patience: 9
+step 8500 (train): 2.129386655807495
+Validating on a sample...
+dev loss: 2.132027622461319
+Saving new best model!
+step 9000 (train): 2.056431936502457
+Validating on a sample...
+dev loss: 2.095675137042999
+Saving new best model!
+step 9500 (train): 1.9739959955215454
+Validating on a sample...
+dev loss: 1.9940378415584563
+Saving new best model!
+step 10000 (train): 1.9383895223140717
+Validating on a sample...
+dev loss: 2.0523312878608704
+Model is worse than the best so far. Current patience: 9
+step 10500 (train): 1.9056484515666963
+Validating on a sample...
+dev loss: 1.9660229992866516
+Saving new best model!
+step 11000 (train): 1.8525673537254332
+Validating on a sample...
+dev loss: 1.9306635105609893
+Saving new best model!
+step 11500 (train): 1.8075067801475524
+Validating on a sample...
+dev loss: 1.9252890431880951
+Saving new best model!
+step 12000 (train): 1.7282041058540345
+Validating on a sample...
+dev loss: 1.9297522854804994
+Model is worse than the best so far. Current patience: 9
+step 12500 (train): 1.6925213344097136
+Validating on a sample...
+dev loss: 1.896361275911331
+Saving new best model!
+step 13000 (train): 1.649118845462799
+Validating on a sample...
+dev loss: 1.8762576723098754
+Saving new best model!
+step 13500 (train): 1.6311731337308883
+Validating on a sample...
+dev loss: 1.835528633594513
+Saving new best model!
+step 14000 (train): 1.6160993061065674
+Validating on a sample...
+dev loss: 1.7914057087898254
+Saving new best model!
+step 14500 (train): 1.5511883720159532
+Validating on a sample...
+dev loss: 1.852045007944107
+Model is worse than the best so far. Current patience: 9
+step 15000 (train): 1.5147103735208511
+Validating on a sample...
+dev loss: 1.835502840280533
+Model is worse than the best so far. Current patience: 8
+step 15500 (train): 1.4805827206373214
+Validating on a sample...
+dev loss: 1.8219487583637237
+Model is worse than the best so far. Current patience: 7
+step 16000 (train): 1.4357752228975296
+Validating on a sample...
+dev loss: 1.7876470172405243
+Saving new best model!
+step 16500 (train): 1.438315925002098
+Validating on a sample...
+dev loss: 1.8103021156787873
+Model is worse than the best so far. Current patience: 9
+step 17000 (train): 1.4084360142946244
+Validating on a sample...
+dev loss: 1.7326401031017304
+Saving new best model!
+step 17500 (train): 1.3931934883594512
+Validating on a sample...
+dev loss: 1.7656734156608582
+Model is worse than the best so far. Current patience: 9
+step 18000 (train): 1.334242945790291
+Validating on a sample...
+dev loss: 1.7390266096591949
+Model is worse than the best so far. Current patience: 8
+step 18500 (train): 1.307666848063469
+Validating on a sample...
+dev loss: 1.7697846031188964
+Model is worse than the best so far. Current patience: 7
+step 19000 (train): 1.276481032371521
+Validating on a sample...
+dev loss: 1.756390268802643
+Model is worse than the best so far. Current patience: 6
+step 19500 (train): 1.2789448956251144
+Validating on a sample...
+dev loss: 1.7430000817775726
+Model is worse than the best so far. Current patience: 5
+step 20000 (train): 1.2614468364715576
+Validating on a sample...
+dev loss: 1.748882600069046
+Model is worse than the best so far. Current patience: 4
+step 20500 (train): 1.2380813057422637
+Validating on a sample...
+dev loss: 1.7160524868965148
+Saving new best model!
+step 21000 (train): 1.1989776797294616
+Validating on a sample...
+dev loss: 1.7439079213142394
+Model is worse than the best so far. Current patience: 9
+step 21500 (train): 1.1644947426319123
+Validating on a sample...
+dev loss: 1.7201061952114105
+Model is worse than the best so far. Current patience: 8
+step 22000 (train): 1.1422847932577134
+Validating on a sample...
+dev loss: 1.7495500195026397
+Model is worse than the best so far. Current patience: 7
+step 22500 (train): 1.1290132796764374
+Validating on a sample...
+dev loss: 1.734487818479538
+Model is worse than the best so far. Current patience: 6
+step 23000 (train): 1.1380888950824737
+Validating on a sample...
+dev loss: 1.6995137465000152
+Saving new best model!
+step 23500 (train): 1.1127989001274108
+Validating on a sample...
+dev loss: 1.7350223791599273
+Model is worse than the best so far. Current patience: 9
+step 24000 (train): 1.0827699633836747
+Validating on a sample...
+dev loss: 1.7692979085445404
+Model is worse than the best so far. Current patience: 8
+step 24500 (train): 1.0555975795388222
+Validating on a sample...
+dev loss: 1.7336970508098601
+Model is worse than the best so far. Current patience: 7
+step 25000 (train): 1.0205701431632042
+Validating on a sample...
+dev loss: 1.7615013575553895
+Model is worse than the best so far. Current patience: 6
+step 25500 (train): 1.017163939356804
+Validating on a sample...
+dev loss: 1.758112107515335
+Model is worse than the best so far. Current patience: 5
+step 26000 (train): 1.0201127870082856
+Validating on a sample...
+dev loss: 1.7606039559841156
+Model is worse than the best so far. Current patience: 4
+step 26500 (train): 1.0084905762076377
+Validating on a sample...
+dev loss: 1.7404906809329987
+Model is worse than the best so far. Current patience: 3
+step 27000 (train): 0.9778172180652619
+Validating on a sample...
+dev loss: 1.7358398032188416
+Model is worse than the best so far. Current patience: 2
+step 27500 (train): 0.937363600552082
+Validating on a sample...
+dev loss: 1.7828438758850098
+Model is worse than the best so far. Current patience: 1
+step 28000 (train): 0.9287046150565147
+Validating on a sample...
+dev loss: 1.761402199268341
+Model is worse than the best so far. Current patience: 0
+eng_Latn
+BLEU: 25.79892931775459
+Chrf: 52.592541760728984
+eng_Latn
+BLEU: 29.769262020323083
+Chrf: 51.14512094715615

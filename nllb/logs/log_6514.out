@@ -1,0 +1,15 @@
+False
+here [['eng_Latn', 'por1_Latn']]
+here [['eng_Latn', 'por1_Latn'], ['eng_Latn', 'por2_Latn']]
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+Training models/encrypted/parallel-v0
+Augmenting vocabulary with the following tokens:
+  por2_Latn
+  por1_Latn

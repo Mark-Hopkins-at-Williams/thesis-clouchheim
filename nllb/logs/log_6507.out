@@ -1,0 +1,60 @@
+True
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+Training models/encrypted/TEST_2-v6
+Augmenting vocabulary with the following tokens:
+  por2_Latn
+  por1_Latn
+  eng1_Latn
+Validating on a sample...
+dev loss: 12.037086963653564
+Saving new best model!
+step 500 (train): 8.791236501693726
+Validating on a sample...
+dev loss: 7.03043306350708
+Saving new best model!
+step 1000 (train): 6.4886830635070805
+Validating on a sample...
+dev loss: 6.126626501083374
+Saving new best model!
+step 1500 (train): 5.751107865333557
+Validating on a sample...
+dev loss: 5.457661538124085
+Saving new best model!
+step 2000 (train): 5.300112260818482
+Validating on a sample...
+dev loss: 5.081766390800476
+Saving new best model!
+step 2500 (train): 4.8964967966079715
+Validating on a sample...
+dev loss: 4.716325078010559
+Saving new best model!
+step 3000 (train): 4.595661837100983
+Validating on a sample...
+dev loss: 4.444019603729248
+Saving new best model!
+step 3500 (train): 4.351429093360901
+Validating on a sample...
+dev loss: 4.252322826385498
+Saving new best model!
+step 4000 (train): 4.137129699707031
+Validating on a sample...
+dev loss: 4.0152215886116025
+Saving new best model!
+step 4500 (train): 4.038543799877167
+Validating on a sample...
+dev loss: 3.8599170947074892
+Saving new best model!
+step 5000 (train): 3.8435868544578553
+Validating on a sample...
+dev loss: 3.768205990791321
+Saving new best model!
+step 5500 (train): 3.7111130361557008
+Validating on a sample...
+dev loss: 3.6136499094963073

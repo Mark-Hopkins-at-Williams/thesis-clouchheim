@@ -1,0 +1,8 @@
+{1: [{'corpus': 'eng-por', 'start_index': 0, 'end_index': 50000}, {'corpus': 'eng-por', 'start_index': 50000, 'end_index': 51000}, {'corpus': 'eng-por', 'start_index': 51000, 'end_index': 52000}], 2: [{'corpus': 'eng-por', 'start_index': 0, 'end_index': 50000}, {'corpus': 'eng-por', 'start_index': 50000, 'end_index': 51000}, {'corpus': 'eng-por', 'start_index': 51000, 'end_index': 52000}]}
+1 train 51000 52000
+1 dev 51000 52000
+1 test 51000 52000
+2 train 51000 52000
+2 dev 51000 52000
+2 test 51000 52000
+wrote data to test.csv
