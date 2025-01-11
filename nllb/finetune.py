@@ -169,8 +169,13 @@ def cache_relevant_lines(config):
     for corpus_name in necessary_lines:
         for lang in ['src_file', 'tgt_file']:
             filename = config['corpora'][corpus_name][lang]
+            max_line = max(necessary_lines[corpus_name], key = lambda x : x[1])[1]
+
             with open(filename) as reader:
-                for i, line in enumerate(reader):  #TODO: reads through entire file, perhaps pre-compute max line num for early stopping
+                for i, line in enumerate(reader):
+                    if i > max_line:
+                        break # early stopping
+
                     if in_any_interval(i, necessary_lines[corpus_name]):
                         cached_lines[(corpus_name, lang[:3], i)] = line     
     return cached_lines
