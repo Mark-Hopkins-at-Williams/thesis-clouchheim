@@ -1,4 +1,0 @@
-  File "/mnt/storage/clouchheim/thesis-clouchheim/nllb/finetune.py", line 266
-    add_lines((src_sents, 'eng', current_max_id, test_scope[0], test_scope[1], 'test')
-             ^
-SyntaxError: '(' was never closed

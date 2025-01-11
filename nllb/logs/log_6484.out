@@ -1,2 +1,0 @@
-{'tgt_num': 1, 'train_scope': [0, 1000], 'dev_scope': [1001, 2000], 'test_scope': [2001, 3000]}
-{'tgt_num': 2, 'train_scope': [0, 1000], 'dev_scope': [1001, 2000], 'test_scope': [2001, 3000]}

@@ -1,3 +1,0 @@
-{'tgt_num': 1, 'train_scope': [0, 10], 'dev_scope': [11, 20], 'test_scope': [21, 30]}
-{'tgt_num': 2, 'train_scope': [0, 10], 'dev_scope': [11, 20], 'test_scope': [21, 30]}
-[['eng', 'por1'], ['eng', 'por2']]
