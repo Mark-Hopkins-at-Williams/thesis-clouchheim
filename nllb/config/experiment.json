@@ -23,13 +23,13 @@
     "validation_data": [
         {
             "corpus": "eng-por",
-            "start_index": 50001,
+            "start_index": 50000,
             "end_index": 51000,
             "tgt_permutation": 1
         },
         {
             "corpus": "eng-por",
-            "start_index": 50001,
+            "start_index": 50000,
             "end_index": 51000,
             "tgt_permutation": 2
         }
@@ -37,15 +37,16 @@
     "test_data": [
         {
             "corpus": "eng-por",
-            "start_index": 51001,
+            "start_index": 51000,
             "end_index": 52000,
             "tgt_permutation": 1
         },
         {
             "corpus": "eng-por",
-            "start_index": 51001,
+            "start_index": 51000,
             "end_index": 52000,
             "tgt_permutation": 2
         }
     ]
 }
+  
