@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 from transformers.optimization import Adafactor
 from multilingualdata import MultilingualCorpus
 from transformers import get_constant_schedule_with_warmup
-from encrypt import create_token_permuter, encrypt_sentences
+from encrypt import create_token_permuter, encrypt_sentences, create_tokenized
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
 from validate import evaluate_translations, batched_translate
 
@@ -219,6 +219,7 @@ def main():
     
     # create permuters for each permutation given permutation metadata
     permuters = dict() # keys are permutation ids, vals are permuters
+    tokenized = dict() # keys are permuation ids, vals are tokenizations (for reuse in encryption later)
     for permuter_id in permutation_metadata:
         sents = []
         for metadata in permutation_metadata[permuter_id]:
@@ -228,7 +229,8 @@ def main():
             for sent_id in range(start_index, end_index):
                 sent = cached_lines[(corpus_name, 'tgt', sent_id)]
                 sents.append(sent)
-        permuters[permuter_id] = create_token_permuter(tokenizer, sents) # TODO: *this is where the other tokenization of the same sentences is happening
+        tokenized[permuter_id] = create_tokenized(tokenizer, sents) # WARN: return_tensors is hardcoded for 'pt', should be in a config somewhere?
+        permuters[permuter_id] = create_token_permuter(tokenizer, tokenized)
        
     # read and encrypt data, place into dataframe   
     data = []
@@ -247,8 +249,7 @@ def main():
                     end_index = metadata['end_index']
                     split = split_mapping[split_data] 
                     for sent_id in range(start_index, end_index):
-                        tgt_sent = cached_lines[(corpus_name, 'tgt', sent_id)]
-                        encrypted_tgt = encrypt_sentences(tgt_sent, tokenizer, permuter) # TODO: this has a redundant tokenization* (check encrypt.py), but to maintian sent_id I couldnt find another option
+                        encrypted_tgt = encrypt_sentences(tokenizer, tokenized[permuter_id], permuter)
                         data.append({'language': tgt_lang, 'script': 'Latn', 'sent_id': sent_id, 'text': encrypted_tgt[0], 'split': split})
                         src_sent = cached_lines[(corpus_name, 'src', sent_id)]
                         data.append({'language': src_lang, 'script': 'Latn', 'sent_id': sent_id, 'text': src_sent.strip(), 'split': split})
