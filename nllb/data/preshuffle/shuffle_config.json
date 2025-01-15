@@ -1,0 +1,39 @@
+{
+    "corpus_file": "europarl-v7.pt-en.en",
+    "test_size": 2000,
+    "dev_size": 2000,
+    "shuffles": [
+        {
+            "id": "0",
+            "seed": 0
+        },
+        {
+            "id": "1",
+            "seed": 0
+        },
+        {
+            "id": "2",
+            "seed": 0
+        },
+        {
+            "id": "3",
+            "seed": 0
+        },
+        {
+            "id": "4",
+            "seed": 0
+        },
+        {
+            "id": "5",
+            "seed": 0
+        },
+        {
+            "id": "6",
+            "seed": 0
+        },
+        {
+            "id": "7",
+            "seed": 0
+        }
+    ]
+}
