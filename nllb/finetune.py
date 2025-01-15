@@ -45,7 +45,7 @@ def finetune(mixture_of_bitexts, dev_bitexts, base_model, finetuned_model_dir, t
              max_length=128, # token sequences will be truncated to this many tokens
              report_every=500,
              validate_every=500,
-             patience=10
+             patience=5
              ):    
     print('Training', finetuned_model_dir)
     tokenizer = AutoTokenizer.from_pretrained(base_model)
@@ -214,6 +214,8 @@ def main():
                 sents.append(sent)
         permuters[permuter_id] = create_token_permuter(tokenizer, sents) # TODO: *this is where the other tokenization of the same sentences is happening
        
+    #TODO: create a source permuter here if source is encrypted
+    
     # read and encrypt data, place into dataframe   
     data = []
     lps = []
