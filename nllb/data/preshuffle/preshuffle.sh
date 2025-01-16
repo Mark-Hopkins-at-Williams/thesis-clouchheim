@@ -6,4 +6,4 @@
 #SBATCH -o logs/log_%j.out  
 #SBATCH -e logs/log_%j.err
 #SBATCH --gres=gpu:1
-python preshuffle.py --config shuffle_config.json
+python preshuffle.py --config shuffle_config.json --output_dir en_pt

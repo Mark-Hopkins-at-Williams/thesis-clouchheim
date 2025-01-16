@@ -1,5 +1,8 @@
 {
-    "corpus_file": "europarl-v7.pt-en.en",
+    "parallel_files": [
+        "europarl-v7.pt-en.en",
+        "europarl-v7.pt-en.pt"
+    ],
     "test_size": 2000,
     "dev_size": 2000,
     "shuffles": [
