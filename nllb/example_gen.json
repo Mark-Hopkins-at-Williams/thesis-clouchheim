@@ -1,0 +1,44 @@
+{
+    "base_model": "facebook/nllb-200-distilled-600M",
+    "corpora": {
+        "eng-dan": {
+            "src_file": "/mnt/storage/clouchheim/thesis-clouchheim/nllb/data/eng_dan_shuff/shuffle_0_Europarl.da-en.en",
+            "tgt_file": "/mnt/storage/clouchheim/thesis-clouchheim/nllb/data/eng_dan_shuff/shuffle_0_Europarl.da-en.da"            
+        },
+        "gen-dan": {
+            "src_file": null, 
+            "tgt_file": "/mnt/storage/clouchheim/thesis-clouchheim/nllb/data/eng_dan_shuff/shuffle_0_Europarl.da-en.da"            
+        }
+    },
+    "training_data": [
+        {
+            "corpus": "eng-dan",
+            "start_index": 50000,
+            "end_index": 100000,
+            "tgt_permutation": 1
+        },
+        {
+            "corpus": "gen-dan",
+            "start_index": 150000,
+            "end_index": 200000,
+            "tgt_permutation": 1
+        }
+    ],
+    "validation_data": [
+        {
+            "corpus": "eng-dan",
+            "start_index": 0,
+            "end_index": 2000,
+            "tgt_permutation": 1
+        }
+    ],
+    "test_data": [
+        {
+            "corpus": "eng-dan",
+            "start_index": 2000,
+            "end_index": 4000,
+            "tgt_permutation": 1
+        }
+    ]
+}
+  
