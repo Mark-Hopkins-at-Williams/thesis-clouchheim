@@ -13,14 +13,14 @@
     "training_data": [
         {
             "corpus": "eng-dan",
-            "start_index": 50000,
-            "end_index": 100000,
+            "start_index": 5000,
+            "end_index": 10000,
             "tgt_permutation": 1
         },
         {
             "corpus": "gen-dan",
-            "start_index": 150000,
-            "end_index": 200000,
+            "start_index": 15000,
+            "end_index": 20000,
             "tgt_permutation": 1
         }
     ],

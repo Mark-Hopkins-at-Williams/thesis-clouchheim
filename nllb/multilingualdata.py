@@ -70,6 +70,7 @@ class MixtureOfBitexts:
         bitext_index = random.choices(range(len(self.bitexts)), weights=self.sampling_probs, k=1)[0]
         lang1_code = self.bitexts[bitext_index].lang1_code
         lang2_code = self.bitexts[bitext_index].lang2_code
+        
         try:
             batch_iter = self.batch_iters[bitext_index]
             lang1_sents, lang2_sents = next(batch_iter)
