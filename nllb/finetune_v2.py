@@ -45,11 +45,15 @@ def finetune(mixture_of_bitexts, dev_bitexts, base_model, finetuned_model_dir, t
              report_every=500,
              validate_every=500,
              patience=5,
-             gpu_memory_fraction=None
+             gpu_memory_fraction=None,
+             freeze_encoder=False
              ):    
     print('Training', finetuned_model_dir)
     tokenizer = AutoTokenizer.from_pretrained(base_model)
     model = AutoModelForSeq2SeqLM.from_pretrained(base_model)
+    if freeze_encoder: # freeze encoder to precent overfitting to domanin
+        for param in model.get_encoder().parameters():
+            param.requires_grad = False
     new_lang_codes = [code for code in mixture_of_bitexts.get_language_codes() if code not in tokenizer.get_vocab()]
     print(f"Augmenting vocabulary with the following tokens:")
     for lang_code in new_lang_codes:
@@ -58,12 +62,10 @@ def finetune(mixture_of_bitexts, dev_bitexts, base_model, finetuned_model_dir, t
     tokenizer.save_pretrained(finetuned_model_dir)
     model.resize_token_embeddings(len(tokenizer))
     
-    if USE_CUDA:
+    if USE_CUDA: # dynamic GPU allocation
         if gpu_memory_fraction:
-            # Limit GPU memory usage to the specified fraction
             torch.cuda.set_per_process_memory_fraction(gpu_memory_fraction)
-        # Enable dynamic memory growth
-        torch.cuda.set_device(0)  # Assumes a single GPU is being used
+        torch.cuda.set_device(0)  
         torch.backends.cudnn.benchmark = True
         model.cuda()
         
