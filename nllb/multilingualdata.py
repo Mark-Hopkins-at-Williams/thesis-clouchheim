@@ -70,6 +70,7 @@ class MixtureOfBitexts:
         bitext_index = random.choices(range(len(self.bitexts)), weights=self.sampling_probs, k=1)[0]
         lang1_code = self.bitexts[bitext_index].lang1_code
         lang2_code = self.bitexts[bitext_index].lang2_code
+        
         try:
             batch_iter = self.batch_iters[bitext_index]
             lang1_sents, lang2_sents = next(batch_iter)
@@ -84,14 +85,17 @@ class MixtureOfBitexts:
 
 class MultilingualCorpus:
     
-    def __init__(self, csv_file, streaming = False):
+    def __init__(self, data, streaming = False):
         
         self.streaming = streaming
         
-        if self.streaming:
-            self.df = None
+        if isinstance(data, pd.DataFrame):
+            self.df = data
         else:
-            self.df = pd.read_csv(csv_file)
+            if self.streaming:
+                self.df = None
+            else:
+                self.df = pd.read_csv(data)
                        
     def create_bitext(self, lang1_code, lang2_code, split, lang1_file = None, lang2_file = None):
         

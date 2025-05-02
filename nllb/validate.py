@@ -1,5 +1,4 @@
 import sacrebleu
-from nllbseed import NllbSeedData
 from tqdm import tqdm
 import os
 import sys

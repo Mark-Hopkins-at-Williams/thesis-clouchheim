@@ -32,7 +32,7 @@ def tokenize(sents, lang, tokenizer, max_length, alt_pad_token=None):
     return tokens
 
 def add_lines(sents, lang, current_max_id, start, end, split, data):
-    for line in range(start, end + 1): #TODO; CHANGE THIS SO THAT I AM ADDING LINES RATHER THAN RELYING ON PERFECTLY PARALLEL APPENDS
+    for line in range(start, end + 1):
         data['language'].append(lang)
         data['script'].append('Latn')
         data['sent_id'].append(line + current_max_id)
@@ -45,11 +45,15 @@ def finetune(mixture_of_bitexts, dev_bitexts, base_model, finetuned_model_dir, t
              report_every=500,
              validate_every=500,
              patience=5,
-             gpu_memory_fraction=None
+             gpu_memory_fraction=None,
+             freeze_encoder=False
              ):    
     print('Training', finetuned_model_dir)
     tokenizer = AutoTokenizer.from_pretrained(base_model)
     model = AutoModelForSeq2SeqLM.from_pretrained(base_model)
+    if freeze_encoder: # freeze encoder to precent overfitting to domanin
+        for param in model.get_encoder().parameters():
+            param.requires_grad = False
     new_lang_codes = [code for code in mixture_of_bitexts.get_language_codes() if code not in tokenizer.get_vocab()]
     print(f"Augmenting vocabulary with the following tokens:")
     for lang_code in new_lang_codes:
@@ -58,12 +62,10 @@ def finetune(mixture_of_bitexts, dev_bitexts, base_model, finetuned_model_dir, t
     tokenizer.save_pretrained(finetuned_model_dir)
     model.resize_token_embeddings(len(tokenizer))
     
-    if USE_CUDA:
+    if USE_CUDA: # dynamic GPU allocation
         if gpu_memory_fraction:
-            # Limit GPU memory usage to the specified fraction
             torch.cuda.set_per_process_memory_fraction(gpu_memory_fraction)
-        # Enable dynamic memory growth
-        torch.cuda.set_device(0)  # Assumes a single GPU is being used
+        torch.cuda.set_device(0)  
         torch.backends.cudnn.benchmark = True
         model.cuda()
         
@@ -84,7 +86,9 @@ def finetune(mixture_of_bitexts, dev_bitexts, base_model, finetuned_model_dir, t
     train_plot_x, train_plot_y = [], []
     dev_plot_x, dev_plot_y = [], []
     for i in tqdm(range(training_steps)):
-        lang1_sents, lang2_sents, lang1, lang2 = mixture_of_bitexts.next_batch()  
+        print('in step', i)
+        lang1_sents, lang2_sents, lang1, lang2 = mixture_of_bitexts.next_batch() 
+        print(lang1, lang2) 
         try:
             model.train()
             x = tokenize(lang1_sents, lang1, tokenizer, max_length).to(model.device)
@@ -111,7 +115,7 @@ def finetune(mixture_of_bitexts, dev_bitexts, base_model, finetuned_model_dir, t
             model.eval()         
             dev_losses = []
             dev_batches = 100
-            for _ in range(dev_batches):
+            for i in range(dev_batches):
                 lang1_sents, lang2_sents, lang1, lang2 = dev_bitexts.next_batch()                
                 x = tokenize(lang1_sents, lang1, tokenizer, max_length).to(model.device)
                 y = tokenize(lang2_sents, lang2, tokenizer, max_length, alt_pad_token=-100).to(model.device)
@@ -160,16 +164,25 @@ def cache_relevant_lines(config):
             end_index = corpus_description['end_index']
             if corpus_id not in necessary_lines:
                 necessary_lines[corpus_id] = []
-            necessary_lines[corpus_id].append((start_index, end_index)) #TODO: smoooosh intervals maybe
+            necessary_lines[corpus_id].append((start_index, end_index)) 
 
     cached_lines = dict()  # keys are (corpus_name, src/tgt, line_num), values are single sentences
     for corpus_name in necessary_lines:
         for lang in ['src_file', 'tgt_file']:
             filename = config['corpora'][corpus_name][lang]
-            with open(filename) as reader:
-                for i, line in enumerate(reader):  #TODO: reads through entire file, perhaps pre-compute max line num for early stopping
-                    if in_any_interval(i, necessary_lines[corpus_name]):
-                        cached_lines[(corpus_name, lang[:3], i)] = line     
+            gen_lang = False
+            
+            if filename != None: # case where 
+                with open(filename) as reader:
+                    for i, line in enumerate(reader):  
+                        if in_any_interval(i, necessary_lines[corpus_name]):
+                            cached_lines[(corpus_name, lang[:3], i)] = line
+            else:
+                with open(config['corpora'][corpus_name]['tgt_file']) as reader: # uses tgt file length as proxy 
+                    for i, line in enumerate(reader):
+                        if in_any_interval(i, necessary_lines[corpus_name]):
+                            cached_lines[(corpus_name, lang[:3], i)] = '<no_source>' # TODO: choose a better stand in
+                     
     return cached_lines
 
 
@@ -190,9 +203,6 @@ def main():
     shutil.copyfile(args.config, os.path.join(model_dir, 'experiment.json'))  
     
     tokenizer = AutoTokenizer.from_pretrained(config['base_model'])
-    
-    #TODO: add the ability to have source permutations
-    #TODO: add the ability to have multiple sources
     
     # get all relevent lines
     cached_lines = cache_relevant_lines(config) 
@@ -228,7 +238,7 @@ def main():
             for sent_id in range(start_index, end_index):
                 sent = cached_lines[(corpus_name, 'tgt', sent_id)]
                 sents.append(sent)
-        permuters[permuter_id] = create_token_permuter(tokenizer, sents) # TODO: *this is where the other tokenization of the same sentences is happening
+        permuters[permuter_id] = create_token_permuter(tokenizer, sents) 
     
     src_permuters = dict() # keys are permutation ids, vals are permuters
     for permuter_id in src_permutation_metadata:
@@ -257,6 +267,9 @@ def main():
                         src_permuter = src_permuters[metadata['src_permutation']]
                         print('found source permuter:', metadata['src_permutation'])
                     corpus_name = metadata['corpus']
+                    
+                    #TODO: add adjdustment here to account for 'none' src file for monolingual addition (maybe here)
+                    
                     if src_permute:
                         src_lang = corpus_name.split('-')[0] + str(metadata['src_permutation'])
                     else:
@@ -272,10 +285,13 @@ def main():
                         encrypted_tgt = encrypt_sentences(tgt_sent, tokenizer, permuter) # TODO: this has a redundant tokenization* (check encrypt.py), but to maintian sent_id I couldnt find another option
                         data.append({'language': tgt_lang, 'script': 'Latn', 'sent_id': sent_id, 'text': encrypted_tgt[0], 'split': split})
                         # add source sents
+                        
+                        #TODO: add adjdustment here to account for 'none' src file for monolingual addition (maybe here detect value of src_sent)
+                        
                         src_sent = cached_lines[(corpus_name, 'src', sent_id)]
                         if src_permute:
                             src_sent = encrypt_sentences(src_sent, tokenizer, src_permuter)
-                            src_sent = src_sent[0]
+                            src_sent = src_sent[0]  
                         data.append({'language': src_lang, 'script': 'Latn', 'sent_id': sent_id, 'text': src_sent.strip(), 'split': split})
                 
     # convert into pandas dataframe and create mixture of bitexts   
@@ -284,10 +300,13 @@ def main():
     lps = list(set(tuple(pair) for pair in lps))
     print('language pairs in model:', lps)
     
-    #bitexts.to_csv(model_dir +'/data.csv', index=False)
+    # check in file
+    bitexts.to_csv(model_dir +'/data.csv', index=False)
     
     corpus = MultilingualCorpus(bitexts) 
     train_data = corpus.create_mixture_of_bitexts(lps, batch_size=32, split='train')
+    lps = [lp for lp in lps if lp[0] != 'gen_Latn'] # removes generate pair from validation and final tests
+    print('new lps:', lps)
     dev_data = corpus.create_mixture_of_bitexts(lps, batch_size=32, split='dev')
     model_name = config['base_model']
     
